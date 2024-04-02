@@ -2,6 +2,7 @@ import express, {Request} from "express";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -78,10 +79,16 @@ router.post("/login", async (req: any, res: any, next: any) => {
       .status(404)
       .json({ message: "L'email et le mot de passe ne corresponde pas." });
   }
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET non défini dans les variables d'environnement.");
+  }
+  
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
   res.status(200).json({
     message: "Logged In",
     user: user.toObject({ getters: true }),
+    token: token
   });
 });
 
