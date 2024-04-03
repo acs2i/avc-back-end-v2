@@ -4,12 +4,21 @@ import express from "express"
 import authRoutes from "./routes/authRoutes"
 import dbConnect from "./config/dbConnect"
 import bodyParser from "body-parser"
+import cors from "cors";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: "GET,POST,PUT,DELETE,PATCH",
+    credentials: true,
+  })
+);
 
 // ROUTES
 app.get('/', (req: any, res: any) => {
