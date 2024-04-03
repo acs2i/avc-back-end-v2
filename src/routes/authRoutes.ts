@@ -1,4 +1,4 @@
-import express, {Request} from "express";
+import express, {Request, Response, NextFunction} from "express";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
 import bcrypt from "bcrypt";
@@ -6,12 +6,10 @@ import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
-
-
 //REGISTER
 //@POST
 //api/v1/auth/register
-router.post("/register", async (req: any, res: any, next: any) => {
+router.post("/register", async (req: Request, res: Response, next: NextFunction) => {
 
   const {
     username,
@@ -61,7 +59,7 @@ router.post("/register", async (req: any, res: any, next: any) => {
 //LOGIN
 //@POST
 //api/v1/auth/register
-router.post("/login", async (req: any, res: any, next: any) => {
+router.post("/login", async (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body;
   let user;
   try {
@@ -90,7 +88,7 @@ router.post("/login", async (req: any, res: any, next: any) => {
   }
   
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-
+  
   res.status(200).json({
     message: "Logged In",
     user: user.toObject({ getters: true }),
