@@ -174,7 +174,7 @@ router.patch(
               _id: updatedProduct._id,
               reference: updatedProduct.reference,
               name: updatedProduct.name,
-              date: updatedProduct.createdAt,
+              date: updatedProduct.updatedAt,
             },
           },
         },
