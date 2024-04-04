@@ -17,7 +17,7 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
     password
   } = req.body;
 
- console.log("body :" + username)
+ 
 
   let existingUser;
   try {

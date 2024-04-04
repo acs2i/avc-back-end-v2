@@ -14,7 +14,7 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    subfamilly: {
+    subFamilly: {
       type: String,
     },
     brand: {
