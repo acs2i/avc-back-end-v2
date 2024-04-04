@@ -24,7 +24,7 @@ router.post(
     try {
       // Rechercher l'utilisateur en utilisant son ID
       const user = await User.findById(creator);
-
+ 
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
       }
@@ -38,15 +38,15 @@ router.post(
         brand,
         productCollection,
         creator: {
-          _id: user._id,
+          _id : user._id,
           username: user.username,
-          email: user.email,
-        },
+          email: user.email
+        }
       });
 
       // Enregistre le produit
       const savedProduct = await newProduct.save();
-      
+
       // Met a jour le champs products de l'utilisateur
       const updatedUser = await User.findByIdAndUpdate(
         creator,

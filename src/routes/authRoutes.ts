@@ -84,7 +84,7 @@ router.post("/login", async (req: Request, res: Response, next: NextFunction) =>
       .json({ message: "L'email et le mot de passe ne corresponde pas." });
   }
   if (!process.env.JWT_SECRET) {
-    throw new Error("JWT_SECRET non défini dans les variables d'environnement.");
+    throw new Error("JWT_SECRET non défini dans les variables d'environnement");
   }
   
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
