@@ -2,6 +2,7 @@
 import dotenv from "dotenv"
 import express from "express"
 import authRoutes from "./routes/authRoutes"
+import productRoutes from "./routes/productRoutes"
 import dbConnect from "./config/dbConnect"
 import bodyParser from "body-parser"
 import cors from "cors";
@@ -29,7 +30,7 @@ app.get('/', (req: any, res: any) => {
 app.use("/api/v1/auth", authRoutes);
 
 // PRODUCTS ROUTES
-// TO DO
+app.use("/api/v1/product", productRoutes);
 
 // USERS ROUTES
 // TO DO
