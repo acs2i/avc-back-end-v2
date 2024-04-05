@@ -59,6 +59,7 @@ router.post(
       subFamilly,
       brand,
       productCollection,
+      imgPath,
       creator,
     } = req.body;
 
@@ -78,6 +79,7 @@ router.post(
         subFamilly,
         brand,
         productCollection,
+        imgPath,
         creator: {
           _id: user._id,
           username: user.username,
@@ -132,6 +134,7 @@ router.patch(
       subFamilly,
       brand,
       productCollection,
+      imgPath,
       creator,
     } = req.body;
 
@@ -155,6 +158,7 @@ router.patch(
       product.subFamilly = subFamilly;
       product.brand = brand;
       product.productCollection = productCollection;
+      product.imgPath = imgPath;
 
       product.creator.push({
         _id: user._id,

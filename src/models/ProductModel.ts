@@ -27,6 +27,10 @@ const ProductSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    imgPath: {
+      type: String,
+      default: ""
+    },
     creator: [
       {
         _id: {
