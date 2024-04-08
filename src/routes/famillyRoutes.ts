@@ -31,7 +31,7 @@ router.post(
           email: user.email,
         },
       });
-
+      console.log(newFamilly)
       // Enregistre le produit
       const savedFamilly = await newFamilly.save();
 
