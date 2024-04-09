@@ -33,7 +33,7 @@ app.use("/api/v1/auth", authRoutes);
 // PRODUCTS ROUTES
 app.use("/api/v1/product", productRoutes);
 
-// CATEGORY Routes
+// FAMILLY ROUTES
 app.use("/api/v1/familly", famillyRoutes);
 
 // USERS ROUTES
