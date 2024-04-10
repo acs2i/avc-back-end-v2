@@ -53,7 +53,7 @@ router.post(
 //api/v1/familly
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const famillies = await Familly.find();
+    const famillies = await Familly.find().sort({name: -1});
 
     res.status(201).json({ famillies: famillies });
   } catch (err) {
@@ -129,14 +129,14 @@ router.post(
 
 //GET SUBFAMILLIES BY FAMILLYID
 //@PGET
-//api/v1/familly/subfamilly
+//api/v1/familly/subfamilly/:familliId
 router.get(
-  "/subfamilly",
+  "/subfamilly/:famillyId",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { famillyId } = req.body;
+    const { famillyId } = req.params;
 
-    if (!famillyId) {
-      const error = new HttpError("Family ID is required.", 400);
+    if (!famillyId || typeof famillyId !== "string" || famillyId.trim() === "") {
+      const error = new HttpError("Family ID is required and must be a non-empty string.", 400);
       return next(error);
     }
 
@@ -158,8 +158,11 @@ router.get(
         "Could not find family with provided ID.",
         404
       );
+
       return next(error);
     }
+
+    (famillyWithSubfamilly.subFamilly as any).sort((a : any, b: any) => a.name.localeCompare(b.name));
 
     res.status(200).json({
       subFamillies: famillyWithSubfamilly.subFamilly.map((sub) =>
@@ -167,6 +170,8 @@ router.get(
       ),
     });
   }
+
+  
 );
 
 export default router;
