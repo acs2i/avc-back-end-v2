@@ -62,6 +62,7 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
 router.post("/login", async (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body;
   let user;
+  let error;
   try {
     user = await User.findOne({ username: username.toLowerCase() });
   } catch (err) {
@@ -72,16 +73,12 @@ router.post("/login", async (req: Request, res: Response, next: NextFunction) =>
   }
 
   if (!user) {
-    return res
-      .status(404)
-      .json({ message: "L'email que vous avez rentré n'existe pas." });
+    return res.status(404).json({ error: "Cet utilisateur n'existe pas." });
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return res
-      .status(404)
-      .json({ message: "L'email et le mot de passe ne corresponde pas." });
+    return res.status(404).json({ error: "L'identifiant et le mot de passe ne correspondent pas" });
   }
   if (!process.env.JWT_SECRET) {
     throw new Error("JWT_SECRET non défini dans les variables d'environnement");
