@@ -56,7 +56,6 @@ router.post(
       reference,
       name,
       familly,
-      subFamilly,
       brand,
       productCollection,
       imgPath,
@@ -76,7 +75,6 @@ router.post(
         reference,
         name,
         familly,
-        subFamilly,
         brand,
         productCollection,
         imgPath,
@@ -131,7 +129,6 @@ router.patch(
       reference,
       name,
       familly,
-      subFamilly,
       brand,
       productCollection,
       imgPath,
@@ -155,7 +152,6 @@ router.patch(
       product.reference = reference;
       product.name = name;
       product.familly = familly;
-      product.subFamilly = subFamilly;
       product.brand = brand;
       product.productCollection = productCollection;
       product.imgPath = imgPath;
