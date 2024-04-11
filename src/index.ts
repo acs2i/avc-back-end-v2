@@ -4,6 +4,8 @@ import express from "express"
 import authRoutes from "./routes/authRoutes"
 import productRoutes from "./routes/productRoutes"
 import famillyRoutes from "./routes/famillyRoutes"
+import brandRoutes from "./routes/brandRoutes"
+import collectionRoutes from "./routes/collectionRoutes"
 import dbConnect from "./config/dbConnect"
 import bodyParser from "body-parser"
 import cors from "cors";
@@ -35,6 +37,12 @@ app.use("/api/v1/product", productRoutes);
 
 // FAMILLY ROUTES
 app.use("/api/v1/familly", famillyRoutes);
+
+// BRAND ROUTES
+app.use("/api/v1/brand", brandRoutes);
+
+// COLLECTION ROUTES
+app.use("/api/v1/collection", collectionRoutes);
 
 // USERS ROUTES
 // TO DO
