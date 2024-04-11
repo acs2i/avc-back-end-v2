@@ -30,7 +30,7 @@ router.post(
           email: user.email,
         },
       });
-      console.log(newCollection)
+   
       // Enregistre le produit
       const savedCollection = await newCollection.save();
 
@@ -47,7 +47,7 @@ router.post(
           },
         },
         { new: true }
-      ).populate("products");
+      )
 
       res.status(201).json({ collection: savedCollection.toObject({ getters: true }) });
     } catch (err) {

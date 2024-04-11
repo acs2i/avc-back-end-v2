@@ -30,7 +30,7 @@ router.post(
           email: user.email,
         },
       });
-      console.log(newBrand)
+
       // Enregistre le produit
       const savedBrand = await newBrand.save();
 
@@ -47,9 +47,9 @@ router.post(
           },
         },
         { new: true }
-      ).populate("products");
+      )
 
-      res.status(201).json({ familly: savedBrand.toObject({ getters: true }) });
+      res.status(201).json({ brand: savedBrand.toObject({ getters: true }) });
     } catch (err) {
       const error = new HttpError(
         "Echec lors de la création du produit, réessayez plus tard.",
