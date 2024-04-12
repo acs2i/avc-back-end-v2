@@ -24,6 +24,14 @@ const ProductSchema = new mongoose.Schema(
     productCollection: {
       type: String,
     },
+    uvc: [
+      {
+        code: { type: String, required: true },
+        color: { type: [String] },
+        size: { type: [String] },
+        price: { type: [Number] },
+      }
+    ],
     status: {
       type: Number,
       default: 0,

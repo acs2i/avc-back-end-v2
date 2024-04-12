@@ -59,6 +59,7 @@ router.post(
       subFamilly,
       brand,
       productCollection,
+      uvc,
       imgPath,
       creator,
     } = req.body;
@@ -79,6 +80,7 @@ router.post(
         subFamilly,
         brand,
         productCollection,
+        uvc,
         imgPath,
         creator: {
           _id: user._id,
@@ -104,7 +106,7 @@ router.post(
           },
         },
         { new: true }
-      ).populate("products");
+      );
 
       res
         .status(201)
