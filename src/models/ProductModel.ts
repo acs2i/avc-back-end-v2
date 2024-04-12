@@ -10,14 +10,14 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    familly: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Familly",
-        default: [],
-        timestamp: true
-      },
-    ],
+    familly: {
+      type: [String],
+      default: []
+    },
+    subFamilly: {
+      type: [String],
+      default: []
+    },
     brand: {
       type: String,
     },
