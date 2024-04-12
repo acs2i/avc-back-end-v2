@@ -62,6 +62,7 @@ router.post(
       uvc,
       imgPath,
       creator,
+      status
     } = req.body;
 
     try {
@@ -87,6 +88,7 @@ router.post(
           username: user.username,
           email: user.email,
         },
+        status
       });
 
       // Enregistre le produit
