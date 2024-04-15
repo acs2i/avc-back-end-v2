@@ -59,7 +59,40 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
   
-      const { creator } : { creator: string } = req.body;
+      const { creator } : { creator: string | undefined |null } = req.body;
+
+      if(creator === null || creator === undefined) {
+        throw new HttpError("Erreur a propos de creator: "+ creator , 400);
+      }
+
+      const {uvc}: { 
+        uvc: {     
+          color: { type: string[] },
+          size: { type: string[] },
+          price: { type: number[] },
+        } | null | undefined} = req.body;
+
+      let newUvcId = undefined;
+        // if uvc exists, push it to the proper collection
+      if(uvc !== null && uvc !== undefined) {
+          const uvcResponse = await fetch(dataLakeUri + "/uvc", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "app-id": "password"
+            }, 
+            body: JSON.stringify(uvc)
+          });
+
+          if(uvcResponse) {
+            newUvcId = (await uvcResponse.json())._id;
+          } else {
+            throw new HttpError("Erreur à propos de la rèquete vers le data lake pour uvc", 404);
+
+          }
+      }
+  
+      const referenceBody = newUvcId ? {...req.body, uvcs: [newUvcId] } : req.body
 
       const response: any = await fetch(dataLakeUri + "/reference", {
         method: "POST",
@@ -67,11 +100,11 @@ router.post(
           "Content-Type": "application/json",
           "app-id": "password"
         },
-        body: JSON.stringify(req.body)
+        body: JSON.stringify(referenceBody)
       });
 
       if(response.status !== 200) {
-        throw new HttpError("Erreur à propos de la rèquete vers le data lake", 400);
+        throw new HttpError("Erreur à propos de la rèquete vers le data lake pour reference", 400);
       }
 
       const product = await response.json(); // notez: eventuellement ajoute l'interface de reference du datalake?
