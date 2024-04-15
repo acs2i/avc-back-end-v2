@@ -59,33 +59,7 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
   
-      const { creator } : { 
-        creator: {
-          password: string | undefined | null,
-          username: string | undefined | null,
-          email: string | undefined | null,
-          _id: string 
-        } | null | undefined } = req.body;
-
-      if(creator === undefined || creator === null) {
-        throw new HttpError("Createur était null ou indéterminé, sa valeur: "  + creator,400);
-      }
-
-      if(creator._id === undefined || creator._id === null) {
-        throw new HttpError("id était null ou indéterminé, sa valeur: "  + creator,400);
-      }
-
-      if(creator.username === undefined || creator.username === null) {
-        throw new HttpError("username était null ou indéterminé, sa valeur: "  + creator,400);
-      }
-
-      if(creator.password === undefined || creator.password === null) {
-        throw new HttpError("password était null ou indéterminé, sa valeur: "  + creator,400);
-      }
-
-      if(creator.email === undefined || creator.email === null) {
-        throw new HttpError("email était null ou indéterminé, sa valeur: "  + creator,400);
-      }
+      const { creator } : { creator: string } = req.body;
 
       const response: any = await fetch(dataLakeUri + "/reference", {
         method: "POST",
@@ -102,8 +76,7 @@ router.post(
 
       const product = await response.json(); // notez: eventuellement ajoute l'interface de reference du datalake?
 
-      const user = await User.findById(new ObjectId(creator._id));
-
+      const user = await User.findById(creator);
 
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
@@ -125,9 +98,19 @@ router.post(
         { new: true }
       );
 
-      res
-        .status(201)
-        .json(product);
+      if(updatedUser) {
+        res.status(201).json(product);
+      } else {
+        // delete reference
+        fetch(dataLakeUri + "/reference/" + product._id, { method: "DELETE", headers: {
+          "Content-Type": "application/json",
+          "app-id": "password"
+        }})
+        throw new HttpError("Erreur a propos de updated user: "+ updatedUser , 400);
+
+      }
+
+
     } catch (err) {
       console.error(err);
       const error = new HttpError(
