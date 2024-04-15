@@ -6,8 +6,8 @@ const FamillySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    subFamilly: [
-      { type: mongoose.Types.ObjectId, default: [], ref: "SubFamilly" },
+    subFamily: [
+      { type: mongoose.Types.ObjectId, default: [], ref: "SubFamily" },
     ],
     creator: [
       {
@@ -30,5 +30,5 @@ const FamillySchema = new mongoose.Schema(
   { timestamps: true, collection: "family" }
 );
 
-const Familly = mongoose.model("Familly", FamillySchema);
+const Familly = mongoose.model("Family", FamillySchema);
 export default Familly;

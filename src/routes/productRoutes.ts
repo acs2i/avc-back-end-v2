@@ -59,34 +59,8 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
   
-      const { creator } : { 
-        creator: {
-          password: string | undefined | null,
-          username: string | undefined | null,
-          email: string | undefined | null,
-          _id: string 
-        } | null | undefined } = req.body;
-
-      if(creator === undefined || creator === null) {
-        throw new HttpError("Createur était null ou indéterminé, sa valeur: "  + creator,400);
-      }
-
-      if(creator._id === undefined || creator._id === null) {
-        throw new HttpError("id était null ou indéterminé, sa valeur: "  + creator,400);
-      }
-
-      if(creator.username === undefined || creator.username === null) {
-        throw new HttpError("username était null ou indéterminé, sa valeur: "  + creator,400);
-      }
-
-      if(creator.password === undefined || creator.password === null) {
-        throw new HttpError("password était null ou indéterminé, sa valeur: "  + creator,400);
-      }
-
-      if(creator.email === undefined || creator.email === null) {
-        throw new HttpError("email était null ou indéterminé, sa valeur: "  + creator,400);
-      }
-
+      const { creator } = req.body;
+      console.log(req.body)
       const response: any = await fetch(dataLakeUri + "/reference", {
         method: "POST",
         headers: {
@@ -102,8 +76,7 @@ router.post(
 
       const product = await response.json(); // notez: eventuellement ajoute l'interface de reference du datalake?
 
-      const user = await User.findById(new ObjectId(creator._id));
-
+      const user = await User.findById(creator);
 
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
@@ -150,7 +123,7 @@ router.patch(
     const {
       reference,
       name,
-      familly,
+      family,
       brand,
       productCollection,
       imgPath,
@@ -173,7 +146,7 @@ router.patch(
       // Mettre à jour les détails du produit
       product.reference = reference;
       product.name = name;
-      product.familly = familly;
+      product.family = family;
       product.brand = brand;
       product.productCollection = productCollection;
       product.imgPath = imgPath;

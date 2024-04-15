@@ -36,7 +36,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/product", productRoutes);
 
 // FAMILLY ROUTES
-app.use("/api/v1/familly", famillyRoutes);
+app.use("/api/v1/family", famillyRoutes);
 
 // BRAND ROUTES
 app.use("/api/v1/brand", brandRoutes);

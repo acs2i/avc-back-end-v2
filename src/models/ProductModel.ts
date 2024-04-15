@@ -10,11 +10,11 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    familly: {
+    family: {
       type: [String],
       default: []
     },
-    subFamilly: {
+    subFamily: {
       type: [String],
       default: []
     },
