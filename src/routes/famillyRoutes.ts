@@ -1,8 +1,8 @@
 import express, { Request, Response, NextFunction } from "express";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
-import Familly from "../models/FamilyModel";
-import SubFamilly from "../models/SubFamillyModel";
+import Family from "../models/FamilyModel";
+import SubFamily from "../models/SubFamillyModel";
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.post(
       }
 
       // Créer un nouveau produit avec les détails de l'utilisateur
-      const newFamilly = new Familly({
+      const newFamilly = new Family({
         name,
         subFamilly,
         creator: {
@@ -53,7 +53,7 @@ router.post(
 //api/v1/familly
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const famillies = await Familly.find().sort({name: -1});
+    const famillies = await Family.find().sort({name: -1});
 
     res.status(201).json({ famillies: famillies });
   } catch (err) {
@@ -78,7 +78,7 @@ router.post(
       }
 
       // Créer un nouveau produit avec les détails de l'utilisateur
-      const newSubFamilly = new SubFamilly({
+      const newSubFamilly = new SubFamily({
         name,
         familly,
         creator: {
@@ -92,11 +92,11 @@ router.post(
       const savedSubFamilly = await newSubFamilly.save();
 
       // Met a jour la famille liée à la sous famille crée
-      const updateFamilly = await Familly.findById(familly);
+      const updateFamilly = await Family.findById(familly);
       if (!updateFamilly) {
         throw new HttpError("Famille non trouvée.", 404);
       }
-      updateFamilly.subFamilly.push(savedSubFamilly._id);
+      updateFamilly.subFamily.push(savedSubFamilly._id);
       await updateFamilly.save();
 
       // Met a jour le champs products de l'utilisateur
@@ -137,20 +137,21 @@ router.post(
 //@PGET
 //api/v1/familly/subfamilly/:familliId
 router.get(
-  "/subfamilly/:famillyId",
+  "/subfamily/:familyId",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { famillyId } = req.params;
+    const { familyId } = req.params;
 
-    if (!famillyId || typeof famillyId !== "string" || famillyId.trim() === "") {
+    if (!familyId || typeof familyId !== "string" || familyId.trim() === "") {
       const error = new HttpError("Family ID is required and must be a non-empty string.", 400);
       return next(error);
     }
 
-    let famillyWithSubfamilly;
+    let famillyWithSubfamily;
     try {
-      famillyWithSubfamilly = await Familly.findById(famillyId).populate(
-        "subFamilly"
+      famillyWithSubfamily = await Family.findById(familyId).populate(
+        "subFamily"
       );
+      console.log(famillyWithSubfamily)
     } catch (err) {
       const error = new HttpError(
         "Fetching subfamily failed, please try again later.",
@@ -159,7 +160,7 @@ router.get(
       return next(error);
     }
 
-    if (!famillyWithSubfamilly) {
+    if (!famillyWithSubfamily) {
       const error = new HttpError(
         "Could not find family with provided ID.",
         404
@@ -168,10 +169,9 @@ router.get(
       return next(error);
     }
 
-    (famillyWithSubfamilly.subFamilly as any).sort((a : any, b: any) => a.name.localeCompare(b.name));
 
     res.status(200).json({
-      subFamillies: famillyWithSubfamilly.subFamilly.map((sub) =>
+      subFamillies: famillyWithSubfamily.subFamily.map((sub) =>
         sub.toObject({ getters: true })
       ),
     });

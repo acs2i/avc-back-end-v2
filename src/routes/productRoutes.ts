@@ -166,7 +166,7 @@ router.patch(
     const {
       reference,
       name,
-      familly,
+      family,
       brand,
       productCollection,
       imgPath,
@@ -189,7 +189,7 @@ router.patch(
       // Mettre à jour les détails du produit
       product.reference = reference;
       product.name = name;
-      product.familly = familly;
+      product.family = family;
       product.brand = brand;
       product.productCollection = productCollection;
       product.imgPath = imgPath;

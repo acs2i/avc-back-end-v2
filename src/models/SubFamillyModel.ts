@@ -8,7 +8,7 @@ const SubFamillySchema = new mongoose.Schema(
     },
     familly: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Familly",
+      ref: "Family",
       required: true,
       timestamp: true,
     },
@@ -33,5 +33,5 @@ const SubFamillySchema = new mongoose.Schema(
   {timestamps: true, collection: "subfamily"}
 );
 
-const SubFamilly = mongoose.model("SubFamilly", SubFamillySchema);
+const SubFamilly = mongoose.model("SubFamily", SubFamillySchema);
 export default SubFamilly;
