@@ -112,11 +112,17 @@ router.post(
           },
         },
         { new: true }
-      );
+      )
 
-      res
+      if(updatedUser) {
+        res
         .status(201)
         .json({ subFamilly: savedSubFamilly.toObject({ getters: true }) });
+      } else {
+        throw new HttpError("Probleme avec updatedUser", 400);
+      }
+
+   
     } catch (err) {
       const error = new HttpError(
         "Echec lors de la création du produit, réessayez plus tard.",

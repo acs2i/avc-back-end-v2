@@ -60,7 +60,7 @@ router.post(
     try {
   
       const { creator } = req.body;
-      console.log(req.body)
+
       const response: any = await fetch(dataLakeUri + "/reference", {
         method: "POST",
         headers: {
@@ -98,9 +98,19 @@ router.post(
         { new: true }
       );
 
-      res
-        .status(201)
-        .json(product);
+      if(updatedUser) {
+        res.status(201).json(product);
+      } else {
+        // delete reference
+        fetch(dataLakeUri + "/reference/" + product._id, { method: "DELETE", headers: {
+          "Content-Type": "application/json",
+          "app-id": "password"
+        }})
+        throw new HttpError("Erreur a propos de updated user: "+ updatedUser , 400);
+
+      }
+
+
     } catch (err) {
       console.error(err);
       const error = new HttpError(
