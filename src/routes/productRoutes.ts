@@ -1,9 +1,14 @@
 import express, { Request, Response, NextFunction } from "express";
+import dotenv from "dotenv";
 import Product from "../models/ProductModel";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
+import { ObjectId } from "mongodb";
+
+dotenv.config();
 
 const router = express.Router();
+const dataLakeUri = process.env.SERVER_DATA_LAKE_URI_LOCAL;
 
 //GET ALL PRODUCT
 //@GET
@@ -52,47 +57,57 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
 router.post(
   "/create",
   async (req: Request, res: Response, next: NextFunction) => {
-    const {
-      reference,
-      name,
-      familly,
-      subFamilly,
-      brand,
-      productCollection,
-      uvc,
-      imgPath,
-      creator,
-      status
-    } = req.body;
-
     try {
-      // Rechercher l'utilisateur en utilisant son ID
-      const user = await User.findById(creator);
+  
+      const { creator } : { 
+        creator: {
+          password: string | undefined | null,
+          username: string | undefined | null,
+          email: string | undefined | null,
+          _id: string 
+        } | null | undefined } = req.body;
+
+      if(creator === undefined || creator === null) {
+        throw new HttpError("Createur était null ou indéterminé, sa valeur: "  + creator,400);
+      }
+
+      if(creator._id === undefined || creator._id === null) {
+        throw new HttpError("id était null ou indéterminé, sa valeur: "  + creator,400);
+      }
+
+      if(creator.username === undefined || creator.username === null) {
+        throw new HttpError("username était null ou indéterminé, sa valeur: "  + creator,400);
+      }
+
+      if(creator.password === undefined || creator.password === null) {
+        throw new HttpError("password était null ou indéterminé, sa valeur: "  + creator,400);
+      }
+
+      if(creator.email === undefined || creator.email === null) {
+        throw new HttpError("email était null ou indéterminé, sa valeur: "  + creator,400);
+      }
+
+      const response: any = await fetch(dataLakeUri + "/reference", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "app-id": "password"
+        },
+        body: JSON.stringify(req.body)
+      });
+
+      if(response.status !== 200) {
+        throw new HttpError("Erreur à propos de la rèquete vers le data lake", 400);
+      }
+
+      const product = await response.json(); // notez: eventuellement ajoute l'interface de reference du datalake?
+
+      const user = await User.findById(new ObjectId(creator._id));
+
 
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
       }
-
-      // Créer un nouveau produit avec les détails de l'utilisateur
-      const newProduct = new Product({
-        reference,
-        name,
-        familly,
-        subFamilly,
-        brand,
-        productCollection,
-        uvc,
-        imgPath,
-        creator: {
-          _id: user._id,
-          username: user.username,
-          email: user.email,
-        },
-        status
-      });
-
-      // Enregistre le produit
-      const savedProduct = await newProduct.save();
 
       // Met a jour le champs products de l'utilisateur
       const updatedUser = await User.findByIdAndUpdate(
@@ -100,10 +115,10 @@ router.post(
         {
           $push: {
             products: {
-              _id: savedProduct._id,
-              reference: savedProduct.reference,
-              name: savedProduct.name,
-              date: savedProduct.createdAt,
+              _id: product._id,
+              reference: product.reference,
+              name: product.name,
+              date: product.createdAt,
             },
           },
         },
@@ -112,8 +127,9 @@ router.post(
 
       res
         .status(201)
-        .json({ product: savedProduct.toObject({ getters: true }) });
+        .json(product);
     } catch (err) {
+      console.error(err);
       const error = new HttpError(
         "Echec lors de la création du produit, réessayez plus tard.",
         500

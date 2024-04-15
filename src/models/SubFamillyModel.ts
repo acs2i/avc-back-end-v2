@@ -30,7 +30,7 @@ const SubFamillySchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  {timestamps: true, collection: "subfamily"}
 );
 
 const SubFamilly = mongoose.model("SubFamilly", SubFamillySchema);

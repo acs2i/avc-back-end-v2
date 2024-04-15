@@ -24,7 +24,7 @@ const CollectionSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true, collection: "collection" }
 );
 
 const Collection = mongoose.model("Collection", CollectionSchema);

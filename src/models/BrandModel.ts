@@ -24,7 +24,7 @@ const BrandSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true, collection: "brand" }
 );
 
 const Brand = mongoose.model("Brand", BrandSchema);

@@ -27,7 +27,7 @@ const FamillySchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true, collection: "family" }
 );
 
 const Familly = mongoose.model("Familly", FamillySchema);
