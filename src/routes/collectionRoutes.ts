@@ -27,13 +27,6 @@ router.post(
       const body = JSON.stringify({name, creatorId: user._id})
 
       const response = await Post("/collection", body);
-      // const newCollection = new Collection({
-      //   name,
-      //   creatorId: user._id
-      // });
-   
-      // // Enregistre le produit
-      // const savedCollection = await newCollection.save();
 
       if(response.status !== 200 ){
         throw new HttpError("Erreur sur le coté data lake à propos de Post brand " + JSON.stringify(response), 400);

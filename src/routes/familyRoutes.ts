@@ -14,27 +14,25 @@ const router = express.Router();
 router.post(
   "/create",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, subFamily, creator } = req.body;
+    const { name, subFamily, creatorId } = req.body;
 
     try {
       // Rechercher l'utilisateur en utilisant son ID
-      const user = await User.findById(creator);
+      const user = await User.findById(creatorId);
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
       }
 
-      const body = JSON.stringify({ creatorId: creator, name, subFamily});
+      const body = JSON.stringify({ creatorId, name, subFamily});
 
       // // Enregistre le produit
       const response = await Post("/family", body);
 
-      console.log("response: " , response.status)
       if(response.status !== 200) {
         throw new HttpError("Le Get ne pouvait pas recevoir les valeurs à propos des familles", 400);
       }
   
       const newFamily = await response.json();
-
 
       res
         .status(201)
@@ -74,10 +72,10 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 router.post(
   "/subfamily/create",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, familyId, creator } = req.body;
+    const { name, familyId, creatorId } = req.body;
     try {
       // Rechercher l'utilisateur en utilisant son ID
-      const user = await User.findById(creator);
+      const user = await User.findById(creatorId);
 
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
@@ -95,7 +93,7 @@ router.post(
       const savedSubFamily = await response.json();
 
       const updatedUser = await User.findByIdAndUpdate(
-        creator,
+        creatorId,
         {
           $push: {
             products: {

@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
+import { Get, Post, Put } from "../services/fetch";
 
 
 const router = express.Router();
@@ -13,14 +14,7 @@ const dataLakeUri = process.env.SERVER_DATA_LAKE_URI_LOCAL;
 //api/v1/product
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // const products = await Product.find();
-    const response = await fetch(dataLakeUri + "/reference", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "app-id": `${dataLakeApiKey}`
-      }    
-    });
+    const response = await Get("/reference");
 
     if(response.status !== 200 ) {
       throw new HttpError("GET tous les produit n'a pas bien functioné ",400);
@@ -43,13 +37,9 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
 
   let product;
   try {
-    const response = await fetch(dataLakeUri + "/reference/" + id, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "app-id": `${dataLakeApiKey}`
-      }    
-    });
+
+    const response = await Get("/reference", id);
+
     if(response) {
       product = await response.json();
     } else {
@@ -84,10 +74,10 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
   
-      const { creator } : { creator: string | undefined |null } = req.body;
+      const { creatorId } : { creatorId: string | undefined |null } = req.body;
 
-      if(creator === null || creator === undefined) {
-        throw new HttpError("Erreur a propos de creator: "+ creator , 400);
+      if(creatorId === null || creatorId === undefined) {
+        throw new HttpError("Erreur a propos de creatorId: "+ creatorId , 400);
       }
 
       const {uvc}: { 
@@ -100,14 +90,10 @@ router.post(
       let newUvcId = undefined;
         // if uvc exists, push it to the proper collection
       if(uvc !== null && uvc !== undefined) {
-          const uvcResponse = await fetch(dataLakeUri + "/uvc", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "app-id": `${dataLakeApiKey}`
-            }, 
-            body: JSON.stringify(uvc)
-          });
+
+
+          const body = JSON.stringify(uvc);
+          const uvcResponse = await Post("/uvc", body)
 
           if(uvcResponse) {
             newUvcId = (await uvcResponse.json())._id;
@@ -119,14 +105,7 @@ router.post(
   
       const referenceBody = newUvcId ? {...req.body, uvcs: [newUvcId] } : req.body
 
-      const response: any = await fetch(dataLakeUri + "/reference", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "app-id": `${dataLakeApiKey}`
-        },
-        body: JSON.stringify(referenceBody)
-      });
+      const response = await Post("/reference", JSON.stringify(referenceBody))
 
       if(response.status !== 200) {
         throw new HttpError("Erreur à propos de la rèquete vers le data lake pour reference", 400);
@@ -134,7 +113,7 @@ router.post(
 
       const product = await response.json(); // notez: eventuellement ajoute l'interface de reference du datalake?
 
-      const user = await User.findById(creator);
+      const user = await User.findById(creatorId);
 
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
@@ -142,7 +121,7 @@ router.post(
 
       // Met a jour le champs products de l'utilisateur
       const updatedUser = await User.findByIdAndUpdate(
-        creator,
+        creatorId,
         {
           $push: {
             products: {
@@ -201,14 +180,7 @@ router.patch(
 
     try {
       // Vérifier si le produit existe
-      // let product = await Product.findById(id);
-      const productResponse = await fetch(dataLakeUri + "/reference/" + id, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "app-id": `${dataLakeApiKey}`
-        }    
-      });
+      const productResponse = await Get("/reference", id);
 
       if (!productResponse) {
         throw new HttpError("La rèquete pour le produit ne s'est pas bien passé.", 404);
@@ -240,14 +212,8 @@ router.patch(
         email: user.email,
       });
 
-      const putResponse = await fetch(dataLakeUri + "/reference", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "app-id": `${dataLakeApiKey}`
-        },
-        body: JSON.stringify(product)    
-      });
+
+      const putResponse = await Put("/reference", JSON.stringify(product))
 
       // Enregistrer les modifications du produit
       // const updatedProduct = await product.save();
@@ -275,14 +241,7 @@ router.patch(
       // Mettre à jour l'utilisateur
       if(updatedUser === undefined || updatedUser === null) {
         // Défaire la rèquete vers data lake
-        fetch(dataLakeUri + "/reference", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "app-id": "password"
-          },
-          body: JSON.stringify(oldProduct)    
-        });
+        Put("/reference", JSON.stringify(oldProduct))
   
         throw new HttpError("L'utilisateur ne pouvait pas etre mis à jour", 400);
       }
