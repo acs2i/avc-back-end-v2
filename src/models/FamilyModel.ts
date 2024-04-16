@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const FamillySchema = new mongoose.Schema(
+const FamilySchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -30,5 +30,5 @@ const FamillySchema = new mongoose.Schema(
   { timestamps: true, collection: "family" }
 );
 
-const Familly = mongoose.model("Family", FamillySchema);
-export default Familly;
+const Family = mongoose.model("Family", FamilySchema);
+export default Family;

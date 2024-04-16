@@ -1,9 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
-import dotenv from "dotenv";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
 
-dotenv.config();
 
 const router = express.Router();
 const dataLakeApiKey = process.env.DATA_LAKE_API_KEY
