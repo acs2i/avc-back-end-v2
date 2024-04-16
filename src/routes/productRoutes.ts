@@ -22,7 +22,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 
     const products = await response.json();
 
-    res.status(201).json({ products });
+    res.status(201).json(products);
   } catch (err) {
     res.status(500).json({ error: { message: "un probleme est survenu" } });
   }
