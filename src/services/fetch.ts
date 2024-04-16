@@ -18,6 +18,7 @@ export const Get = async (endpoint: string, id: string | undefined = undefined, 
 }
 
 export const Post = async(endpoint: string, body: string): Promise<any> => {
+    console.log(dataLakeUri + endpoint)
     return await fetch(dataLakeUri + endpoint, {
         method: "POST",
         headers: {
@@ -25,5 +26,15 @@ export const Post = async(endpoint: string, body: string): Promise<any> => {
             "app-id": `${dataLakeApiKey}`
         },
         body
+    })
+}
+
+export const Delete  = async ( endpoint: string, id: string) : Promise<any> => {
+    return await fetch(dataLakeUri + endpoint + "/" + id, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "app-id": `${dataLakeApiKey}`
+        },
     })
 }
