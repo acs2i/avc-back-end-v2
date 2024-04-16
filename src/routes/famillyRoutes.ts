@@ -151,7 +151,7 @@ router.get(
       famillyWithSubfamily = await Family.findById(familyId).populate(
         "subFamily"
       );
-      console.log(famillyWithSubfamily)
+
     } catch (err) {
       const error = new HttpError(
         "Fetching subfamily failed, please try again later.",
