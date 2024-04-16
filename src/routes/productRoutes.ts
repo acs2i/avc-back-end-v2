@@ -1,29 +1,35 @@
 import express, { Request, Response, NextFunction } from "express";
-import dotenv from "dotenv";
-import Product from "../models/ProductModel";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
-import { ObjectId } from "mongodb";
+import { Get, Post, Put } from "../services/fetch";
 
-dotenv.config();
 
 const router = express.Router();
+const dataLakeApiKey = process.env.DATA_LAKE_API_KEY
 const dataLakeUri = process.env.SERVER_DATA_LAKE_URI_LOCAL;
 
 //GET ALL PRODUCT
+// Connecté à datalake
 //@GET
 //api/v1/product
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const products = await Product.find();
+    const response = await Get("/reference");
 
-    res.status(201).json({ products: products });
+    if(response.status !== 200 ) {
+      throw new HttpError("GET tous les produit n'a pas bien functioné ",400);
+    }
+
+    const products = await response.json();
+
+    res.status(201).json({ products });
   } catch (err) {
     res.status(500).json({ error: { message: "un probleme est survenu" } });
   }
 });
 
 //GET PRODUCT BY ID
+// Connecté à datalake
 //@GET
 //api/v1/product/:id
 router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
@@ -31,7 +37,15 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
 
   let product;
   try {
-    product = await Product.findById(id);
+
+    const response = await Get("/reference", id);
+
+    if(response) {
+      product = await response.json();
+    } else {
+      throw new HttpError("Un problème à propos de la creation de la reference s'est passé", 400);
+    }
+
   } catch (err) {
     const error = new HttpError(
       "Un problème est survenu, impossible de trouver l'utilisateur",
@@ -48,10 +62,11 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   }
 
-  res.json({ product: product.toObject({ getters: true }) });
+  res.json({ product });
 });
 
 //CREATE
+// Connecté à datalake
 //@POST
 //api/v1/product/create
 router.post(
@@ -59,24 +74,46 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
   
-      const { creator } = req.body;
+      const { creatorId } : { creatorId: string | undefined |null } = req.body;
 
-      const response: any = await fetch(dataLakeUri + "/reference", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "app-id": "password"
-        },
-        body: JSON.stringify(req.body)
-      });
+      if(creatorId === null || creatorId === undefined) {
+        throw new HttpError("Erreur a propos de creatorId: "+ creatorId , 400);
+      }
+
+      const {uvc}: { 
+        uvc: {     
+          color: { type: string[] },
+          size: { type: string[] },
+          price: { type: number[] },
+        } | null | undefined} = req.body;
+
+      let newUvcId = undefined;
+        // if uvc exists, push it to the proper collection
+      if(uvc !== null && uvc !== undefined) {
+
+
+          const body = JSON.stringify(uvc);
+          const uvcResponse = await Post("/uvc", body)
+
+          if(uvcResponse) {
+            newUvcId = (await uvcResponse.json())._id;
+          } else {
+            throw new HttpError("Erreur à propos de la rèquete vers le data lake pour uvc", 404);
+
+          }
+      }
+  
+      const referenceBody = newUvcId ? {...req.body, uvcs: [newUvcId] } : req.body
+
+      const response = await Post("/reference", JSON.stringify(referenceBody))
 
       if(response.status !== 200) {
-        throw new HttpError("Erreur à propos de la rèquete vers le data lake", 400);
+        throw new HttpError("Erreur à propos de la rèquete vers le data lake pour reference", 400);
       }
 
       const product = await response.json(); // notez: eventuellement ajoute l'interface de reference du datalake?
 
-      const user = await User.findById(creator);
+      const user = await User.findById(creatorId);
 
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
@@ -84,7 +121,7 @@ router.post(
 
       // Met a jour le champs products de l'utilisateur
       const updatedUser = await User.findByIdAndUpdate(
-        creator,
+        creatorId,
         {
           $push: {
             products: {
@@ -104,7 +141,7 @@ router.post(
         // delete reference
         fetch(dataLakeUri + "/reference/" + product._id, { method: "DELETE", headers: {
           "Content-Type": "application/json",
-          "app-id": "password"
+          "app-id": `${dataLakeApiKey}`
         }})
         throw new HttpError("Erreur a propos de updated user: "+ updatedUser , 400);
 
@@ -123,6 +160,7 @@ router.post(
 );
 
 //UPDATE
+// Connecté à datalake
 //@PATCH
 //api/v1/product/create
 router.patch(
@@ -142,9 +180,10 @@ router.patch(
 
     try {
       // Vérifier si le produit existe
-      let product = await Product.findById(id);
-      if (!product) {
-        throw new HttpError("Produit non trouvé.", 404);
+      const productResponse = await Get("/reference", id);
+
+      if (!productResponse) {
+        throw new HttpError("La rèquete pour le produit ne s'est pas bien passé.", 404);
       }
 
       // Vérifier si l'utilisateur existe
@@ -153,6 +192,9 @@ router.patch(
         throw new HttpError("Utilisateur non trouvé.", 404);
       }
 
+      
+      const product = await productResponse.json();
+      const oldProduct = product;   // il peut etre utilisé en cas de défaire
       // Mettre à jour les détails du produit
       product.reference = reference;
       product.name = name;
@@ -161,40 +203,54 @@ router.patch(
       product.productCollection = productCollection;
       product.imgPath = imgPath;
 
+      if(product.creator === undefined ) product.creator  = []
+
+      // console.log("PRODUCT: " , product)
       product.creator.push({
         _id: user._id,
         username: user.username,
         email: user.email,
       });
 
+
+      const putResponse = await Put("/reference", JSON.stringify(product))
+
       // Enregistrer les modifications du produit
-      const updatedProduct = await product.save();
+      // const updatedProduct = await product.save();
+
+      if(putResponse.status !== 200) {
+        throw new HttpError("Erreur de put sur le produit", 400)
+      }
 
       // Mettre à jour le champ products de l'utilisateur
-      const updatedUser = await User.findByIdAndUpdate(
+      const updatedUser : Document | null | undefined = await User.findByIdAndUpdate(
         creator,
         {
           $push: {
             products: {
-              _id: updatedProduct._id,
-              reference: updatedProduct.reference,
-              name: updatedProduct.name,
-              date: updatedProduct.updatedAt,
+              _id: product._id,
+              reference: product.reference,
+              name: product.name,
+              date: product.updatedAt,
             },
           },
         },
         { new: true }
-      ).populate("products");
+      )
+      
+      // Mettre à jour l'utilisateur
+      if(updatedUser === undefined || updatedUser === null) {
+        // Défaire la rèquete vers data lake
+        Put("/reference", JSON.stringify(oldProduct))
+  
+        throw new HttpError("L'utilisateur ne pouvait pas etre mis à jour", 400);
+      }
 
       res
         .status(200)
-        .json({ product: updatedProduct.toObject({ getters: true }) });
+        .json(product );
     } catch (err) {
-      const error = new HttpError(
-        "Échec lors de la mise à jour du produit, réessayez plus tard.",
-        500
-      );
-      return next(error);
+      return next(err);
     }
   }
 );
@@ -202,18 +258,31 @@ router.patch(
 //DELETE PRODUCT
 //@DELETE
 //api/v1/product/delete/:id
-router.delete(
-  "/delete/:id",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const productId = req.params.id;
-      await Product.findByIdAndDelete(productId);
+// Pas de CRUD o: que le CRU ;)
+// router.delete(
+//   "/delete/:id",
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//       const productId = req.params.id;
+//       // await Product.findByIdAndDelete(productId);
+//       const response = await fetch(dataLakeUri + "/reference/" + productId, {
+//         method: "DELETE",
+//         headers: {
+//           "Content-Type": "application/json",
+//           "app-id": "password"
+//         }    
+//       });
 
-      res.status(200).json({ message: "Produit supprimé avec succès" });
-    } catch (error) {
-      res.status(500).json({ message: "Erreur lors de la suppression" });
-    }
-  }
-);
+//       if(response.status !== 200) {
+//         throw new Error("Produit n'etait pas supprimé")
+//       } 
+
+//       res.status(200).json({ message: "Produit supprimé avec succès" });
+//     } catch (error) {
+//       console.error(error)
+//       res.status(500).json({ message: "Erreur lors de la suppression" });
+//     }
+//   }
+// );
 
 export default router;

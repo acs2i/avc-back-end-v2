@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
-const SubFamillySchema = new mongoose.Schema(
+const SubFamilySchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
     },
-    familly: {
+    family: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Family",
       required: true,
@@ -33,5 +33,5 @@ const SubFamillySchema = new mongoose.Schema(
   {timestamps: true, collection: "subfamily"}
 );
 
-const SubFamilly = mongoose.model("SubFamily", SubFamillySchema);
-export default SubFamilly;
+const SubFamily = mongoose.model("SubFamily", SubFamilySchema);
+export default SubFamily;

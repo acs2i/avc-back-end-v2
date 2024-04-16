@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 import express from "express"
 import authRoutes from "./routes/authRoutes"
 import productRoutes from "./routes/productRoutes"
-import famillyRoutes from "./routes/famillyRoutes"
+import familyRoutes from "./routes/familyRoutes"
 import brandRoutes from "./routes/brandRoutes"
 import collectionRoutes from "./routes/collectionRoutes"
 import dbConnect from "./config/dbConnect"
@@ -35,8 +35,8 @@ app.use("/api/v1/auth", authRoutes);
 // PRODUCTS ROUTES
 app.use("/api/v1/product", productRoutes);
 
-// FAMILLY ROUTES
-app.use("/api/v1/family", famillyRoutes);
+// family ROUTES
+app.use("/api/v1/family", familyRoutes);
 
 // BRAND ROUTES
 app.use("/api/v1/brand", brandRoutes);

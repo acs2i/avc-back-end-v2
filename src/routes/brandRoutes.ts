@@ -2,41 +2,50 @@ import express, { Request, Response, NextFunction } from "express";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
 import Brand from "../models/BrandModel";
+import { Delete, Get, Post } from "../services/fetch";
 
 const router = express.Router();
 
 //CREATE
+// connecté à data lake
 //@POST
 //api/v1/brand/create
 router.post(
   "/create",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, creator } = req.body;
+    const { name, creatorId } = req.body; // creator is CREATOR ID
 
     try {
       // Rechercher l'utilisateur en utilisant son ID
-      const user = await User.findById(creator);
+      const user = await User.findById(creatorId);
 
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
       }
 
       // Créer un nouveau produit avec les détails de l'utilisateur
-      const newBrand = new Brand({
-        name,
-        creator: {
-          _id: user._id,
-          username: user.username,
-          email: user.email,
-        },
-      });
+      const body = JSON.stringify(
+        {
+          name, 
+          creator: { 
+            _id: user._id, 
+            username: user.username, 
+            email: user.email
+          }
+        }   
+      );
 
-      // Enregistre le produit
-      const savedBrand = await newBrand.save();
+      const response = await Post("/brand", body);
 
-      // Met a jour le champs products de l'utilisateur
+      if(response.status !== 200 ){
+        throw new HttpError("Erreur sur le coté data lake à propos de Post brand " + JSON.stringify(response), 400);
+      }
+
+      const savedBrand = await response.json();
+
+
       const updatedUser = await User.findByIdAndUpdate(
-        creator,
+        creatorId,
         {
           $push: {
             products: {
@@ -49,26 +58,34 @@ router.post(
         { new: true }
       )
 
-      res.status(201).json({ brand: savedBrand.toObject({ getters: true }) });
+      if ( updatedUser === null ||  updatedUser === undefined) {
+        Delete("/brands", savedBrand._id);
+        throw new Error("could not find user, rolling back the changes")
+    }
+
+
+      res.status(201).json(savedBrand);
     } catch (err) {
-      const error = new HttpError(
-        "Echec lors de la création du produit, réessayez plus tard.",
-        500
-      );
-      return next(error);
+      console.error(err)
+      return next(err);
     }
   }
 );
 
 
 //GET ALL BRANDS
+// connecté à data lake
 //@PGET
 //api/v1/brand
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const brands = await Brand.find();
-  
-      res.status(201).json({ brands: brands });
+      const response = await Get("/brands");
+
+      if(response.status !== 200) {
+        throw new Error("Erreur sur le coté de data lake serveur en cherchant les brands");
+      }
+      const brands = await response.json();
+      res.status(201).json(brands);
     } catch (err) {
       res.status(500).json({ error: { message: "un probleme est survenu" } });
     }

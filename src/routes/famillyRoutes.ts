@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
 import Family from "../models/FamilyModel";
-import SubFamily from "../models/SubFamillyModel";
+import SubFamily from "../models/SubFamilyModel";
 
 const router = express.Router();
 
@@ -181,3 +181,4 @@ router.get(
 );
 
 export default router;
+

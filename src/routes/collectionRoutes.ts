@@ -1,42 +1,41 @@
 import express, { Request, Response, NextFunction } from "express";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
-import Collection from "../models/CollectionModel";
+import { Delete, Get, Post } from "../services/fetch";
 
 const router = express.Router();
 
 //CREATE
+// connecté à data lake
 //@POST
 //api/v1/collection/create
 router.post(
   "/create",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, creator } = req.body;
+    const { name, creatorId } = req.body;
 
     try {
       // Rechercher l'utilisateur en utilisant son ID
-      const user = await User.findById(creator);
+      const user = await User.findById(creatorId);
 
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
       }
 
       // Créer un nouveau produit avec les détails de l'utilisateur
-      const newCollection = new Collection({
-        name,
-        creator: {
-          _id: user._id,
-          username: user.username,
-          email: user.email,
-        },
-      });
-   
-      // Enregistre le produit
-      const savedCollection = await newCollection.save();
+      const body = JSON.stringify({name, creatorId: user._id})
+
+      const response = await Post("/collection", body);
+
+      if(response.status !== 200 ){
+        throw new HttpError("Erreur sur le coté data lake à propos de Post brand " + JSON.stringify(response), 400);
+      }
+
+      const savedCollection = await response.json();
 
       // Met a jour le champs products de l'utilisateur
       const updatedUser = await User.findByIdAndUpdate(
-        creator,
+        creatorId,
         {
           $push: {
             products: {
@@ -49,26 +48,35 @@ router.post(
         { new: true }
       )
 
-      res.status(201).json({ collection: savedCollection.toObject({ getters: true }) });
+      if ( updatedUser === null ||  updatedUser === undefined) {
+        Delete("/collection", savedCollection._id);
+        throw new Error("could not find user, rolling back the changes")
+    }
+
+
+      res.status(201).json(savedCollection);
     } catch (err) {
-      const error = new HttpError(
-        "Echec lors de la création du produit, réessayez plus tard.",
-        500
-      );
-      return next(error);
+      console.error(err)
+      return next(err);
     }
   }
 );
 
 
 //GET ALL COLLECTIONS
+// connecté à data lake
 //@PGET
 //api/v1/collection
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const collections = await Collection.find();
+      const response = await Get("/collection");
+
+      if(response.status !== 200) {
+        throw new Error("Erreur sur le coté de data lake serveur en cherchant les collection");
+      }
+      const collections = await response.json();
   
-      res.status(201).json({ collections: collections });
+      res.status(201).json(collections);
     } catch (err) {
       res.status(500).json({ error: { message: "un probleme est survenu" } });
     }
