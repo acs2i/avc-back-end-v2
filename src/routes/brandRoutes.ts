@@ -7,6 +7,7 @@ import { Delete, Get, Post } from "../services/fetch";
 const router = express.Router();
 
 //CREATE
+// connecté à data lake
 //@POST
 //api/v1/brand/create
 router.post(
