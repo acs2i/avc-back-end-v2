@@ -62,7 +62,7 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   }
 
-  res.json({ product });
+  res.json(product);
 });
 
 //CREATE
