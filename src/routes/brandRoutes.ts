@@ -79,7 +79,7 @@ router.post(
 //api/v1/brand
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const response = await Get("/brands");
+      const response = await Get("/brand");
 
       if(response.status !== 200) {
         throw new Error("Erreur sur le coté de data lake serveur en cherchant les brands");
@@ -87,7 +87,8 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
       const brands = await response.json();
       res.status(201).json(brands);
     } catch (err) {
-      res.status(500).json({ error: { message: "un probleme est survenu" } });
+      console.error(err)
+      res.status(500).json(err);
     }
   });
 
