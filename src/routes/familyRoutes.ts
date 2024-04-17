@@ -29,7 +29,7 @@ router.post(
       const response = await Post("/family", body);
 
       if(response.status !== 200) {
-        throw new HttpError("Le Get ne pouvait pas recevoir les valeurs à propos des familles", 400);
+        throw new HttpError("Le Post ne pouvait pas recevoir les valeurs à propos des familles", 400);
       }
   
       const newFamily = await response.json();
