@@ -21,7 +21,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const products = await response.json();
-
+  
     res.status(201).json({ products });
   } catch (err) {
     res.status(500).json({ error: { message: "un probleme est survenu" } });
@@ -259,30 +259,30 @@ router.patch(
 //@DELETE
 //api/v1/product/delete/:id
 // Pas de CRUD o: que le CRU ;)
-// router.delete(
-//   "/delete/:id",
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//       const productId = req.params.id;
-//       // await Product.findByIdAndDelete(productId);
-//       const response = await fetch(dataLakeUri + "/reference/" + productId, {
-//         method: "DELETE",
-//         headers: {
-//           "Content-Type": "application/json",
-//           "app-id": "password"
-//         }    
-//       });
+router.delete(
+  "/delete/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const productId = req.params.id;
+      // await Product.findByIdAndDelete(productId);
+      const response = await fetch(dataLakeUri + "/reference/" + productId, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "app-id": "password"
+        }    
+      });
 
-//       if(response.status !== 200) {
-//         throw new Error("Produit n'etait pas supprimé")
-//       } 
+      if(response.status !== 200) {
+        throw new Error("Produit n'etait pas supprimé")
+      } 
 
-//       res.status(200).json({ message: "Produit supprimé avec succès" });
-//     } catch (error) {
-//       console.error(error)
-//       res.status(500).json({ message: "Erreur lors de la suppression" });
-//     }
-//   }
-// );
+      res.status(200).json({ message: "Produit supprimé avec succès" });
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ message: "Erreur lors de la suppression" });
+    }
+  }
+);
 
 export default router;
