@@ -45,7 +45,7 @@ router.post(
 );
 
 //GET ALL FAMILLIES
-// connecté à datalake
+// connecté a datalake
 //@PGET
 //api/v1/family
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
@@ -64,6 +64,38 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     res.status(500).json({ error: { message: "un probleme est survenu" } });
   }
 });
+
+//GET FAMILY BY ID
+// 
+//@PGET
+//api/v1/family
+router.get("/name/:name", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+
+    const name : string | null | undefined = req.params.name;
+
+    if(name === undefined || name === null) {
+      throw new Error(req.originalUrl + ": msg: name was undefind or null: " + name);
+    }
+
+    const response = await Get("/family/name", name);
+
+
+    if(response.status !== 200) {
+      throw new HttpError("Le Get ne pouvait pas recevoir les valeurs à propos des familles", 400);
+    }
+
+    const family = await response.json();
+
+
+    res.status(201).json(family);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: { message: "un probleme est survenu" } });
+  }
+});
+
 
 //CREATE
 // connecté à datalake

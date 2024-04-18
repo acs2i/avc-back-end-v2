@@ -17,11 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(
-  cors({
-    origin: "http://localhost:3002",
-    methods: "GET,POST,PUT,DELETE,PATCH",
-    credentials: true,
-  })
+  cors()
 );
 
 // ROUTES
