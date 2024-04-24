@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
-import { Delete, Get, Post } from "../services/fetch";
+import { Delete, Get, Post, Put } from "../services/fetch";
 
 const router = express.Router();
 
@@ -148,6 +148,36 @@ router.get("/search", async(req: Request, res: Response) => {
 
 
 
+})
+
+// connecté a datalake - TESTED NEW DATA LAKE
+router.put("/", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {collection} = req.body;
+
+    if(!collection) {
+      throw new Error(req.originalUrl + ", msg: collection was falsy: " + collection)
+    }
+
+    const response = await Put("/collection", JSON.stringify(collection));
+
+    if(!response) {
+      throw new Error(req.originalUrl + ", msg: response was falsy: " + JSON.stringify(response))
+    }
+
+    
+    if(response.status === 200) {
+      const updatedDoc = await response.json();
+      res.status(201).json(updatedDoc);
+    } else {
+      throw new Error(req.originalUrl + ", msg: response status was not 200: " + JSON.stringify(response))
+    }
+
+
+  }catch(err) {
+        console.error(err)
+        res.status(400).json({})
+    }
 })
 
 export default router;
