@@ -127,8 +127,53 @@ router.get("/search", async(req: Request, res: Response) => {
   }
 
 
-
 })
+
+router.get("/YX_TYPE/:YX_TYPE", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+
+    const page: string | any | string[] | undefined = req.query.page;
+    const limit: string | any | string[] | undefined = req.query.limit;
+
+    let intPage;
+    let intLimit;
+
+    if(page === undefined) {
+        intPage = 1;
+    } else {
+        intPage = parseInt(page) 
+    }
+
+
+    if(limit === undefined) {
+        intLimit = 10;        
+    } else {
+        intLimit = parseInt(limit); 
+    }        
+
+    const YX_TYPE: string | any | string[] | undefined = req.params.YX_TYPE;
+
+
+    if(!YX_TYPE) {
+      throw new HttpError("YX_TYPE ETAIT FALSY", 400);
+    }
+
+    const response = await Get("/family/YX_TYPE", YX_TYPE, intPage, intLimit );
+
+    if(response.status !== 200) {
+      // console.log("Response: " , response)
+      throw new HttpError("Le Get ne pouvait pas recevoir les valeurs à propos des familles", 400);
+    }
+
+    const family = await response.json();
+
+    res.status(201).json(family);
+  } catch (err) {
+    // // console.error(err);
+    res.status(500).json({ error: { message: "un probleme est survenu" } });
+  }
+});
+
 
 //GET FAMILY BY ID
 // DEPRECATED 
