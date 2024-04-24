@@ -62,35 +62,33 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
 router.post("/login", async (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body;
   let user;
-  let error;
   try {
     user = await User.findOne({ username: username.toLowerCase() });
+      if (!user) {
+        return res.status(404).json({ error: "Cet utilisateur n'existe pas." });
+      }
+    
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(404).json({ error: "L'identifiant et le mot de passe ne correspondent pas" });
+      }
+      if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET non défini dans les variables d'environnement");
+      }
+      
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      
+      res.status(200).json({
+        message: "Logged In",
+        user: user.toObject({ getters: true }),
+        token: token
+      });
   } catch (err) {
-    const error = new HttpError(
-      "Erreur lors de l'authentification, réessayer plus tard.",
-      500
-    );
+    console.error("Error: " , err);
+    res.status(400).json({})
   }
 
-  if (!user) {
-    return res.status(404).json({ error: "Cet utilisateur n'existe pas." });
-  }
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    return res.status(404).json({ error: "L'identifiant et le mot de passe ne correspondent pas" });
-  }
-  if (!process.env.JWT_SECRET) {
-    throw new Error("JWT_SECRET non défini dans les variables d'environnement");
-  }
-  
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  
-  res.status(200).json({
-    message: "Logged In",
-    user: user.toObject({ getters: true }),
-    token: token
-  });
+ 
 });
 
 export default router;

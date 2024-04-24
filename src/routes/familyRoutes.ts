@@ -1,8 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
-import Family from "../models/FamilyModel";
-import SubFamily from "../models/SubFamilyModel";
 import { Get, Post } from "../services/fetch";
 
 const router = express.Router();
@@ -65,13 +63,13 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 
 
     if(limit === undefined) {
-        intLimit = 1000;        
+        intLimit = 10;        
     } else {
         intLimit = parseInt(limit); 
     }        
 
 
-    const response = await Get("/family", undefined, page, limit );
+    const response = await Get("/family", undefined, intPage, intLimit );
 
     if(response.status !== 200) {
       throw new HttpError("Le Get ne pouvait pas recevoir les valeurs à propos des familles", 400);

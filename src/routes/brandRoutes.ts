@@ -1,7 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
-import Brand from "../models/BrandModel";
 import { Delete, Get, Post } from "../services/fetch";
 
 const router = express.Router();

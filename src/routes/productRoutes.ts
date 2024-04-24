@@ -1,12 +1,10 @@
 import express, { Request, Response, NextFunction } from "express";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
-import { Delete, Get, Post, Put } from "../services/fetch";
+import { Delete, Get, Post } from "../services/fetch";
 
 
 const router = express.Router();
-const dataLakeApiKey = process.env.DATA_LAKE_API_KEY
-const dataLakeUri = process.env.SERVER_DATA_LAKE_URI_LOCAL;
 
 //GET ALL PRODUCT
 // Connecté à datalake - TESTED NEW DATA LAKE
@@ -34,7 +32,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
         intLimit = parseInt(limit); 
     }        
 
-    const response = await Get("/product", undefined, page, limit);
+    const response = await Get("/product", undefined, intPage, intLimit);
 
     if(response.status !== 200 ) {
       throw new HttpError("GET tous les produit n'a pas bien functioné ",400);
