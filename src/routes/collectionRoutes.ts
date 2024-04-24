@@ -13,7 +13,7 @@ const router = express.Router();
 router.post(
   "/create",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, creatorId } = req.body;
+    const { creatorId, collection} = req.body;
 
     try {
       // Rechercher l'utilisateur en utilisant son ID
@@ -24,9 +24,11 @@ router.post(
       }
 
       // Créer un nouveau produit avec les détails de l'utilisateur
-      const body = JSON.stringify({name, creatorId: user._id})
+      const body = JSON.stringify({ creatorId, collection})
 
       const response = await Post("/collection", body);
+
+      console.log(body)
 
       if(response.status !== 200 ){
         throw new HttpError("Erreur sur le coté data lake à propos de Post brand " + JSON.stringify(response), 400);
@@ -65,12 +67,32 @@ router.post(
 
 
 //GET ALL COLLECTIONS
-// connecté à data lake
+// connecté à data lake - TESTED ON NEW DATA LAKE
 //@PGET
 //api/v1/collection
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const response = await Get("/collection");
+
+      const page: string | any | string[] | undefined = req.query.page;
+      const limit: string | any | string[] | undefined = req.query.limit;
+
+      let intPage : number;
+      let intLimit : number;
+
+      if(!page) {
+          intPage = 1;
+      } else {
+          intPage = parseInt(page) 
+      }
+
+
+      if(!limit) {
+          intLimit = 10;        
+      } else {
+          intLimit = parseInt(limit); 
+      }        
+
+      const response = await Get("/collection", undefined, intPage, intLimit);
 
       if(response.status !== 200) {
         throw new Error("Erreur sur le coté de data lake serveur en cherchant les collection");

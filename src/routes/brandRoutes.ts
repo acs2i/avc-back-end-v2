@@ -7,13 +7,13 @@ import { Delete, Get, Post } from "../services/fetch";
 const router = express.Router();
 
 //CREATE
-// connecté à data lake
+// connecté à data lake - NEW DATALAKE
 //@POST
 //api/v1/brand/create
 router.post(
   "/create",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, creatorId } = req.body; // creator is CREATOR ID
+    const { creatorId, brand } = req.body; // creator is CREATOR ID
 
     try {
       // Rechercher l'utilisateur en utilisant son ID
@@ -23,17 +23,9 @@ router.post(
         throw new HttpError("Utilisateur non trouvé.", 404);
       }
 
-      // Créer un nouveau produit avec les détails de l'utilisateur
-      const body = JSON.stringify(
-        {
-          name, 
-          creator: { 
-            _id: user._id, 
-            username: user.username, 
-            email: user.email
-          }
-        }   
-      );
+      const body = JSON.stringify({
+        ...brand
+      })
 
       const response = await Post("/brand", body);
 
@@ -59,7 +51,7 @@ router.post(
       )
 
       if ( updatedUser === null ||  updatedUser === undefined) {
-        Delete("/brands", savedBrand._id);
+        Delete("/brand", savedBrand._id);
         throw new Error("could not find user, rolling back the changes")
     }
 
@@ -74,12 +66,33 @@ router.post(
 
 
 //GET ALL BRANDS
-// connecté à data lake
+// connecté à data lake - NEW DATALAKE
 //@PGET
 //api/v1/brand
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const response = await Get("/brand");
+
+      const page: string | any | string[] | undefined = req.query.page;
+      const limit: string | any | string[] | undefined = req.query.limit;
+
+      let intPage : number;
+      let intLimit : number;
+
+      if(page === undefined) {
+          intPage = 1;
+      } else {
+          intPage = parseInt(page) 
+      }
+
+
+      if(limit === undefined) {
+          intLimit = 10;        
+      } else {
+          intLimit = parseInt(limit); 
+      }        
+
+
+      const response = await Get("/brand", undefined, intPage, intLimit);
 
       if(response.status !== 200) {
         throw new Error("Erreur sur le coté de data lake serveur en cherchant les brands");

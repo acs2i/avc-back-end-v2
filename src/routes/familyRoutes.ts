@@ -14,7 +14,7 @@ const router = express.Router();
 router.post(
   "/create",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, subFamily, creatorId } = req.body;
+    const { family, creatorId } = req.body;
 
     try {
       // Rechercher l'utilisateur en utilisant son ID
@@ -23,7 +23,7 @@ router.post(
         throw new HttpError("Utilisateur non trouvé.", 404);
       }
 
-      const body = JSON.stringify({ creatorId, name, subFamily});
+      const body = JSON.stringify({...family});
 
       // // Enregistre le produit
       const response = await Post("/family", body);
@@ -45,12 +45,33 @@ router.post(
 );
 
 //GET ALL FAMILLIES
-// connecté a datalake
+// connecté a datalake - TESTED NEW DATA LAKE
 //@PGET
 //api/v1/family
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const response = await Get("/family");
+
+    const page: string | any | string[] | undefined = req.query.page;
+    const limit: string | any | string[] | undefined = req.query.limit;
+
+    let intPage;
+    let intLimit;
+
+    if(page === undefined) {
+        intPage = 1;
+    } else {
+        intPage = parseInt(page) 
+    }
+
+
+    if(limit === undefined) {
+        intLimit = 1000;        
+    } else {
+        intLimit = parseInt(limit); 
+    }        
+
+
+    const response = await Get("/family", undefined, page, limit );
 
     if(response.status !== 200) {
       throw new HttpError("Le Get ne pouvait pas recevoir les valeurs à propos des familles", 400);
@@ -66,121 +87,123 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 });
 
 //GET FAMILY BY ID
-// 
+// DEPRECATED 
 //@PGET
 //api/v1/family
-router.get("/name/:name", async (req: Request, res: Response, next: NextFunction) => {
-  try {
+// router.get("/name/:name", async (req: Request, res: Response, next: NextFunction) => {
+//   try {
 
-    const name : string | null | undefined = req.params.name;
+//     const name : string | null | undefined = req.params.name;
 
-    if(name === undefined || name === null) {
-      throw new Error(req.originalUrl + ": msg: name was undefind or null: " + name);
-    }
+//     if(name === undefined || name === null) {
+//       throw new Error(req.originalUrl + ": msg: name was undefind or null: " + name);
+//     }
 
-    const response = await Get("/family/name", name);
-
-
-    if(response.status !== 200) {
-      throw new HttpError("Le Get ne pouvait pas recevoir les valeurs à propos des familles", 400);
-    }
-
-    const family = await response.json();
+//     const response = await Get("/family/name", name);
 
 
-    res.status(201).json(family);
+//     if(response.status !== 200) {
+//       throw new HttpError("Le Get ne pouvait pas recevoir les valeurs à propos des familles", 400);
+//     }
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: { message: "un probleme est survenu" } });
-  }
-});
+//     const family = await response.json();
+
+
+//     res.status(201).json(family);
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: { message: "un probleme est survenu" } });
+//   }
+// });
 
 
 //CREATE
+// DEPRECATED
 // connecté à datalake
 //@POST
 //api/v1/family/subFamily/create
-router.post(
-  "/subfamily/create",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { name, familyId, creatorId } = req.body;
-    try {
-      // Rechercher l'utilisateur en utilisant son ID
-      const user = await User.findById(creatorId);
+// router.post(
+//   "/subfamily/create",
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     const { name, familyId, creatorId } = req.body;
+//     try {
+//       // Rechercher l'utilisateur en utilisant son ID
+//       const user = await User.findById(creatorId);
 
-      if (!user) {
-        throw new HttpError("Utilisateur non trouvé.", 404);
-      }
+//       if (!user) {
+//         throw new HttpError("Utilisateur non trouvé.", 404);
+//       }
 
    
-      const body = JSON.stringify({name, familyId})
+//       const body = JSON.stringify({name, familyId})
 
-      const response = await Post("/subFamily", body);
+//       const response = await Post("/subFamily", body);
       
-      if(response.status !== 200 ){
-        throw new HttpError("Erreur sur le coté data lake à propos de Post subfamily " + JSON.stringify(response), 400);
-      }
+//       if(response.status !== 200 ){
+//         throw new HttpError("Erreur sur le coté data lake à propos de Post subfamily " + JSON.stringify(response), 400);
+//       }
 
-      const savedSubFamily = await response.json();
+//       const savedSubFamily = await response.json();
 
-      const updatedUser = await User.findByIdAndUpdate(
-        creatorId,
-        {
-          $push: {
-            products: {
-              _id: savedSubFamily._id,
-              name: savedSubFamily.name,
-              date: savedSubFamily.createdAt,
-            },
-          },
-        },
-        { new: true }
-      )
+//       const updatedUser = await User.findByIdAndUpdate(
+//         creatorId,
+//         {
+//           $push: {
+//             products: {
+//               _id: savedSubFamily._id,
+//               name: savedSubFamily.name,
+//               date: savedSubFamily.createdAt,
+//             },
+//           },
+//         },
+//         { new: true }
+//       )
 
-      if(updatedUser) {
-        res
-        .status(201)
-        .json(savedSubFamily);
-      } else {
-        throw new HttpError("Probleme avec updatedUser", 400);
-      }
+//       if(updatedUser) {
+//         res
+//         .status(201)
+//         .json(savedSubFamily);
+//       } else {
+//         throw new HttpError("Probleme avec updatedUser", 400);
+//       }
 
    
-    } catch (err) {
-      console.error(err)
-      return next(err);
-    }
-  }
-);
+//     } catch (err) {
+//       console.error(err)
+//       return next(err);
+//     }
+//   }
+// );
 
 //GET SUBFAMILLIES BY familyID
+// DEPRECATED
 // connecté à datalake
 //@PGET
 //api/v1/family/subfamily/:familliId
-router.get(
-  "/subfamily/:familyId",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const familyId : string | undefined | null = req.params.familyId;
+// router.get(
+//   "/subfamily/:familyId",
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//       const familyId : string | undefined | null = req.params.familyId;
 
-      const response = await Get("/subFamily", familyId);
+//       const response = await Get("/subFamily", familyId);
   
-      if(response.status !== 200) {
-        throw new Error("Erreur quand chercher les subfamily valeurs sur le cote datalake");
-      }
+//       if(response.status !== 200) {
+//         throw new Error("Erreur quand chercher les subfamily valeurs sur le cote datalake");
+//       }
 
-      const subFamilies = await response.json();
+//       const subFamilies = await response.json();
 
-      res.status(201).json(subFamilies)
+//       res.status(201).json(subFamilies)
 
-    } catch(err) {
-      console.error(err)
-      return next(err);
-    }
-  }
+//     } catch(err) {
+//       console.error(err)
+//       return next(err);
+//     }
+//   }
 
   
-);
+// );
 
 export default router;
