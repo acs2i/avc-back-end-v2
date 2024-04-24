@@ -84,6 +84,52 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+
+router.get("/search", async(req: Request, res: Response) => {
+  try {
+    const page: string | any | string[] | undefined = req.query.page;
+    const limit: string | any | string[] | undefined = req.query.limit;
+
+    let intPage;
+    let intLimit;
+
+    if(!page) {
+        intPage = 1;
+    } else {
+        intPage = parseInt(page) 
+    }
+
+
+    if(!limit) {
+        intLimit = 1000;        
+    } else {
+        intLimit = parseInt(limit); 
+    }    
+    
+    const value = req.query.value;
+
+    if(!value) {
+        throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
+    } 
+
+    const response = await Get("/family/search", undefined, intPage, intLimit, value as string);
+
+    if(response.status !== 200) {
+      throw new Error("Erreur sur le coté de data lake serveur en cherchant les families");
+    }
+    
+    const families = await response.json();
+    res.status(201).json(families);
+
+  } catch(err) {
+    console.error(err)
+    res.status(500).json(err);
+  }
+
+
+
+})
+
 //GET FAMILY BY ID
 // DEPRECATED 
 //@PGET
