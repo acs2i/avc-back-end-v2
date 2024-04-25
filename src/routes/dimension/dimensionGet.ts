@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express"
-import { Get } from "../services/fetch";
+import { Get } from "../../services/fetch";
 
 const router = express.Router();
 

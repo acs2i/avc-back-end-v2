@@ -5,7 +5,8 @@ import authRoutes from "./routes/authRoutes"
 import productRoutes from "./routes/productRoutes"
 import familyRoutes from "./routes/familyRoutes"
 import brandRoutes from "./routes/brandRoutes"
-import dimensionRoutes from "./routes/dimensionRoutes"
+import dimensionGetRoutes from "./routes/dimension/dimensionGet"
+import dimensionPostRoutes from "./routes/dimension/dimensionPost"
 
 import collectionRoutes from "./routes/collectionRoutes"
 import dbConnect from "./config/dbConnect"
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(
   cors()
 );
+const v1 = "/api/v1";
 
 // ROUTES
 app.get('/', (req: any, res: any) => {
@@ -28,22 +30,23 @@ app.get('/', (req: any, res: any) => {
 });
 
 // AUTH ROUTES
-app.use("/api/v1/auth", authRoutes);
+app.use(v1 + "/auth", authRoutes);
 
 // PRODUCTS ROUTES
-app.use("/api/v1/product", productRoutes);
+app.use(v1 + "/product", productRoutes);
 
 // family ROUTES
-app.use("/api/v1/family", familyRoutes);
+app.use(v1 + "/family", familyRoutes);
 
 // BRAND ROUTES
-app.use("/api/v1/brand", brandRoutes);
+app.use(v1 + "/brand", brandRoutes);
 
 // COLLECTION ROUTES
-app.use("/api/v1/collection", collectionRoutes);
+app.use(v1 + "/collection", collectionRoutes);
 
 // Dimenmsions ROUTES
-app.use("/api/v1/dimension", dimensionRoutes);
+app.use(v1 + "/dimension", dimensionGetRoutes);
+app.use(v1 + "/dimension", dimensionPostRoutes);
 
 // USERS ROUTES
 // TO DO
