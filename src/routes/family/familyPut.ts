@@ -5,15 +5,20 @@ import { FAMILY } from "./shared";
 const router = express.Router();
 
 // connecté a datalake - TESTED NEW DATA LAKE
-router.put(FAMILY, async (req: Request, res: Response, next: NextFunction) => {
+router.put(FAMILY + ":id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const family = req.body;
 
     if(!family) {
       throw new Error(req.originalUrl + ", msg: family was falsy: " + family)
     }
+    const id: string | undefined | null = req.params.id;
 
-    const response = await Put("/family", JSON.stringify(family));
+    if(!id) {
+      throw new Error(req.originalUrl + ", msg: id was falsy: " + id)
+    }
+
+    const response = await Put("/family/" + id, JSON.stringify(family));
 
     if(!response) {
       throw new Error(req.originalUrl + ", msg: response was falsy: " + JSON.stringify(response))
