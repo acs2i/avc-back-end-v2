@@ -4,15 +4,21 @@ import { COLLECTION } from "./shared";
 const router = express.Router();
 
 // connecté a datalake - TESTED NEW DATA LAKE
-router.put(COLLECTION, async (req: Request, res: Response, next: NextFunction) => {
+router.put(COLLECTION + "/:id", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const collection = req.body;
   
       if(!collection) {
         throw new Error(req.originalUrl + ", msg: collection was falsy: " + collection)
       }
+
+      const id: string | undefined | null = req.params.id;
+
+      if(!id) {
+        throw new Error(req.originalUrl + ", msg: id was falsy: " + id)
+      }
   
-      const response = await Put("/collection", JSON.stringify(collection));
+      const response = await Put("/collection/" + id, JSON.stringify(collection));
   
       if(!response) {
         throw new Error(req.originalUrl + ", msg: response was falsy: " + JSON.stringify(response))
