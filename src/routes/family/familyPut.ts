@@ -5,7 +5,7 @@ import { FAMILY } from "./shared";
 const router = express.Router();
 
 // connecté a datalake - TESTED NEW DATA LAKE
-router.put(FAMILY + ":id", async (req: Request, res: Response, next: NextFunction) => {
+router.put(FAMILY + "/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const family = req.body;
 
