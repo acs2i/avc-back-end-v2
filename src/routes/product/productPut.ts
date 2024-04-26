@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 // connecté a datalake - TESTED NEW DATA LAKE
-router.put(PRODUCT, async( req: Request, res: Response) => {
+router.put(PRODUCT + "/:id", async( req: Request, res: Response) => {
   try {
     
     const {product , creatorId} = req.body;
@@ -26,7 +26,13 @@ router.put(PRODUCT, async( req: Request, res: Response) => {
     //   throw new HttpError("Utilisateur non trouvé.", 404);
     // }
 
-    const response = await Put("/product", JSON.stringify(product));
+    const id: string | undefined | null = req.params.id;
+
+    if(!id) {
+      throw new Error(req.originalUrl + ", msg: id was falsy: " + id)
+    }
+
+    const response = await Put("/product/" + id, JSON.stringify(product));
 
     if(!response) {
       throw new Error(req.originalUrl + ", msg: response was falsy: " + JSON.stringify(response))
