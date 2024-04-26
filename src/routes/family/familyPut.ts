@@ -7,7 +7,7 @@ const router = express.Router();
 // connecté a datalake - TESTED NEW DATA LAKE
 router.put(FAMILY, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const {family} = req.body;
+    const family = req.body;
 
     if(!family) {
       throw new Error(req.originalUrl + ", msg: family was falsy: " + family)

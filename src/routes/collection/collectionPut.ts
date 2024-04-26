@@ -6,7 +6,7 @@ const router = express.Router();
 // connecté a datalake - TESTED NEW DATA LAKE
 router.put(COLLECTION, async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const {collection} = req.body;
+      const collection = req.body;
   
       if(!collection) {
         throw new Error(req.originalUrl + ", msg: collection was falsy: " + collection)

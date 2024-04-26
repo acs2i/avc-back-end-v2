@@ -7,7 +7,7 @@ const router = express.Router();
 // connecté a datalake - TESTED NEW DATA LAKE
 router.put(BRAND, async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const {brand} = req.body;
+      const brand = req.body;
   
       if(!brand) {
         throw new Error(req.originalUrl + ", msg: brand was falsy: " + brand)
