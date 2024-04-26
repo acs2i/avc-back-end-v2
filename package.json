@@ -1,5 +1,5 @@
 {
-    "name": "data-lake-server",
+    "name": "avc-back-end-v2",
     "version": "1.0.0",
     "description": "",
     "main": "./dist/index.js",
