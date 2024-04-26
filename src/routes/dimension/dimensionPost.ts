@@ -1,10 +1,11 @@
 import express, { Request, Response } from "express"
 import { Post } from "../../services/fetch";
+import { DIMENSION } from "./shared";
 
 const router = express.Router();
 
 // we will need to be
-router.post("/", async (req: Request, res: Response) => {
+router.post(DIMENSION, async (req: Request, res: Response) => {
     try {
         const dimension = req.body;
         
@@ -20,7 +21,7 @@ router.post("/", async (req: Request, res: Response) => {
 
         const document = await response.json();
 
-        res.status(201).json(document)
+        res.status(200).json(document)
 
     } catch(err) {
         console.error(err);

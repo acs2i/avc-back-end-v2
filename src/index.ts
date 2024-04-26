@@ -2,13 +2,27 @@
 import dotenv from "dotenv"
 import express from "express"
 import authRoutes from "./routes/authRoutes"
-import productRoutes from "./routes/productRoutes"
-import familyRoutes from "./routes/familyRoutes"
-import brandRoutes from "./routes/brandRoutes"
+
+import productGetRoutes from "./routes/product/productGet"
+import productPostRoutes from "./routes/product/productPost"
+import productPutRoutes from "./routes/product/productPut"
+
+import familyGetRoutes from "./routes/family/familyGet"
+import familyPostRoutes from "./routes/family/familyPost"
+import familyPutRoutes from "./routes/family/familyPut"
+
 import dimensionGetRoutes from "./routes/dimension/dimensionGet"
 import dimensionPostRoutes from "./routes/dimension/dimensionPost"
 
-import collectionRoutes from "./routes/collectionRoutes"
+import collectionGetRoutes from "./routes/collection/collectionGet"
+import collectionPostRoutes from "./routes/collection/collectionPost"
+import collectionPutRoutes from "./routes/collection/collectionPut"
+
+import brandGetRoutes from "./routes/brand/brandGet"
+import brandPostRoutes from "./routes/brand/brandPost"
+import brandPutRoutes from "./routes/brand/brandPut"
+
+
 import dbConnect from "./config/dbConnect"
 import bodyParser from "body-parser"
 import cors from "cors";
@@ -33,20 +47,28 @@ app.get('/', (req: any, res: any) => {
 app.use(v1 + "/auth", authRoutes);
 
 // PRODUCTS ROUTES
-app.use(v1 + "/product", productRoutes);
+app.use(v1, productGetRoutes);
+app.use(v1, productPostRoutes);
+app.use(v1, productPutRoutes);
 
 // family ROUTES
-app.use(v1 + "/family", familyRoutes);
+app.use(v1, familyGetRoutes);
+app.use(v1, familyPostRoutes);
+app.use(v1, familyPutRoutes);
 
 // BRAND ROUTES
-app.use(v1 + "/brand", brandRoutes);
+app.use(v1, brandGetRoutes);
+app.use(v1, brandPostRoutes);
+app.use(v1, brandPutRoutes);
 
 // COLLECTION ROUTES
-app.use(v1 + "/collection", collectionRoutes);
+app.use(v1, collectionGetRoutes);
+app.use(v1, collectionPostRoutes);
+app.use(v1, collectionPutRoutes);
 
 // Dimenmsions ROUTES
-app.use(v1 + "/dimension", dimensionGetRoutes);
-app.use(v1 + "/dimension", dimensionPostRoutes);
+app.use(v1, dimensionGetRoutes);
+app.use(v1, dimensionPostRoutes);
 
 // USERS ROUTES
 // TO DO

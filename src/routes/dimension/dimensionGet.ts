@@ -1,9 +1,10 @@
 import express, { Request, Response } from "express"
 import { Get } from "../../services/fetch";
+import { DIMENSION } from "./shared";
 
 const router = express.Router();
 
-router.get("/", async(req: Request, res: Response) => {
+router.get(DIMENSION, async(req: Request, res: Response) => {
     try {
         const page: string | any | string[] | undefined = req.query.page;
         const limit: string | any | string[] | undefined = req.query.limit;
@@ -27,12 +28,12 @@ router.get("/", async(req: Request, res: Response) => {
         const response = await Get("/dimension", undefined, intPage, intLimit);
 
         if(response.status !== 200) {
-            throw new Error("Erreur sur le coté de data lake serveur en cherchant les brands");
+            throw new Error("Erreur sur le coté de data lake serveur en cherchant les dimensions");
         }
 
         const documents = await response.json();
 
-        res.status(201).json(documents);
+        res.status(200).json(documents);
 
     } catch(err) {
         console.error(err);
@@ -40,7 +41,7 @@ router.get("/", async(req: Request, res: Response) => {
     }
 })
 
-router.get("/:id", async(req: Request, res: Response) => {
+router.get(DIMENSION + "/:id", async(req: Request, res: Response) => {
     try {
 
         
@@ -55,12 +56,12 @@ router.get("/:id", async(req: Request, res: Response) => {
         const response = await Get("/dimension", id);
 
         if(response.status !== 200) {
-            throw new Error("Erreur sur le coté de data lake serveur en cherchant les brands");
+            throw new Error("Erreur sur le coté de data lake serveur en cherchant les dimensions");
         }
 
         const documents = await response.json();
 
-        res.status(201).json(documents);
+        res.status(200).json(documents);
 
     } catch(err) {
         console.error(err);

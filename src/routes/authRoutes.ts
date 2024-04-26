@@ -53,7 +53,7 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
     return next(error);
   }
 
-  res.status(201).json({ user: newUser.toObject({ getters: true }) });
+  res.status(200).json({ user: newUser.toObject({ getters: true }) });
 });
 
 //LOGIN
