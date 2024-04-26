@@ -24,7 +24,7 @@ router.get("/search", async(req: Request, res: Response) => {
 
 
     if(!limit) {
-        intLimit = 1000;        
+        intLimit = 10;        
     } else {
         intLimit = parseInt(limit); 
     }    
@@ -74,7 +74,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 
 
     if(limit === undefined) {
-        intLimit = 1000;        
+        intLimit = 10;        
     } else {
         intLimit = parseInt(limit); 
     }        

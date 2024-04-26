@@ -19,7 +19,7 @@ router.get("/", async(req: Request, res: Response) => {
 
 
         if(limit === undefined) {
-            intLimit = 1000;        
+            intLimit = 10;        
         } else {
             intLimit = parseInt(limit); 
         }        

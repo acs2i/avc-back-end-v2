@@ -101,7 +101,7 @@ router.get("/search", async(req: Request, res: Response) => {
 
 
     if(!limit) {
-        intLimit = 1000;        
+        intLimit = 10;        
     } else {
         intLimit = parseInt(limit); 
     }    
