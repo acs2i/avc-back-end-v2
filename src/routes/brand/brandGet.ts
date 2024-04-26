@@ -85,8 +85,37 @@ router.get(BRAND + "/search", async(req: Request, res: Response) => {
       res.status(500).json(err);
     }
 
+})
+
+router.get(BRAND + "/:id", async (req: Request, res: Response) => {
+  try {
+
+      const id: string | undefined | null = req.params.id;
+
+      if(id === null || id === undefined) {
+          res.status(200).json({})
+          throw new Error(req.originalUrl + ", msg: id was: " + id)
+      }
+
+
+      const response = await Get("/brand", id);
+
+      if(response.status !== 200) {
+          throw new Error("Le Get Id pour Brand n'a pas donné un 200 status")
+      }
+
+      const result = await response.json();
+
+      res.status(200).json(result)
+
+  }
+  catch(err) {
+      res.status(500).json(err)
+      console.error(err)
+  }
 
 
 })
+
 
 export default router;

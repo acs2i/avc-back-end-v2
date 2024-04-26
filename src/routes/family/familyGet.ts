@@ -93,7 +93,7 @@ router.get(FAMILY + "/search", async(req: Request, res: Response) => {
   
   })
   // connecté a datalake - TESTED NEW DATA LAKE
-  router.get(FAMILY + "/YX_TYPE/:YX_TYPE", async (req: Request, res: Response, next: NextFunction) => {
+router.get(FAMILY + "/YX_TYPE/:YX_TYPE", async (req: Request, res: Response, next: NextFunction) => {
     try {
   
       const page: string | any | string[] | undefined = req.query.page;
@@ -133,10 +133,44 @@ router.get(FAMILY + "/search", async(req: Request, res: Response) => {
   
       res.status(200).json(family);
     } catch (err) {
-        console.error(err);
+      console.error(err);
       res.status(500).json({ error: { message: "un probleme est survenu" } });
     }
-  });
+});
   
+
+
+router.get(FAMILY + "/:id", async (req: Request, res: Response) => {
+  try {
+
+      const id: string | undefined | null = req.params.id;
+
+      if(id === null || id === undefined) {
+          res.status(200).json({})
+          throw new Error(req.originalUrl + ", msg: id was: " + id)
+      }
+
+
+      const response = await Get("/family", id);
+
+      if(response.status !== 200) {
+          throw new Error("Le Get Id n'a pas donné un 200 status")
+      }
+
+      const result = await response.json();
+
+      res.status(200).json(result)
+
+  }
+  catch(err) {
+      res.status(500).json(err)
+      console.error(err)
+  }
+
+
+})
+
+
+
 
 export default router;
