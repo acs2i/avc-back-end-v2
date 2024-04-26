@@ -154,7 +154,7 @@ router.get(FAMILY + "/:id", async (req: Request, res: Response) => {
       const response = await Get("/family", id);
 
       if(response.status !== 200) {
-          throw new Error("Le Get Id n'a pas donné un 200 status")
+          throw new Error("Le Get Id familly n'a pas donné un 200 status")
       }
 
       const result = await response.json();
