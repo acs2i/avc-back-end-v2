@@ -22,6 +22,10 @@ import brandGetRoutes from "./routes/brand/brandGet"
 import brandPostRoutes from "./routes/brand/brandPost"
 import brandPutRoutes from "./routes/brand/brandPut"
 
+import uvcGetRoutes from "./routes/uvc/uvcGet"
+import uvcPostRoutes from "./routes/uvc/uvcPost"
+import uvcPutRoutes from "./routes/uvc/uvcPut"
+
 
 import dbConnect from "./config/dbConnect"
 import bodyParser from "body-parser"
@@ -69,6 +73,11 @@ app.use(v1, collectionPutRoutes);
 // Dimenmsions ROUTES
 app.use(v1, dimensionGetRoutes);
 app.use(v1, dimensionPostRoutes);
+
+// Uvc Routes
+app.use(v1, uvcGetRoutes)
+app.use(v1, uvcPostRoutes)
+app.use(v1, uvcPutRoutes)
 
 // USERS ROUTES
 // TO DO
