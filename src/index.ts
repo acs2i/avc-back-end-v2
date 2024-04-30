@@ -13,6 +13,7 @@ import familyPutRoutes from "./routes/family/familyPut"
 
 import dimensionGetRoutes from "./routes/dimension/dimensionGet"
 import dimensionPostRoutes from "./routes/dimension/dimensionPost"
+import dimensionPutRoutes from "./routes/dimension/dimensionPut"
 
 import collectionGetRoutes from "./routes/collection/collectionGet"
 import collectionPostRoutes from "./routes/collection/collectionPost"
@@ -73,6 +74,7 @@ app.use(v1, collectionPutRoutes);
 // Dimenmsions ROUTES
 app.use(v1, dimensionGetRoutes);
 app.use(v1, dimensionPostRoutes);
+app.use(v1, dimensionPutRoutes);
 
 // Uvc Routes
 app.use(v1, uvcGetRoutes)
