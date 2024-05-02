@@ -8,8 +8,24 @@ const dataLakeUri = process.env.SERVER_DATA_LAKE_URI_LOCAL;
 // include the first "/" but not the last "/"
 // example "/reference"
 // param can be name or id or any other kind of variable
-export const Get = async (endpoint: string, param: string | undefined = undefined, page: number = 1, limit: number= 10, value : string | undefined = undefined) : Promise<any> => {
-    return await fetch(dataLakeUri + endpoint + (param ? `/${param}` : "") + `?page=${page}&limit=${limit}&value=${value}`, {
+export const Get = async (endpoint: string, param: string | undefined = undefined, page: number = 1, limit: number= 10, value : string | Record<string, any> | undefined = undefined) : Promise<any> => {
+    if(value) {
+        if(typeof value === "object") {
+            let temp = "&";
+            const keys : string[] = Object.keys(value)
+            for(let i = 0; i < keys.length; i++ ) {
+                const key: string = keys[i]
+                const val = value[key]
+                temp += key + "=" +val 
+                if(i !== keys.length - 1) temp += "&"
+            }
+            value = temp;
+        } else {
+            value = `&value=${value}` 
+        }
+    }
+
+    return await fetch(dataLakeUri + endpoint + (param ? `/${param}` : "") + `?page=${page}&limit=${limit}${value}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

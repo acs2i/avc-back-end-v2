@@ -93,7 +93,7 @@ router.get(FAMILY + "/search", async(req: Request, res: Response) => {
   
   })
   // connecté a datalake - TESTED NEW DATA LAKE
-router.get(FAMILY + "/YX_TYPE/:YX_TYPE", async (req: Request, res: Response, next: NextFunction) => {
+router.get(FAMILY + "/YX_TYPE", async (req: Request, res: Response, next: NextFunction) => {
     try {
   
       const page: string | any | string[] | undefined = req.query.page;
@@ -115,17 +115,18 @@ router.get(FAMILY + "/YX_TYPE/:YX_TYPE", async (req: Request, res: Response, nex
           intLimit = parseInt(limit); 
       }        
   
-      const YX_TYPE: string | any | string[] | undefined = req.params.YX_TYPE;
+      const YX_TYPE = req.query.YX_TYPE;
   
   
       if(!YX_TYPE) {
         throw new HttpError("YX_TYPE ETAIT FALSY", 400);
       }
-  
-      const response = await Get("/family/YX_TYPE", YX_TYPE, intPage, intLimit );
+
+      const value = req.query.value;
+
+      const response = await Get("/family", "YX_TYPE", intPage, intLimit, { YX_TYPE, value: value as string});
   
       if(response.status !== 200) {
-        // console.log("Response: " , response)
         throw new HttpError("Le Get ne pouvait pas recevoir les valeurs à propos des familles", 400);
       }
   
