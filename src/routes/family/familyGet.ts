@@ -69,14 +69,11 @@ router.get(FAMILY + "/search", async(req: Request, res: Response) => {
       } else {
           intLimit = parseInt(limit); 
       }    
-      
-      const value = req.query.value;
+       
+
+      const {YX_TYPE, YX_CODE, YX_LIBELLE} = req.query;
   
-      if(!value) {
-          throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
-      } 
-  
-      const response = await Get("/family/search", undefined, intPage, intLimit, value as string);
+      const response = await Get("/family/search", undefined, intPage, intLimit, { YX_CODE, YX_LIBELLE, YX_TYPE});
   
       if(response.status !== 200) {
         throw new Error("Erreur sur le coté de data lake serveur en cherchant les families");

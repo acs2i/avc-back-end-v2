@@ -16,6 +16,7 @@ export const Get = async (endpoint: string, param: string | undefined = undefine
             for(let i = 0; i < keys.length; i++ ) {
                 const key: string = keys[i]
                 const val = value[key]
+                if(!val) continue;
                 temp += key + "=" +val 
                 if(i !== keys.length - 1) temp += "&"
             }
