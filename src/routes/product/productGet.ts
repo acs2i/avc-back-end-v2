@@ -29,13 +29,10 @@ router.get(PRODUCT + "/search", async(req: Request, res: Response) => {
         intLimit = parseInt(limit); 
     }    
     
-    const value = req.query.value;
 
-    if(!value) {
-        throw new Error(req.originalUrl + ", msg: value in product routes get was falsy: " + value);
-    } 
+    const {GA_CODEARTICLE, GA_LIBCOMPL, GA_LIBELLE,GA_LIBREART4,GA_LIBREART1, GA_LIBREART2, GA_FOURNPRINC,GA_FERME} = req.query
 
-    const response = await Get("/product/search", undefined, intPage, intLimit, value as string);
+    const response = await Get("/product/search", undefined, intPage, intLimit,  {GA_CODEARTICLE, GA_LIBCOMPL, GA_LIBELLE,GA_LIBREART4,GA_LIBREART1, GA_LIBREART2, GA_FOURNPRINC,GA_FERME});
 
     if(response.status !== 200) {
       throw new Error("Erreur sur le coté de data lake serveur en cherchant les products");
@@ -79,9 +76,8 @@ router.get(PRODUCT, async (req: Request, res: Response, next: NextFunction) => {
         intLimit = parseInt(limit); 
     }        
 
-    const {GA_CODEARTICLE, GA_LIBCOMPL, GA_LIBELLE,GA_LIBREART4,GA_LIBREART1, GA_LIBREART2, GA_FOURNPRINC,GA_FERME} = req.query
 
-    const response = await Get("/product", undefined, intPage, intLimit, {GA_CODEARTICLE, GA_LIBCOMPL, GA_LIBELLE,GA_LIBREART4,GA_LIBREART1, GA_LIBREART2, GA_FOURNPRINC,GA_FERME});
+    const response = await Get("/product", undefined, intPage, intLimit);
 
     if(response.status !== 200 ) {
       throw new HttpError("GET tous les produit n'a pas bien functioné ",400);
