@@ -64,13 +64,15 @@ router.get(COLLECTION + "/search", async(req: Request, res: Response) => {
         intLimit = parseInt(limit); 
     }    
     
-    const value = req.query.value;
+    // const value = req.query.value;
 
-    if(!value) {
-        throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
-    } 
+    // if(!value) {
+    //     throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
+    // } 
 
-    const response = await Get("/collection/search", undefined, intPage, intLimit, value as string);
+    const { CODE, LIBELLE} = req.query;
+
+    const response = await Get("/collection/search", undefined, intPage, intLimit, {CODE, LIBELLE});
 
     if(response.status !== 200) {
       throw new Error("Erreur sur le coté de data lake serveur en cherchant les collections");

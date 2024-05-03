@@ -4,6 +4,48 @@ import { DIMENSION } from "./shared";
 
 const router = express.Router();
 
+// connecté a datalake - TESTED NEW DATA LAKE
+router.get(DIMENSION + "/search", async(req: Request, res: Response) => {
+    try {
+      const page: string | any | string[] | undefined = req.query.page;
+      const limit: string | any | string[] | undefined = req.query.limit;
+  
+      let intPage;
+      let intLimit;
+  
+      if(!page) {
+          intPage = 1;
+      } else {
+          intPage = parseInt(page) 
+      }
+  
+  
+      if(!limit) {
+          intLimit = 10;        
+      } else {
+          intLimit = parseInt(limit); 
+      }    
+       
+
+      const {GDI_TYPEDIM, GDI_DIMORLI, GDI_LIBELLE} = req.query;
+  
+      const response = await Get("/dimension/search", undefined, intPage, intLimit, { GDI_TYPEDIM, GDI_DIMORLI, GDI_LIBELLE});
+  
+      if(response.status !== 200) {
+        throw new Error("Erreur sur le coté de data lake serveur en cherchant les families");
+      }
+      
+      const families = await response.json();
+      res.status(200).json(families);
+  
+    } catch(err) {
+      console.error(err)
+      res.status(500).json(err);
+    }
+  
+  
+  })
+
 router.get(DIMENSION, async(req: Request, res: Response) => {
     try {
         const page: string | any | string[] | undefined = req.query.page;
@@ -23,7 +65,7 @@ router.get(DIMENSION, async(req: Request, res: Response) => {
             intLimit = 10;        
         } else {
             intLimit = parseInt(limit); 
-        }        
+        }
         
         const response = await Get("/dimension", undefined, intPage, intLimit);
 

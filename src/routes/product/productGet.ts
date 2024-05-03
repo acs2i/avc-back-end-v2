@@ -79,7 +79,9 @@ router.get(PRODUCT, async (req: Request, res: Response, next: NextFunction) => {
         intLimit = parseInt(limit); 
     }        
 
-    const response = await Get("/product", undefined, intPage, intLimit);
+    const {GA_CODEARTICLE, GA_LIBCOMPL, GA_LIBELLE,GA_LIBREART4,GA_LIBREART1, GA_LIBREART2, GA_FOURNPRINC,GA_FERME} = req.query
+
+    const response = await Get("/product", undefined, intPage, intLimit, {GA_CODEARTICLE, GA_LIBCOMPL, GA_LIBELLE,GA_LIBREART4,GA_LIBREART1, GA_LIBREART2, GA_FOURNPRINC,GA_FERME});
 
     if(response.status !== 200 ) {
       throw new HttpError("GET tous les produit n'a pas bien functioné ",400);

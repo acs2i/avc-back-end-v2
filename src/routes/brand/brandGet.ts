@@ -64,14 +64,11 @@ router.get(BRAND + "/search", async(req: Request, res: Response) => {
       } else {
           intLimit = parseInt(limit); 
       }    
-      
-      const value = req.query.value;
-  
-      if(!value) {
-          throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
-      } 
-  
-      const response = await Get("/brand/search", undefined, intPage, intLimit, value as string);
+
+      const {  YX_CODE, YX_LIBELLE } = req.query;
+
+
+      const response = await Get("/brand/search", undefined, intPage, intLimit, {YX_CODE, YX_LIBELLE});
   
       if(response.status !== 200) {
         throw new Error("Erreur sur le coté de data lake serveur en cherchant les brands");
