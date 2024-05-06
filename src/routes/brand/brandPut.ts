@@ -18,9 +18,11 @@ router.put(BRAND + "/:id", async (req: Request, res: Response, next: NextFunctio
       if(!id) {
         throw new Error(req.originalUrl + ", msg: id was falsy: " + id)
       }
+
+
+      const response = await Put(`/brand/${id}`, JSON.stringify(brand));
   
-      const response = await Put("/brand", JSON.stringify(brand));
-  
+    
       if(!response) {
         throw new Error(req.originalUrl + ", msg: response was falsy: " + JSON.stringify(response))
       }
