@@ -23,6 +23,9 @@ import familyGetRoutes from "./routes/family/familyGet"
 import familyPostRoutes from "./routes/family/familyPost"
 import familyPutRoutes from "./routes/family/familyPut"
 
+import gridGetRoutes from "./routes/grid/gridGet"
+import gridPostRoutes from "./routes/grid/gridPost"
+
 import productGetRoutes from "./routes/product/productGet"
 import productPostRoutes from "./routes/product/productPost"
 import productPutRoutes from "./routes/product/productPut"
@@ -72,6 +75,10 @@ app.use(v1, dimensionPutRoutes);
 app.use(v1, familyGetRoutes);
 app.use(v1, familyPostRoutes);
 app.use(v1, familyPutRoutes);
+
+//Grid ROUTES
+app.use(v1, gridGetRoutes);
+app.use(v1, gridPostRoutes);
 
 // Product ROUTES
 app.use(v1, productGetRoutes);
