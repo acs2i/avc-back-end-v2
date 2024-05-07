@@ -43,4 +43,33 @@ router.get(GRID, async (req: Request, res: Response) => {
 });
   
 
+router.get(GRID + "/:id", async (req: Request, res: Response) => {
+    try {
+  
+        const id: string | undefined | null = req.params.id;
+  
+        if(id === null || id === undefined) {
+            res.status(200).json({})
+            throw new Error(req.originalUrl + ", msg: id was: " + id)
+        }
+  
+  
+        const response = await Get("/grid", id);
+  
+        if(response.status !== 200) {
+            throw new Error("Le Get Id familly n'a pas donné un 200 status")
+        }
+  
+        const result = await response.json();
+  
+        res.status(200).json(result)
+  
+    }
+    catch(err) {
+        res.status(500).json(err)
+        console.error(err)
+    }
+  
+  })
+
 export default router;
