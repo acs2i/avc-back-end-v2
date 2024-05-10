@@ -6,8 +6,51 @@ import { PRODUCT } from "./shared";
 
 const router = express.Router();
 
-// Connecté à datalake - TESTED NEW DATA LAKE
-//@GET
+router.get(PRODUCT + "/ga-libelle/:GA_LIBELLE", async(req: Request, res: Response) => {
+  try {
+
+    const { GA_LIBELLE } = req.params;
+
+    if(!GA_LIBELLE){
+      throw new Error("GA_LIBELLE was falsy")
+    }
+
+    const page: string | any | string[] | undefined = req.query.page;
+    const limit: string | any | string[] | undefined = req.query.limit;
+
+    let intPage;
+    let intLimit;
+
+    if(!page) {
+        intPage = 1;
+    } else {
+        intPage = parseInt(page) 
+    }
+
+
+    if(!limit) {
+        intLimit = 10;        
+    } else {
+        intLimit = parseInt(limit); 
+    }    
+
+    const response = await Get("/product/ga-libelle", GA_LIBELLE);
+
+    if(response.status !== 200) {
+      throw new Error("Error on the side of data lake");
+    }
+
+    const results = await response.json();
+
+    res.status(200).json(results)
+
+
+  } catch(err) {
+    console.error(err)
+    res.status(400).json({})
+  }
+})
+
 router.get(PRODUCT + "/search", async(req: Request, res: Response) => {
   try {
     const page: string | any | string[] | undefined = req.query.page;

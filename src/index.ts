@@ -19,6 +19,12 @@ import dimensionGetRoutes from "./routes/dimension/dimensionGet"
 import dimensionPostRoutes from "./routes/dimension/dimensionPost"
 import dimensionPutRoutes from "./routes/dimension/dimensionPut"
 
+
+import draftGetRoutes from "./routes/draft/draftGet"
+import draftPostRoutes from "./routes/draft/draftPost"
+import draftPutRoutes from "./routes/draft/draftPut"
+
+
 import familyGetRoutes from "./routes/family/familyGet"
 import familyPostRoutes from "./routes/family/familyPost"
 import familyPutRoutes from "./routes/family/familyPut"
@@ -70,6 +76,11 @@ app.use(v1, collectionPutRoutes);
 app.use(v1, dimensionGetRoutes);
 app.use(v1, dimensionPostRoutes);
 app.use(v1, dimensionPutRoutes);
+
+// Draft ROUTES
+app.use(v1, draftGetRoutes);
+app.use(v1, draftPostRoutes);
+app.use(v1, draftPutRoutes);
 
 // Family ROUTES
 app.use(v1, familyGetRoutes);
