@@ -148,14 +148,18 @@ router.get(FAMILY + "/:id", async (req: Request, res: Response) => {
           throw new Error(req.originalUrl + ", msg: id was: " + id)
       }
 
+      const subFamily = req.query.subFamily;
 
-      const response = await Get("/family", id);
+      const subSubFamily = req.query.subSubFamily;
+
+      const response = await Get("/family", id, undefined, undefined, {subFamily, subSubFamily});
 
       if(response.status !== 200) {
           throw new Error("Le Get Id familly n'a pas donné un 200 status")
       }
 
       const result = await response.json();
+
 
       res.status(200).json(result)
 
