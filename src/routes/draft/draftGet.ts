@@ -10,7 +10,6 @@ router.get(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: stri
 
         const _id = req.params.id;
 
-        
         if(!_id) {
             throw new Error("Id was falsy")
         }
@@ -28,9 +27,8 @@ router.get(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: stri
         // Make sure authorization token matches
         const idFromToken = req.user.id;
 
-        console.log("id: ", _id,  "   id from token: " , idFromToken)
-
         const { CREATOR_ID}  = data;
+
         const creatorId : string = CREATOR_ID as unknown as string;
 
         if(creatorId != idFromToken) {
@@ -38,10 +36,6 @@ router.get(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: stri
         }
 
         res.status(200).json(data);
-
-        
-
-
 
     } catch(err) {
         console.error(err);
@@ -99,17 +93,7 @@ router.get(DRAFT + "/ga-libelle/:GA_LIBELLE", verifyToken, async (req: Request &
         if(!GA_LIBELLE) {
             throw new Error("Creator Id was falsy")
         }
-
-        // if(!req.user) {
-        //     throw new Error("User was not authenticated");
-        // }
-        // Make sure authorization token matches
-        // const idFromToken = req.user.id;
-
-        // if(creatorId !== idFromToken) {
-        //     throw new Error("Id passed from user does not match their authentication token");
-        // }
-
+        
         const filter = { GA_LIBELLE }
 
         const data = await DraftModel.findOne(filter);
@@ -119,8 +103,6 @@ router.get(DRAFT + "/ga-libelle/:GA_LIBELLE", verifyToken, async (req: Request &
         }
 
         res.status(200).json(data);
-
-
 
     } catch(err) {
         console.error(req.originalUrl + ", msg: error : " + err)

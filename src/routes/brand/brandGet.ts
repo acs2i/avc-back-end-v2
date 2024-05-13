@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import { Get } from "../../services/fetch";
 import { BRAND } from "./shared";
+import { generalLimits } from "../../services/generalServices";
 const router = express.Router();
 
 //GET ALL BRANDS
@@ -10,25 +11,7 @@ const router = express.Router();
 router.get(BRAND, async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-      const page: string | any | string[] | undefined = req.query.page;
-      const limit: string | any | string[] | undefined = req.query.limit;
-
-      let intPage : number;
-      let intLimit : number;
-
-      if(page === undefined) {
-          intPage = 1;
-      } else {
-          intPage = parseInt(page) 
-      }
-
-
-      if(limit === undefined) {
-          intLimit = 10;        
-      } else {
-          intLimit = parseInt(limit); 
-      }        
-
+      const {intPage, intLimit} = await generalLimits(req);
 
       const response = await Get("/brand", undefined, intPage, intLimit);
 
@@ -46,24 +29,8 @@ router.get(BRAND, async (req: Request, res: Response, next: NextFunction) => {
 
 router.get(BRAND + "/search", async(req: Request, res: Response) => {
     try {
-      const page: string | any | string[] | undefined = req.query.page;
-      const limit: string | any | string[] | undefined = req.query.limit;
-  
-      let intPage;
-      let intLimit;
-  
-      if(!page) {
-          intPage = 1;
-      } else {
-          intPage = parseInt(page) 
-      }
-  
-  
-      if(!limit) {
-          intLimit = 10;        
-      } else {
-          intLimit = parseInt(limit); 
-      }    
+     
+      const {intPage, intLimit} = await generalLimits(req);
 
       const {  YX_CODE, YX_LIBELLE } = req.query;
 

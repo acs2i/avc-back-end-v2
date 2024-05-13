@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import express from "express"
 import { UVC } from "./shared";
 import { Get } from "../../services/fetch";
+import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
 
@@ -9,24 +10,8 @@ const router = express.Router();
 router.get(UVC, async( req: Request, res: Response) => {
     try {
 
-        const page: string | any | string[] | undefined = req.query.page;
-        const limit: string | any | string[] | undefined = req.query.limit;
-
-        let intPage;
-        let intLimit;
-
-        if(page === undefined) {
-            intPage = 1;
-        } else {
-            intPage = parseInt(page) 
-        }
-
-
-        if(limit === undefined) {
-            intLimit = 10;        
-        } else {
-            intLimit = parseInt(limit); 
-        }        
+        
+        const {intPage, intLimit} = await generalLimits(req);
 
         const response = await Get("/uvc", undefined, intPage, intLimit);
 

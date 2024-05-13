@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import { Get} from "../../services/fetch";
 import { COLLECTION } from "./shared";
+import { generalLimits } from "../../services/generalServices";
 const router = express.Router();
 
 //GET ALL COLLECTIONS
@@ -10,24 +11,8 @@ const router = express.Router();
 router.get(COLLECTION, async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-      const page: string | any | string[] | undefined = req.query.page;
-      const limit: string | any | string[] | undefined = req.query.limit;
-
-      let intPage : number;
-      let intLimit : number;
-
-      if(!page) {
-          intPage = 1;
-      } else {
-          intPage = parseInt(page) 
-      }
-
-
-      if(!limit) {
-          intLimit = 10;        
-      } else {
-          intLimit = parseInt(limit); 
-      }        
+      
+      const {intPage, intLimit} = await generalLimits(req);
 
       const response = await Get("/collection", undefined, intPage, intLimit);
 
@@ -45,30 +30,8 @@ router.get(COLLECTION, async (req: Request, res: Response, next: NextFunction) =
 
 router.get(COLLECTION + "/search", async(req: Request, res: Response) => {
   try {
-    const page: string | any | string[] | undefined = req.query.page;
-    const limit: string | any | string[] | undefined = req.query.limit;
-
-    let intPage;
-    let intLimit;
-
-    if(!page) {
-        intPage = 1;
-    } else {
-        intPage = parseInt(page) 
-    }
-
-
-    if(!limit) {
-        intLimit = 10;        
-    } else {
-        intLimit = parseInt(limit); 
-    }    
     
-    // const value = req.query.value;
-
-    // if(!value) {
-    //     throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
-    // } 
+    const {intPage, intLimit} = await generalLimits(req);
 
     const { CODE, LIBELLE} = req.query;
 
@@ -85,9 +48,6 @@ router.get(COLLECTION + "/search", async(req: Request, res: Response) => {
     console.error(err)
     res.status(500).json(err);
   }
-
-
-
 })
 
 router.get(COLLECTION + "/:id", async (req: Request, res: Response) => {
