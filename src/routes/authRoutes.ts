@@ -14,7 +14,9 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
   const {
     username,
     email,
-    password
+    password,
+    authorization,
+    comment
   } = req.body;
 
  
@@ -41,7 +43,9 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
   const newUser = new User({
     username,
     password: passwordHash,
-    email
+    email,
+    authorization,
+    comment
   });
   try {
     await newUser.save();
@@ -89,6 +93,19 @@ router.post("/login", async (req: Request, res: Response, next: NextFunction) =>
   }
 
  
+});
+
+//LOGIN
+//@GET
+//api/v1/auth/register
+router.get("/all-users", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).json({ error: "Une erreur est survenue lors de la récupération des utilisateurs." });
+  }
 });
 
 export default router;

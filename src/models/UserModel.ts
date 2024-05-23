@@ -13,6 +13,14 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  authorization: {
+    type: String,
+    required: true,
+  },
+  comment: {
+    type: String,
+    maxlength: 250
+  },
   products: [
     {
       _id: {
