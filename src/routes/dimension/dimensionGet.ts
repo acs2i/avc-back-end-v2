@@ -1,31 +1,15 @@
 import express, { Request, Response } from "express"
 import { Get } from "../../services/fetch";
 import { DIMENSION } from "./shared";
+import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
 
 // connecté a datalake - TESTED NEW DATA LAKE
 router.get(DIMENSION + "/search", async(req: Request, res: Response) => {
     try {
-      const page: string | any | string[] | undefined = req.query.page;
-      const limit: string | any | string[] | undefined = req.query.limit;
-  
-      let intPage;
-      let intLimit;
-  
-      if(!page) {
-          intPage = 1;
-      } else {
-          intPage = parseInt(page) 
-      }
-  
-  
-      if(!limit) {
-          intLimit = 10;        
-      } else {
-          intLimit = parseInt(limit); 
-      }    
-       
+      
+        const {intPage, intLimit} = await generalLimits(req);       
 
       const {GDI_TYPEDIM, GDI_DIMORLI, GDI_LIBELLE} = req.query;
   
@@ -48,25 +32,8 @@ router.get(DIMENSION + "/search", async(req: Request, res: Response) => {
 
 router.get(DIMENSION, async(req: Request, res: Response) => {
     try {
-        const page: string | any | string[] | undefined = req.query.page;
-        const limit: string | any | string[] | undefined = req.query.limit;
+        const {intPage, intLimit} = await generalLimits(req);
 
-        let intPage;
-        let intLimit;
-
-        if(page === undefined) {
-            intPage = 1;
-        } else {
-            intPage = parseInt(page) 
-        }
-
-
-        if(limit === undefined) {
-            intLimit = 10;        
-        } else {
-            intLimit = parseInt(limit); 
-        }
-        
         const response = await Get("/dimension", undefined, intPage, intLimit);
 
         if(response.status !== 200) {

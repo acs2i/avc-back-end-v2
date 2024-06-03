@@ -1,4 +1,5 @@
 import { Get } from "../../services/fetch";
+import { generalLimits } from "../../services/generalServices";
 import { SUPPLIER } from "./shared";
 import express, { Request, Response } from "express"
 
@@ -6,24 +7,9 @@ const router = express.Router()
 
 router.get(SUPPLIER, async (req: Request, res: Response) => {
   try {
-    const page: string | any | string[] | undefined = req.query.page;
-    const limit: string | any | string[] | undefined = req.query.limit;
+    
+    const {intPage, intLimit} = await generalLimits(req);
 
-    let intPage;
-    let intLimit;
-
-    if(!page) {
-        intPage = 1;
-    } else {
-        intPage = parseInt(page) 
-    }
-
-
-    if(!limit) {
-        intLimit = 10;        
-    } else {
-        intLimit = parseInt(limit); 
-    }    
 
     const response = await Get("/supplier", undefined, intPage, intLimit);
 
@@ -43,25 +29,9 @@ router.get(SUPPLIER, async (req: Request, res: Response) => {
 
 router.get(SUPPLIER + "/search", async(req: Request, res: Response) => {
     try {
-      const page: string | any | string[] | undefined = req.query.page;
-      const limit: string | any | string[] | undefined = req.query.limit;
-  
-      let intPage;
-      let intLimit;
-  
-      if(!page) {
-          intPage = 1;
-      } else {
-          intPage = parseInt(page) 
-      }
-  
-  
-      if(!limit) {
-          intLimit = 10;        
-      } else {
-          intLimit = parseInt(limit); 
-      }    
       
+      const {intPage, intLimit} = await generalLimits(req);
+
       const {T_TIERS, T_LIBELLE, T_JURIDIQUE, T_FERME, T_TELEPHONE, T_EMAIL} = req.query
   
       const response = await Get("/supplier/search", undefined, intPage, intLimit, {T_TIERS, T_LIBELLE, T_JURIDIQUE, T_FERME,T_TELEPHONE,T_EMAIL});

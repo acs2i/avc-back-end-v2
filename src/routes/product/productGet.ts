@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import HttpError from "../../models/http-errors";
 import { Get } from "../../services/fetch";
 import { PRODUCT } from "./shared";
+import { generalLimits } from "../../services/generalServices";
 
 
 const router = express.Router();
@@ -97,28 +98,11 @@ router.get(PRODUCT + "/search", async(req: Request, res: Response) => {
 // Connecté à datalake - TESTED NEW DATA LAKE
 //@GET
 //api/v1/product
-router.get(PRODUCT, async (req: Request, res: Response, next: NextFunction) => {
+router.get(PRODUCT, async (req: Request, res: Response) => {
   try {
 
-    const page: string | any | string[] | undefined = req.query.page;
-    const limit: string | any | string[] | undefined = req.query.limit;
-
-    let intPage;
-    let intLimit;
-
-    if(page === undefined) {
-        intPage = 1;
-    } else {
-        intPage = parseInt(page) 
-    }
-
-
-    if(limit === undefined) {
-        intLimit = 10;        
-    } else {
-        intLimit = parseInt(limit); 
-    }        
-
+  
+    const {intPage, intLimit} = await generalLimits(req);
 
     const response = await Get("/product", undefined, intPage, intLimit);
 
@@ -139,7 +123,7 @@ router.get(PRODUCT, async (req: Request, res: Response, next: NextFunction) => {
 // Connecté à datalake - TESTED FOR NEW DATALAKE
 //@GET
 //api/v1/product/:id
-router.get(PRODUCT + "/:id", async (req: Request, res: Response, next: NextFunction) => {
+router.get(PRODUCT + "/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
 
   let result = undefined;
@@ -165,7 +149,6 @@ router.get(PRODUCT + "/:id", async (req: Request, res: Response, next: NextFunct
   } catch (err) {
     console.error(err)
     res.status(500).json({error: { message: "Un probleme est survenu "}})
-    next(err);
   }
 
 
