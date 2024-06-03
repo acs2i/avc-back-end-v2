@@ -10,16 +10,16 @@ const router = express.Router();
 //@POST
 //api/v1/auth/register
 router.post("/register", async (req: Request, res: Response, next: NextFunction) => {
-
   const {
     username,
     email,
     password,
     authorization,
-    comment
+    comment,
+    additionalFields
   } = req.body;
 
- 
+  console.log("Request body:", req.body);  // Log the request body
 
   let existingUser;
   try {
@@ -33,23 +33,41 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
   }
 
   if (existingUser) {
-    const error = new HttpError("Cet Email est déja utilisé", 422);
+    const error = new HttpError("Cet Email est déjà utilisé", 422);
     return next(error);
   }
 
   const salt = await bcrypt.genSalt();
   const passwordHash = await bcrypt.hash(password, salt);
 
+  let additionalFieldsMap = new Map<string, any>();
+  if (additionalFields) {
+    try {
+      additionalFieldsMap = new Map(additionalFields.map((field: { key: string; value: any }) => [field.key, field.value]));
+      console.log("Additional Fields Map:", additionalFieldsMap); // Log the additional fields map
+    } catch (err) {
+      const error = new HttpError(
+        "Invalid format for additionalFields.",
+        400
+      );
+      return next(error);
+    }
+  }
+
   const newUser = new User({
     username,
     password: passwordHash,
     email,
     authorization,
-    comment
+    comment,
+    additionalFields: additionalFieldsMap
   });
+
   try {
     await newUser.save();
+    console.log("New user created:", newUser);  // Log the new user
   } catch (err) {
+    console.error("Error saving user:", err);  // Log the error
     const error = new HttpError(
       "Echec lors de la création du compte, réessayez plus tard.",
       500

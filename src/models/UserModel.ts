@@ -38,6 +38,10 @@ const UserSchema = new mongoose.Schema({
       },
     },
   ],
+  additionalFields: {
+    type: Map,
+    of: mongoose.Schema.Types.Mixed
+  }
 }, {timestamps: true, collection: "user"}
 
 
