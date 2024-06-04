@@ -15,14 +15,6 @@ router.post(GROUP, async (req: Request, res: Response) => {
         if(!group) {
             throw new Error("req.body was falsy")
         }
-
-        // if(!req.user) {
-        //     throw new Error("User was not authenticated");
-        // }
-
-        // Make sure authorization token matches
-        // const creator_id = "test";
-        // const creator_id = req.body;
         const id = req.body.id;
 
         const {groupname} = group;

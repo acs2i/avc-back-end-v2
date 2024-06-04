@@ -44,42 +44,14 @@ router.get(GROUP + "/:id", verifyToken, async (req: Request & { user?: {id: stri
 })
 
 // This will just fetch all the groups that are in the avc backend database
-router.get(GROUP + "/group/:id", verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
+router.get(GROUP, async (req: Request, res: Response) => {
     try {
-        const creatorId = req.params.creatorId;
-
-        if(!creatorId) {
-            throw new Error("Creator Id was falsy")
-        }
-
-        if(!req.user) {
-            throw new Error("User was not authenticated");
-        }
-        // Make sure authorization token matches
-        const idFromToken = req.user.id;
-
-        if(creatorId !== idFromToken) {
-            throw new Error("Id passed from user does not match their authentication token");
-        }
-
-        const filter = { creator_id: idFromToken}
-
-        const data = await GroupModel.find(filter);
-
-        if(!data) {
-            throw new Error("Finding the Drafts returned falsy for some reason")
-        }
-
-        const total = await GroupModel.countDocuments(filter)
-
-        res.status(200).json({data, total});
-
-
-
-    } catch(err) {
-        console.error(req.originalUrl + ", msg: error : " + err)
-        res.status(400).json({})
-    }
+        const groups = await GroupModel.find().populate("users");
+        res.status(200).json(groups);
+      } catch (err) {
+        console.error("Error: ", err);
+        res.status(500).json({ error: "Une erreur est survenue lors de la récupération des utilisateurs." });
+      }
 
 
 })
