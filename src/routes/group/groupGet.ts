@@ -1,11 +1,11 @@
-import { verifyToken } from './../../middleware/auth';
+import { verifyToken } from '../../middleware/auth';
 import express, { Request, Response } from "express"
-import { DRAFT } from "./shared";
-import DraftModel from '../../models/draftSchema';
+import { GROUP } from "./shared";
+import GroupModel from '../../models/groupSchema';
 
 const router = express.Router();
 
-router.get(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
+router.get(GROUP + "/:id", verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
     try {
 
         const _id = req.params.id;
@@ -14,7 +14,7 @@ router.get(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: stri
             throw new Error("Id was falsy")
         }
 
-        const data = await DraftModel.findById(_id );
+        const data = await GroupModel.findById(_id );
 
         if(!data) {
             throw new Error("Finding the Drafts returned falsy for some reason")
@@ -27,9 +27,9 @@ router.get(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: stri
         // Make sure authorization token matches
         const idFromToken = req.user.id;
 
-        const { creator_id}  = data;
+        const { id}  = data;
 
-        const creatorId : string = creator_id as unknown as string;
+        const creatorId : string = id as unknown as string;
 
         if(creatorId != idFromToken) {
             throw new Error("Id passed from user does not match their authentication token");
@@ -43,8 +43,8 @@ router.get(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: stri
     }
 })
 
-// This will just fetch all the drafts that are in the avc backend database
-router.get(DRAFT + "/creator-id/:creatorId", verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
+// This will just fetch all the groups that are in the avc backend database
+router.get(GROUP + "/group/:id", verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
     try {
         const creatorId = req.params.creatorId;
 
@@ -64,45 +64,17 @@ router.get(DRAFT + "/creator-id/:creatorId", verifyToken, async (req: Request & 
 
         const filter = { creator_id: idFromToken}
 
-        const data = await DraftModel.find(filter);
+        const data = await GroupModel.find(filter);
 
         if(!data) {
             throw new Error("Finding the Drafts returned falsy for some reason")
         }
 
-        const total = await DraftModel.countDocuments(filter)
+        const total = await GroupModel.countDocuments(filter)
 
         res.status(200).json({data, total});
 
 
-
-    } catch(err) {
-        console.error(req.originalUrl + ", msg: error : " + err)
-        res.status(400).json({})
-    }
-
-
-})
-
-
-// This will just fetch all the drafts that are in the avc backend database
-router.get(DRAFT + "/ga-libelle/:designation_longue", verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
-    try {
-        const designation_longue = req.params.designation_longue;
-
-        if(!designation_longue) {
-            throw new Error("Creator Id was falsy")
-        }
-        
-        const filter = { designation_longue }
-
-        const data = await DraftModel.findOne(filter);
-
-        if(!data) {
-            throw new Error("Finding the Drafts returned falsy for some reason")
-        }
-
-        res.status(200).json(data);
 
     } catch(err) {
         console.error(req.originalUrl + ", msg: error : " + err)

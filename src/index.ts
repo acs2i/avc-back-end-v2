@@ -24,6 +24,10 @@ import draftGetRoutes from "./routes/draft/draftGet"
 import draftPostRoutes from "./routes/draft/draftPost"
 import draftPutRoutes from "./routes/draft/draftPut"
 
+import groupGetRoutes from "./routes/group/groupGet"
+import groupPostRoutes from "./routes/group/groupPost"
+import groupPutRoutes from "./routes/group/groupPut"
+
 
 import familyGetRoutes from "./routes/family/familyGet"
 import familyPostRoutes from "./routes/family/familyPost"
@@ -81,6 +85,11 @@ app.use(v1, dimensionPutRoutes);
 app.use(v1, draftGetRoutes);
 app.use(v1, draftPostRoutes);
 app.use(v1, draftPutRoutes);
+
+// Group ROUTES
+app.use(v1, groupGetRoutes);
+app.use(v1, groupPostRoutes);
+app.use(v1, groupPutRoutes);
 
 // Family ROUTES
 app.use(v1, familyGetRoutes);

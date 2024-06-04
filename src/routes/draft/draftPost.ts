@@ -6,7 +6,7 @@ import { Document } from 'mongoose';
 
 const router = express.Router();
 
-router.post(DRAFT, verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
+router.post(DRAFT, async (req: Request, res: Response) => {
     try {
 
         const draft = req.body;
@@ -16,22 +16,24 @@ router.post(DRAFT, verifyToken, async (req: Request & { user?: {id: string}}, re
             throw new Error("req.body was falsy")
         }
 
-        if(!req.user) {
-            throw new Error("User was not authenticated");
-        }
+        // if(!req.user) {
+        //     throw new Error("User was not authenticated");
+        // }
 
         // Make sure authorization token matches
-        const CREATOR_ID = req.user.id;
+        // const creator_id = "test";
+        // const creator_id = req.body;
+        const creator_id = req.body.id;
 
-        const {GA_LIBELLE} = draft;
+        const {designation_longue} = draft;
 
-        const existingDraft = await DraftModel.findOne( {GA_LIBELLE , CREATOR_ID});
+        const existingDraft = await DraftModel.findOne( {designation_longue, creator_id});
 
         if(existingDraft) {
             throw new Error(req.originalUrl + ", msg: There already is a draft with this name")
         }
 
-        const newDraft = await new DraftModel({...draft, CREATOR_ID, IS_DRAFT: "0"})
+        const newDraft = await new DraftModel({...draft, creator_id, status: "0"})
 
        
         if(!newDraft) {

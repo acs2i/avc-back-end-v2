@@ -3,45 +3,47 @@ import mongoose, { Schema } from "mongoose";
 
 
 interface DraftSchema {
-    CREATOR_ID: ObjectId,
-    GA_CODEARTICLE: string,     
-    GA_LIBCOMPL: string,       
-    GA_LIBELLE: string,     
-    GA_LIBREART1 : string,  
-    GA_LIBREART2 : string, 
-    GA_LIBREART4 : string, 
-    GA_FOURNPRINC: string, 
-    GA_FERME: string,   
-    IS_DRAFT: string
+    creator_id: ObjectId,
+    description_ref: string,     
+    reference: string,       
+    designation_longue: string,     
+    designation_courte : string,  
+    marque : string, 
+    collection : string, 
+    description_brouillon: string,
+    status: number
 }
 
 const draftSchema = new mongoose.Schema<DraftSchema>({
-    CREATOR_ID: {
-        type: Schema.Types.ObjectId
+    creator_id: {
+        type: Schema.Types.ObjectId,
+        required: true
     },
-    GA_CODEARTICLE: {
+    description_ref: {
         type: String
     },
-    GA_LIBCOMPL: {
+    reference: {
+        type: String,
+        required: true
+    },
+    designation_longue: {
         type: String
     },
-    GA_LIBELLE: {
+    designation_courte: {
         type: String
     },
-    GA_LIBREART1: {
+    marque: {
         type: String
     },
-    GA_LIBREART2: {
+    collection: {
         type: String
     },
-    GA_LIBREART4: {
+    description_brouillon: {
         type: String
     },
-    GA_FOURNPRINC: {
-        type: String
-    },
-    IS_DRAFT: {
-        type: String
+    status: {
+        type: Number,
+        default: 0
     },
 
 },{ timestamps: true, collection: "draft" })
