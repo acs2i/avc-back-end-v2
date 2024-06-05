@@ -17,8 +17,8 @@ interface DraftSchema {
 const draftSchema = new mongoose.Schema<DraftSchema>({
     creator_id: {
         type: Schema.Types.ObjectId,
-        required: true
-    },
+        required: true,
+      },
     description_ref: {
         type: String
     },

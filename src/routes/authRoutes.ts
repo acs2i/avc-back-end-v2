@@ -19,7 +19,6 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
     additionalFields
   } = req.body;
 
-  console.log("Request body:", req.body);  // Log the request body
 
   let existingUser;
   try {
@@ -44,7 +43,7 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
   if (additionalFields) {
     try {
       additionalFieldsMap = new Map(additionalFields.map((field: { key: string; value: any }) => [field.key, field.value]));
-      console.log("Additional Fields Map:", additionalFieldsMap); // Log the additional fields map
+      console.log("Additional Fields Map:", additionalFieldsMap);
     } catch (err) {
       const error = new HttpError(
         "Invalid format for additionalFields.",
@@ -85,7 +84,7 @@ router.post("/login", async (req: Request, res: Response, next: NextFunction) =>
   const { username, password } = req.body;
   let user;
   try {
-    user = await User.findOne({ username: username.toLowerCase() });
+    user = await User.findOne({ username: username });
       if (!user) {
         return res.status(404).json({ error: "Cet utilisateur n'existe pas." });
       }

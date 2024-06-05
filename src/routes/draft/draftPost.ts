@@ -16,24 +16,17 @@ router.post(DRAFT, async (req: Request, res: Response) => {
             throw new Error("req.body was falsy")
         }
 
-        // if(!req.user) {
-        //     throw new Error("User was not authenticated");
-        // }
-
-        // Make sure authorization token matches
-        // const creator_id = "test";
-        // const creator_id = req.body;
-        const creator_id = req.body.id;
+        const id = req.body.id;
 
         const {designation_longue} = draft;
 
-        const existingDraft = await DraftModel.findOne( {designation_longue, creator_id});
+        const existingDraft = await DraftModel.findOne( {designation_longue, id});
 
         if(existingDraft) {
             throw new Error(req.originalUrl + ", msg: There already is a draft with this name")
         }
 
-        const newDraft = await new DraftModel({...draft, creator_id, status: "0"})
+        const newDraft = await new DraftModel({...draft, id})
 
        
         if(!newDraft) {

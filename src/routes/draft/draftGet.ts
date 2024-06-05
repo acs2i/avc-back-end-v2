@@ -2,6 +2,7 @@ import { verifyToken } from './../../middleware/auth';
 import express, { Request, Response } from "express"
 import { DRAFT } from "./shared";
 import DraftModel from '../../models/draftSchema';
+import GroupModel from '../../models/groupSchema';
 
 const router = express.Router();
 
@@ -108,6 +109,18 @@ router.get(DRAFT + "/ga-libelle/:designation_longue", verifyToken, async (req: R
         console.error(req.originalUrl + ", msg: error : " + err)
         res.status(400).json({})
     }
+
+
+})
+
+router.get(DRAFT, async (req: Request, res: Response) => {
+    try {
+        const draft = await GroupModel.find().populate("creator_id");
+        res.status(200).json(draft);
+      } catch (err) {
+        console.error("Error: ", err);
+        res.status(500).json({ error: "Une erreur est survenue lors de la récupération des utilisateurs." });
+      }
 
 
 })
