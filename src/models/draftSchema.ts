@@ -8,9 +8,18 @@ interface DraftSchema {
     reference: string,       
     designation_longue: string,     
     designation_courte : string,  
-    marque : string, 
-    collection : string, 
+    supplier_name : string,  
+    supplier_ref : string,  
+    family : string[],  
+    subFamily : string[],  
+    dimension_type : string, 
+    dimension : string[],  
+    brand : string, 
+    collection : string,
+    composition : string,
+    theme : string,
     description_brouillon: string,
+    imgPath: string,
     status: number
 }
 
@@ -32,13 +41,40 @@ const draftSchema = new mongoose.Schema<DraftSchema>({
     designation_courte: {
         type: String
     },
-    marque: {
+    supplier_name: {
+        type: String
+    },
+    supplier_ref: {
+        type: String
+    },
+    family: [{
+        type: String
+    }],
+    subFamily: [{
+        type: String
+    }],
+    dimension_type: {
+        type: String
+    },
+    dimension: [{
+        type: String
+    }],
+    brand: {
         type: String
     },
     collection: {
         type: String
     },
+    composition: {
+        type: String
+    },
+    theme: {
+        type: String
+    },
     description_brouillon: {
+        type: String
+    },
+    imgPath: {
         type: String
     },
     status: {
