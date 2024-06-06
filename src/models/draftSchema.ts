@@ -15,7 +15,7 @@ interface DraftSchema {
     dimension_type : string, 
     dimension : string[],  
     brand : string, 
-    collection : string,
+    ref_collection : string,
     composition : string,
     theme : string,
     description_brouillon: string,
@@ -24,9 +24,10 @@ interface DraftSchema {
 }
 
 const draftSchema = new mongoose.Schema<DraftSchema>({
-    creator_id: {
-        type: Schema.Types.ObjectId,
-        required: true,
+    creator_id:  {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        timestamp: true,
       },
     description_ref: {
         type: String
@@ -62,7 +63,7 @@ const draftSchema = new mongoose.Schema<DraftSchema>({
     brand: {
         type: String
     },
-    collection: {
+    ref_collection: {
         type: String
     },
     composition: {
