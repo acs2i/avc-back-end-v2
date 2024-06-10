@@ -1,19 +1,19 @@
-import { verifyToken } from './../../middleware/auth';
+import { verifyToken } from '../../middleware/auth';
 import express, { Request, Response } from "express"
-import { DRAFT } from "./shared";
-import DraftModel from '../../models/draftSchema';
+import { GROUP } from "./shared";
+import GroupModel from '../../models/groupSchema';
 import { UpdateWriteOpResult } from 'mongoose';
 
 
 const router = express.Router();
 
-router.put(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
+router.put(GROUP + "/:id", verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
     try {
 
-        const draft = req.body;
+        const group = req.body;
 
         
-        if(!draft) {
+        if(!group) {
             throw new Error(req.originalUrl + ", msg: req.body was falsy")
         }
 
@@ -28,14 +28,14 @@ router.put(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: stri
         }
 
         // Check product first matches the  creator id
-        const targetedDraft = await DraftModel.findById(_id );
+        const targetedGroup = await GroupModel.findById(_id );
 
-        if(!targetedDraft) {
+        if(!targetedGroup) {
             throw new Error(req.originalUrl + ", msg: targeted draft was not found")
         }
 
         // Make sure authorization token matches
-        const creatorId: string = targetedDraft.creator_id as unknown as string;
+        const creatorId: string = targetedGroup.creator_id as unknown as string;
         const idFromToken = req.user.id;
 
         // JAKE/VINCE/WALID/MARTIN - Il faut le mettre à jour quand le system de droit est implementé
@@ -44,7 +44,7 @@ router.put(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: stri
         }
 
 
-        const response: UpdateWriteOpResult= await DraftModel.updateOne({ _id}, {$set: draft })
+        const response: UpdateWriteOpResult= await GroupModel.updateOne({ _id}, {$set: group })
 
         if (response.acknowledged === true && response.matchedCount === 1 && response.modifiedCount === 1) {
             res.status(200).json(response)

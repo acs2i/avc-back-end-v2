@@ -1,169 +1,141 @@
-import { verifyToken } from './../../middleware/auth';
-import express, { Request, Response } from "express"
+import { verifyToken } from "./../../middleware/auth";
+import express, { Request, Response } from "express";
 import { DRAFT } from "./shared";
-import DraftModel from '../../models/draftSchema';
-import { generalLimits } from '../../services/generalServices';
+import DraftModel from "../../models/draftSchema";
+import GroupModel from "../../models/groupSchema";
+import User from "../../models/UserModel";
 
 const router = express.Router();
 
-
-// This will only get all the drafts that belong to a specific user
-// This will also have search functionalities as well too...? right practice? perhaps. 
-router.get(DRAFT, verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
+router.get(
+  DRAFT + "/:id",
+  verifyToken,
+  async (req: Request & { user?: { id: string } }, res: Response) => {
     try {
-        
-        if(!req.user) {
-            throw new Error("User was not authenticated");
-        }
+      const _id = req.params.id;
 
-        const {skip, intLimit} = await generalLimits(req);
+      if (!_id) {
+        throw new Error("Id was falsy");
+      }
 
-        const CREATOR_ID = req.user.id;
-        
-        if(!CREATOR_ID) {
-            throw new Error("Somehow creator id was falsy")
-        }
+      const data = await DraftModel.findById(_id);
 
-        const filter = { $and: [{CREATOR_ID}] as any[]};
+      if (!data) {
+        throw new Error("Finding the Drafts returned falsy for some reason");
+      }
 
-        // ONLY ALLOWS FOR NON LIASON VALUE SEARCHES
-        const {GA_CODEARTICLE, GA_LIBCOMPL, GA_LIBELLE} = req.query;
+      if (!req.user) {
+        throw new Error("User was not authenticated");
+      }
 
-        if(GA_CODEARTICLE) {
-            const regEx = new RegExp(GA_CODEARTICLE as string, "i");
-            filter.$and.push({GA_CODEARTICLE : {$regex: regEx}})
-        }
-        
-        if(GA_LIBCOMPL) {
-            const regEx = new RegExp(GA_LIBCOMPL as string, "i");
-            filter.$and.push({GA_LIBCOMPL : {$regex: regEx}})
-        }
+      // Make sure authorization token matches
+      const idFromToken = req.user.id;
 
-        if(GA_LIBELLE) {
-            const regEx = new RegExp(GA_LIBELLE as string, "i");
-            filter.$and.push({GA_LIBELLE : {$regex: regEx}})
-        }
+      const { creator_id } = data;
 
-        const data = await DraftModel.find(filter).skip(skip).limit(intLimit);
+      const creatorId: string = creator_id as unknown as string;
 
-        const total = await DraftModel.countDocuments(filter);
+      if (creatorId != idFromToken) {
+        throw new Error(
+          "Id passed from user does not match their authentication token"
+        );
+      }
 
-        res.status(200).json({data, total});
-
-
-    } catch(err) {
-        console.error(err);
-        res.status(400).json({})
+      res.status(200).json(data);
+    } catch (err) {
+      console.error(err);
+      res.status(400).json({});
     }
-})
-
-router.get(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
-    try {
-
-        const _id = req.params.id;
-
-        if(!_id) {
-            throw new Error("Id was falsy")
-        }
-
-        const data = await DraftModel.findById(_id );
-
-        if(!data) {
-            throw new Error("Finding the Drafts returned falsy for some reason")
-        }
-
-        if(!req.user) {
-            throw new Error("User was not authenticated");
-        }
-
-        // Make sure authorization token matches
-        const idFromToken = req.user.id;
-
-        const { CREATOR_ID}  = data;
-
-        const creatorId : string = CREATOR_ID as unknown as string;
-
-        if(creatorId != idFromToken) {
-            throw new Error("Id passed from user does not match their authentication token");
-        }
-
-        res.status(200).json(data);
-
-    } catch(err) {
-        console.error(err);
-        res.status(400).json({})
-    }
-})
+  }
+);
 
 // This will just fetch all the drafts that are in the avc backend database
-// DEPRECATED - use the /draft route for getting all the drafts for a user
-// router.get(DRAFT + "/creator-id/:creatorId", verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
-//     try {
-//         const creatorId = req.params.creatorId;
+router.get(
+  DRAFT + "/creator-id/:creatorId",
+  verifyToken,
+  async (req: Request & { user?: { id: string } }, res: Response) => {
+    try {
+      const creatorId = req.params.creatorId;
 
-//         if(!creatorId) {
-//             throw new Error("Creator Id was falsy")
-//         }
+      if (!creatorId) {
+        throw new Error("Creator Id was falsy");
+      }
 
-//         if(!req.user) {
-//             throw new Error("User was not authenticated");
-//         }
-//         // Make sure authorization token matches
-//         const idFromToken = req.user.id;
+      if (!req.user) {
+        throw new Error("User was not authenticated");
+      }
+      // Make sure authorization token matches
+      const idFromToken = req.user.id;
 
-//         if(creatorId !== idFromToken) {
-//             throw new Error("Id passed from user does not match their authentication token");
-//         }
+      if (creatorId !== idFromToken) {
+        throw new Error(
+          "Id passed from user does not match their authentication token"
+        );
+      }
 
-//         const filter = { CREATOR_ID: idFromToken}
+      const filter = { creator_id: idFromToken };
 
-//         const data = await DraftModel.find(filter);
+      const data = await DraftModel.find(filter);
 
-//         if(!data) {
-//             throw new Error("Finding the Drafts returned falsy for some reason")
-//         }
+      if (!data) {
+        throw new Error("Finding the Drafts returned falsy for some reason");
+      }
 
-//         const total = await DraftModel.countDocuments(filter)
+      const total = await DraftModel.countDocuments(filter);
 
-//         res.status(200).json({data, total});
-
-
-
-//     } catch(err) {
-//         console.error(req.originalUrl + ", msg: error : " + err)
-//         res.status(400).json({})
-//     }
-
-
-// })
-
+      res.status(200).json({ data, total });
+    } catch (err) {
+      console.error(req.originalUrl + ", msg: error : " + err);
+      res.status(400).json({});
+    }
+  }
+);
 
 // This will just fetch all the drafts that are in the avc backend database
-router.get(DRAFT + "/ga-libelle/:GA_LIBELLE", verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
+router.get(
+  DRAFT + "/ga-libelle/:designation_longue",
+  verifyToken,
+  async (req: Request & { user?: { id: string } }, res: Response) => {
     try {
-        const GA_LIBELLE = req.params.GA_LIBELLE;
+      const designation_longue = req.params.designation_longue;
 
-        if(!GA_LIBELLE) {
-            throw new Error("Creator Id was falsy")
-        }
-        
-        const filter = { GA_LIBELLE }
+      if (!designation_longue) {
+        throw new Error("Creator Id was falsy");
+      }
 
-        const data = await DraftModel.findOne(filter);
+      const filter = { designation_longue };
 
-        if(!data) {
-            throw new Error("Finding the Drafts returned falsy for some reason")
-        }
+      const data = await DraftModel.findOne(filter);
 
-        res.status(200).json(data);
+      if (!data) {
+        throw new Error("Finding the Drafts returned falsy for some reason");
+      }
 
-    } catch(err) {
-        console.error(req.originalUrl + ", msg: error : " + err)
-        res.status(400).json({})
+      res.status(200).json(data);
+    } catch (err) {
+      console.error(req.originalUrl + ", msg: error : " + err);
+      res.status(400).json({});
     }
+  }
+);
+
+router.get(DRAFT + "/user/:userId", async (req: Request, res: Response) => {
+  const { userId } = req.params;
+
+  try {
 
 
-})
-
+    const drafts = await DraftModel.find({ creator_id: userId }).populate("creator_id")
+    res.status(200).json(drafts);
+  } catch (err) {
+    console.error("Error: ", err);
+    res
+      .status(500)
+      .json({
+        error:
+          "Une erreur est survenue lors de la récupération des brouillons.",
+      });
+  }
+});
 
 export default router;

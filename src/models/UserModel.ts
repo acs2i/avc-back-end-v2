@@ -13,6 +13,14 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  authorization: {
+    type: String,
+    required: true,
+  },
+  comment: {
+    type: String,
+    maxlength: 250
+  },
   products: [
     {
       _id: {
@@ -30,6 +38,10 @@ const UserSchema = new mongoose.Schema({
       },
     },
   ],
+  additionalFields: {
+    type: Map,
+    of: mongoose.Schema.Types.Mixed
+  }
 }, {timestamps: true, collection: "user"}
 
 

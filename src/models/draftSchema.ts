@@ -3,45 +3,84 @@ import mongoose, { Schema } from "mongoose";
 
 
 interface DraftSchema {
-    CREATOR_ID: ObjectId,
-    GA_CODEARTICLE: string,     
-    GA_LIBCOMPL: string,       
-    GA_LIBELLE: string,     
-    GA_LIBREART1 : string,  
-    GA_LIBREART2 : string, 
-    GA_LIBREART4 : string, 
-    GA_FOURNPRINC: string, 
-    GA_FERME: string,   
-    IS_DRAFT: string
+    creator_id: ObjectId,
+    description_ref: string,     
+    reference: string,       
+    designation_longue: string,     
+    designation_courte : string,  
+    supplier_name : string,  
+    supplier_ref : string,  
+    family : string[],  
+    subFamily : string[],  
+    dimension_type : string, 
+    dimension : string[],  
+    brand : string, 
+    ref_collection : string,
+    composition : string,
+    theme : string,
+    description_brouillon: string,
+    imgPath: string,
+    status: number
 }
 
 const draftSchema = new mongoose.Schema<DraftSchema>({
-    CREATOR_ID: {
-        type: Schema.Types.ObjectId
-    },
-    GA_CODEARTICLE: {
+    creator_id:  {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        timestamp: true,
+      },
+    description_ref: {
         type: String
     },
-    GA_LIBCOMPL: {
+    reference: {
+        type: String,
+        required: true
+    },
+    designation_longue: {
         type: String
     },
-    GA_LIBELLE: {
+    designation_courte: {
         type: String
     },
-    GA_LIBREART1: {
+    supplier_name: {
         type: String
     },
-    GA_LIBREART2: {
+    supplier_ref: {
         type: String
     },
-    GA_LIBREART4: {
+    family: [{
+        type: String
+    }],
+    subFamily: [{
+        type: String
+    }],
+    dimension_type: {
         type: String
     },
-    GA_FOURNPRINC: {
+    dimension: [{
+        type: String
+    }],
+    brand: {
         type: String
     },
-    IS_DRAFT: {
+    ref_collection: {
         type: String
+    },
+    composition: {
+        type: String
+    },
+    theme: {
+        type: String
+    },
+    description_brouillon: {
+        type: String
+    },
+    imgPath: {
+        type: String
+    },
+    status: {
+        type: Number,
+        default: 0
     },
 
 },{ timestamps: true, collection: "draft" })
