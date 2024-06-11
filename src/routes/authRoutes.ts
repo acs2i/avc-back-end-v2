@@ -15,6 +15,7 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
     email,
     password,
     authorization,
+    imgPath,
     comment,
     additionalFields
   } = req.body;
@@ -58,6 +59,7 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
     password: passwordHash,
     email,
     authorization,
+    imgPath,
     comment,
     additionalFields: additionalFieldsMap
   });
