@@ -19,15 +19,9 @@ import dimensionGetRoutes from "./routes/dimension/dimensionGet"
 import dimensionPostRoutes from "./routes/dimension/dimensionPost"
 import dimensionPutRoutes from "./routes/dimension/dimensionPut"
 
-
 import draftGetRoutes from "./routes/draft/draftGet"
 import draftPostRoutes from "./routes/draft/draftPost"
 import draftPutRoutes from "./routes/draft/draftPut"
-
-import groupGetRoutes from "./routes/group/groupGet"
-import groupPostRoutes from "./routes/group/groupPost"
-import groupPutRoutes from "./routes/group/groupPut"
-
 
 import familyGetRoutes from "./routes/family/familyGet"
 import familyPostRoutes from "./routes/family/familyPost"
@@ -35,6 +29,10 @@ import familyPutRoutes from "./routes/family/familyPut"
 
 import gridGetRoutes from "./routes/grid/gridGet"
 import gridPostRoutes from "./routes/grid/gridPost"
+
+import groupGetRoutes from "./routes/group/groupGet"
+import groupPostRoutes from "./routes/group/groupPost"
+import groupPutRoutes from "./routes/group/groupPut"
 
 import productGetRoutes from "./routes/product/productGet"
 import productPostRoutes from "./routes/product/productPost"
@@ -46,6 +44,9 @@ import uvcPutRoutes from "./routes/uvc/uvcPut"
 
 import supplierGetRoutes from "./routes/supplier/supplierGet"
 
+import tagGetRoutes from "./routes/tag/tagGet"
+import tagPostRoutes from "./routes/tag/tagPost"
+import tagPutRoutes from "./routes/tag/tagPut"
 
 dotenv.config();
 const app = express();
@@ -86,11 +87,6 @@ app.use(v1, draftGetRoutes);
 app.use(v1, draftPostRoutes);
 app.use(v1, draftPutRoutes);
 
-// Group ROUTES
-app.use(v1, groupGetRoutes);
-app.use(v1, groupPostRoutes);
-app.use(v1, groupPutRoutes);
-
 // Family ROUTES
 app.use(v1, familyGetRoutes);
 app.use(v1, familyPostRoutes);
@@ -99,6 +95,11 @@ app.use(v1, familyPutRoutes);
 //Grid ROUTES
 app.use(v1, gridGetRoutes);
 app.use(v1, gridPostRoutes);
+
+// Group ROUTES
+app.use(v1, groupGetRoutes);
+app.use(v1, groupPostRoutes);
+app.use(v1, groupPutRoutes);
 
 // Product ROUTES
 app.use(v1, productGetRoutes);
@@ -113,6 +114,10 @@ app.use(v1, uvcPutRoutes)
 // Supplier Routes
 app.use(v1, supplierGetRoutes)
 
+// Tag Routes
+app.use(v1, tagGetRoutes)
+app.use(v1, tagPostRoutes)
+app.use(v1, tagPutRoutes)
 
 app.listen(PORT, () => {
   dbConnect();
