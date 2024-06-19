@@ -13,9 +13,11 @@ const router = express.Router();
 router.post(
   COLLECTION,
   async (req: Request, res: Response, next: NextFunction) => {
-    const { creatorId, collection} = req.body;
+    const collection = req.body;
 
     try {
+
+      const {creatorId} = collection;
       // Rechercher l'utilisateur en utilisant son ID
       const user = await User.findById(creatorId);
 
@@ -24,11 +26,9 @@ router.post(
       }
 
       // Créer un nouveau produit avec les détails de l'utilisateur
-      const body = JSON.stringify({ creatorId, collection})
+      const body = JSON.stringify(collection)
 
       const response = await Post("/collection", body);
-
-      console.log(body)
 
       if(response.status !== 200 ){
         throw new HttpError("Erreur sur le coté data lake à propos de Post collection " + JSON.stringify(response), 400);
