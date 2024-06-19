@@ -12,9 +12,10 @@ const router = express.Router();
 //api/v1/brand/create
 // TELL VINCE TO CHANGE FROM "/create" to "/"
 router.post(BRAND, async (req: Request, res: Response, next: NextFunction) => {
-    const { creatorId, brand } = req.body; // creator is CREATOR ID
+    const brand = req.body; // creator is CREATOR ID
 
     try {
+      const { creatorId } = brand;
       // Rechercher l'utilisateur en utilisant son ID
       const user = await User.findById(creatorId);
 
@@ -52,7 +53,7 @@ router.post(BRAND, async (req: Request, res: Response, next: NextFunction) => {
       if (!updatedUser) {
         Delete("/brand", savedBrand._id);
         throw new Error("could not find user, rolling back the changes")
-    }
+      }
 
 
       res.status(200).json(savedBrand);
