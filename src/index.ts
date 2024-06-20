@@ -147,9 +147,13 @@ io.on('connection', (socket) => {
   });
   
   socket.on('chat message', async (msg) => {
-    const message = new Message(msg);
-    await message.save();
-    io.to(msg.receiver).emit('chat message', msg);
+    try {
+      const message = new Message(msg);
+      await message.save();
+      io.to(msg.receiver).emit('chat message', msg);
+    } catch (error) {
+      console.error("Error saving message:", error);
+    }
   });
 
   socket.on('disconnect', () => {
