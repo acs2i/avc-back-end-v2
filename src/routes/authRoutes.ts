@@ -127,4 +127,19 @@ router.get("/all-users", async (req: Request, res: Response, next: NextFunction)
   }
 });
 
+
+//Userbyid
+//@GET
+//api/v1/auth/user/:id
+router.get("/connectedUser/:userId", async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).json({ error: "Une erreur est survenue lors de la récupération des utilisateurs." });
+  }
+});
+
 export default router;

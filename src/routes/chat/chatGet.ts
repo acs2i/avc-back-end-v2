@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import MessageModel from '../../models/Message';
+import User from "../../models/UserModel"
 import { MESSAGES } from "./shared";
 
 const router = express.Router();
@@ -14,6 +15,11 @@ router.get(MESSAGES + '/:userId/:contactId', async (req: Request, res: Response)
         { sender: contactId, receiver: userId }
       ]
     }).sort({ timestamp: 1 });
+
+    // Reset unread messages count for the user
+    await User.findByIdAndUpdate(userId, {
+      $set: { [`unreadMessages.${contactId}`]: 0 }
+    });
 
     res.status(200).json(messages);
   } catch (error) {

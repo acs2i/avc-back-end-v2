@@ -41,9 +41,10 @@ const UserSchema = new mongoose.Schema({
       },
     },
   ],
-  additionalFields: {
+  unreadMessages: {
     type: Map,
-    of: mongoose.Schema.Types.Mixed
+    of: Number,
+    default: {}
   }
 }, {timestamps: true, collection: "user"}
 
