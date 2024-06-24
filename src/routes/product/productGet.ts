@@ -6,7 +6,8 @@ import { generalLimits } from "../../services/generalServices";
 
 
 const router = express.Router();
-
+/* 
+DEPRECATED
 router.get(PRODUCT + "/ga-libelle/:GA_LIBELLE", async(req: Request, res: Response) => {
   try {
 
@@ -51,7 +52,7 @@ router.get(PRODUCT + "/ga-libelle/:GA_LIBELLE", async(req: Request, res: Respons
     res.status(400).json({})
   }
 })
-
+*/
 router.get(PRODUCT + "/search", async(req: Request, res: Response) => {
   try {
     const page: string | any | string[] | undefined = req.query.page;
@@ -74,9 +75,9 @@ router.get(PRODUCT + "/search", async(req: Request, res: Response) => {
     }    
     
 
-    const {GA_CODEARTICLE, GA_LIBCOMPL, GA_LIBELLE,GA_LIBREART4,GA_LIBREART1, GA_LIBREART2, GA_FOURNPRINC,GA_FERME} = req.query
+    const { supplier, tag, tag_grouping, brand, collection, dimension, dimension_type } = req.query;
 
-    const response = await Get("/product/search", undefined, intPage, intLimit,  {GA_CODEARTICLE, GA_LIBCOMPL, GA_LIBELLE,GA_LIBREART4,GA_LIBREART1, GA_LIBREART2, GA_FOURNPRINC,GA_FERME});
+    const response = await Get("/product/search", undefined, intPage, intLimit,  { supplier, tag, tag_grouping, brand, collection, dimension, dimension_type });
 
     if(response.status !== 200) {
       throw new Error("Erreur sur le coté de data lake serveur en cherchant les products");
