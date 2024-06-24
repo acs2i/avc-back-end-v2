@@ -28,7 +28,7 @@ router.get(
         throw new Error("User was not authenticated");
       }
 
-      // Make sure authorization token matches
+
       const idFromToken = req.user.id;
 
       const { creator_id } = data;
@@ -49,7 +49,6 @@ router.get(
   }
 );
 
-// This will just fetch all the drafts that are in the avc backend database
 router.get(
   DRAFT + "/creator-id/:creatorId",
   verifyToken,
@@ -91,7 +90,7 @@ router.get(
   }
 );
 
-// This will just fetch all the drafts that are in the avc backend database
+
 router.get(
   DRAFT + "/ga-libelle/:designation_longue",
   verifyToken,

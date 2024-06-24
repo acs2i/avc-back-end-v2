@@ -26,19 +26,10 @@ const UserSchema = new mongoose.Schema({
   },
   products: [
     {
-      _id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-        required: true,
-      },
-      name: {
-        type: String,
-        required: true,
-      },
-      date: {
-        type: Date,
-        required: true,
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "draft",
+      default: [],
+      timestamp: true
     },
   ],
   unreadMessages: {

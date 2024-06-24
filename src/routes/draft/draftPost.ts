@@ -2,6 +2,7 @@ import { verifyToken } from './../../middleware/auth';
 import express, { Request, Response } from "express"
 import { DRAFT } from "./shared";
 import DraftModel from '../../models/draftSchema';
+import User from '../../models/UserModel';
 import { Document } from 'mongoose';
 
 const router = express.Router();
@@ -10,6 +11,7 @@ router.post(DRAFT, async (req: Request, res: Response) => {
     try {
 
         const draft = req.body;
+        const userId = req.body.creator_id;
 
         
         if(!draft) {
@@ -17,11 +19,10 @@ router.post(DRAFT, async (req: Request, res: Response) => {
         }
 
         const id = req.body.id;
-
         const {designation_longue} = draft;
 
         const existingDraft = await DraftModel.findOne( {designation_longue, id});
-
+    
         if(existingDraft) {
             throw new Error(req.originalUrl + ", msg: There already is a draft with this name")
         }
@@ -32,8 +33,11 @@ router.post(DRAFT, async (req: Request, res: Response) => {
         if(!newDraft) {
             throw new Error(req.originalUrl + " msg: draft save did not work for some reason: " + draft);
         }
-
+        
         const result : Document | null | undefined = await newDraft.save({timestamps: true})
+        if (userId) {
+            await User.findByIdAndUpdate(userId, { $push: { products: newDraft._id } });
+        }
 
         res.status(200).json(result);
 
