@@ -3,6 +3,7 @@ import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { verifyToken } from "../middleware/auth";
 
 const router = express.Router();
 
@@ -66,7 +67,6 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
 
   try {
     await newUser.save();
-    console.log("New user created:", newUser);  // Log the new user
   } catch (err) {
     console.error("Error saving user:", err);  // Log the error
     const error = new HttpError(
@@ -84,42 +84,45 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
 //api/v1/auth/register
 router.post("/login", async (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body;
-  let user;
+  
   try {
-    user = await User.findOne({ username: username });
-      if (!user) {
-        return res.status(404).json({ error: "Cet utilisateur n'existe pas." });
-      }
+    const user = await User.findOne({ username: username });
     
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(404).json({ error: "L'identifiant et le mot de passe ne correspondent pas" });
-      }
-      if (!process.env.JWT_SECRET) {
-        throw new Error("JWT_SECRET non défini dans les variables d'environnement");
-      }
-      
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-      
-      res.status(200).json({
-        message: "Logged In",
-        user: user.toObject({ getters: true }),
-        token: token
-      });
+    if (!user) {
+      return res.status(404).json({ error: "Cet utilisateur n'existe pas." });
+    }
+    
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(404).json({ error: "L'identifiant et le mot de passe ne correspondent pas" });
+    }
+    
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET non défini dans les variables d'environnement");
+    }
+    
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+
+    // Créer un nouvel objet sans la propriété password
+    const { password: _, ...userWithoutPassword } = user.toObject({ getters: true });
+    
+    res.status(200).json({
+      message: "Logged In",
+      user: userWithoutPassword,
+      token: token
+    });
   } catch (err) {
     console.error("Error: " , err);
-    res.status(400).json({})
+    res.status(500).json({ error: "Une erreur est survenue lors de la connexion" });
   }
-
- 
 });
 
-//LOGIN
+//ALL USERS
 //@GET
-//api/v1/auth/register
-router.get("/all-users", async (req: Request, res: Response, next: NextFunction) => {
+//api/v1/auth/register/all-users
+router.get("/all-users", verifyToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select('-password');
     res.status(200).json(users);
   } catch (err) {
     console.error("Error: ", err);
@@ -131,7 +134,7 @@ router.get("/all-users", async (req: Request, res: Response, next: NextFunction)
 //Userbyid
 //@GET
 //api/v1/auth/user/:id
-router.get("/connectedUser/:userId", async (req: Request, res: Response, next: NextFunction) => {
+router.get("/:userId", verifyToken, async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params;
   try {
     const user = await User.findById(userId);
@@ -139,6 +142,43 @@ router.get("/connectedUser/:userId", async (req: Request, res: Response, next: N
   } catch (err) {
     console.error("Error: ", err);
     res.status(500).json({ error: "Une erreur est survenue lors de la récupération des utilisateurs." });
+  }
+});
+
+
+//Update user
+//@GET
+//api/v1/auth/user/:id
+router.patch("/:userId", verifyToken, async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params;
+  const { username, authorization, email } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "Utilisateur non trouvé." });
+    }
+
+    if (username) {
+      user.username = username;
+    }
+
+    if (authorization) {
+      user.authorization = authorization;
+    }
+
+    if (email) {
+      user.email = email;
+    }
+
+    // Sauvegarder les modifications
+    const updatedUser = await user.save();
+
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).json({ error: "Une erreur est survenue lors de la mise à jour de l'utilisateur." });
   }
 });
 

@@ -118,7 +118,7 @@ router.get(
   }
 );
 
-router.get(DRAFT + "/user/:userId", async (req: Request, res: Response) => {
+router.get(DRAFT + "/user/:userId", verifyToken, async (req: Request, res: Response) => {
   const { userId } = req.params;
 
   try {
