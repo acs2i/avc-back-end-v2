@@ -1,5 +1,10 @@
 import mongoose from "mongoose"
 
+const NotificationSchema = new mongoose.Schema({
+  message: { type: String, required: true },
+  date: { type: Date, default: Date.now },
+  read: { type: Boolean, default: false }
+});
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -36,7 +41,12 @@ const UserSchema = new mongoose.Schema({
     type: Map,
     of: Number,
     default: {}
-  }
+  },
+  notifications: [{
+    message:  String,
+    date: Date,
+    read: Boolean
+  }],
 }, {timestamps: true, collection: "user"}
 
 
