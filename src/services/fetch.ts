@@ -47,6 +47,7 @@ export const Post = async(endpoint: string, body: string): Promise<any> => {
 }
 
 export const Put = async(endpoint: string, body: string): Promise<any> => {
+    console.log("ENDPOINT: " , dataLakeUri + endpoint)
     return await fetch(dataLakeUri + endpoint, {
         method: "PUT",
         headers: {
