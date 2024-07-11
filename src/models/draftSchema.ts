@@ -1,90 +1,106 @@
 import { ObjectId } from "mongodb";
 import mongoose, { Schema } from "mongoose";
 
-
 interface DraftSchema {
-    creator_id: ObjectId,
-    description_ref: string,     
-    reference: string,       
-    designation_longue: string,     
-    designation_courte : string,  
-    supplier_name : string,  
-    supplier_ref : string,  
-    family : string[],  
-    subFamily : string[],  
-    dimension_type : string, 
-    dimension : string[],  
-    brand : string, 
-    ref_collection : string,
-    composition : string,
-    theme : string,
-    description_brouillon: string,
-    imgPath: string,
-    status: number
+  creator_id: ObjectId;
+  description_ref: string;
+  reference: string;
+  designation_longue: string;
+  designation_courte: string;
+  call_name: string;
+  supplier_name: string;
+  supplier_ref: string;
+  family: string[];
+  subFamily: string[];
+  suSubbFamily: string[];
+  dimension_type: string;
+  dimension: string[];
+  brand: string;
+  ref_collection: string;
+  composition: string;
+  theme: string;
+  description_brouillon: string;
+  imgPath: string;
+  status: number;
 }
 
-const draftSchema = new mongoose.Schema<DraftSchema>({
-    creator_id:  {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        timestamp: true,
-      },
+const draftSchema = new mongoose.Schema<DraftSchema>(
+  {
+    creator_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      timestamp: true,
+    },
     description_ref: {
-        type: String
+      type: String,
     },
     reference: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     designation_longue: {
-        type: String
+      type: String,
     },
     designation_courte: {
-        type: String
+      type: String,
+    },
+    call_name: {
+      type: String,
     },
     supplier_name: {
-        type: String
+      type: String,
     },
     supplier_ref: {
-        type: String
+      type: String,
     },
-    family: [{
-        type: String
-    }],
-    subFamily: [{
-        type: String
-    }],
+    family: [
+      {
+        type: String,
+      },
+    ],
+    subFamily: [
+      {
+        type: String,
+      },
+    ],
+    suSubbFamily: [
+      {
+        type: String,
+      },
+    ],
     dimension_type: {
-        type: String
+      type: String,
     },
-    dimension: [{
-        type: String
-    }],
+    dimension: [
+      {
+        type: String,
+      },
+    ],
     brand: {
-        type: String
+      type: String,
     },
     ref_collection: {
-        type: String
+      type: String,
     },
     composition: {
-        type: String
+      type: String,
     },
     theme: {
-        type: String
+      type: String,
     },
     description_brouillon: {
-        type: String
+      type: String,
     },
     imgPath: {
-        type: String
+      type: String,
     },
     status: {
-        type: Number,
-        default: 0
+      type: Number,
+      default: 0,
     },
-
-},{ timestamps: true, collection: "draft" })
-
+  },
+  { timestamps: true, collection: "draft" }
+);
 
 const DraftModel = mongoose.model<DraftSchema>("draft", draftSchema);
-export default DraftModel
+export default DraftModel;
