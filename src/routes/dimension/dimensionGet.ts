@@ -11,9 +11,9 @@ router.get(DIMENSION + "/search", async(req: Request, res: Response) => {
       
         const {intPage, intLimit} = await generalLimits(req);       
 
-      const {label} = req.query;
+      const {label, code, type} = req.query;
   
-      const response = await Get("/dimension/search", undefined, intPage, intLimit, { label});
+      const response = await Get("/dimension/search", undefined, intPage, intLimit, { label, code, type});
   
       if(response.status !== 200) {
         throw new Error("Erreur sur le coté de data lake serveur en cherchant les families");

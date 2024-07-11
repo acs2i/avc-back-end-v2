@@ -1,15 +1,15 @@
 import express, { Request, Response, NextFunction } from "express";
 import { Put } from "../../services/fetch";
-import { SUPPLIER } from "./shared";
-
+import { CLIENT } from "./shared";
 const router = express.Router();
 
-router.put(SUPPLIER + "/:id", async (req: Request, res: Response, next: NextFunction) => {
+// connecté a datalake - TESTED NEW DATA LAKE
+router.put(CLIENT + "/:id", async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const supplier = req.body;
+      const client = req.body;
   
-      if(!supplier) {
-        throw new Error(req.originalUrl + ", msg: supplier was falsy: " + supplier)
+      if(!client) {
+        throw new Error(req.originalUrl + ", msg: client was falsy: " + client)
       }
 
       const id: string | undefined | null = req.params.id;
@@ -17,15 +17,14 @@ router.put(SUPPLIER + "/:id", async (req: Request, res: Response, next: NextFunc
       if(!id) {
         throw new Error(req.originalUrl + ", msg: id was falsy: " + id)
       }
-
-      const response = await Put("/supplier/" + id, JSON.stringify(supplier));
+  
+      const response = await Put("/client/" + id, JSON.stringify(client));
   
       if(!response) {
         throw new Error(req.originalUrl + ", msg: response was falsy: " + JSON.stringify(response))
       }
-  
+       
       if(response.status === 200) {
-
         const updatedDoc = await response.json();
         res.status(200).json(updatedDoc);
       } else {

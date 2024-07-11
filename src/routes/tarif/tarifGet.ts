@@ -1,20 +1,20 @@
 import { Get } from "../../services/fetch";
 import { generalLimits } from "../../services/generalServices";
-import { SUPPLIER } from "./shared";
 import express, { Request, Response } from "express"
+import { TARIF } from "./shared";
 
 const router = express.Router()
 
-router.get(SUPPLIER, async (req: Request, res: Response) => {
+router.get(TARIF, async (req: Request, res: Response) => {
   try {
     
     const {intPage, intLimit} = await generalLimits(req);
 
 
-    const response = await Get("/supplier", undefined, intPage, intLimit);
+    const response = await Get("/tarif", undefined, intPage, intLimit);
 
     if(response.status !== 200) {
-      throw new Error("Erreur sur le coté de data lake serveur en cherchant les products");
+      throw new Error("Erreur sur le coté de data lake serveur en cherchant les tarif");
     }
     
     const results = await response.json();
@@ -27,17 +27,17 @@ router.get(SUPPLIER, async (req: Request, res: Response) => {
 
 })
 
-router.get(SUPPLIER + "/search", async(req: Request, res: Response) => {
+router.get(TARIF + "/search", async(req: Request, res: Response) => {
     try {
       
       const {intPage, intLimit} = await generalLimits(req);
 
-      const {code, label, address, status, country} = req.query
+      const {code, label} = req.query
   
-      const response = await Get("/supplier/search", undefined, intPage, intLimit, {code, label, address, status, country});
+      const response = await Get("/tarif/search", undefined, intPage, intLimit, {code, label});
   
       if(response.status !== 200) {
-        throw new Error("Erreur sur le coté de data lake serveur en cherchant les products");
+        throw new Error("Erreur sur le coté de data lake serveur en cherchant les tarif");
       }
       
       const results = await response.json();

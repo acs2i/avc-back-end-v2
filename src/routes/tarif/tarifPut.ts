@@ -1,15 +1,15 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import { Put } from "../../services/fetch";
-import { SUPPLIER } from "./shared";
+import { TARIF } from "./shared";
 
 const router = express.Router();
 
-router.put(SUPPLIER + "/:id", async (req: Request, res: Response, next: NextFunction) => {
+router.put(TARIF + "/:id", async (req: Request, res: Response) => {
     try {
-      const supplier = req.body;
+      const tarif = req.body;
   
-      if(!supplier) {
-        throw new Error(req.originalUrl + ", msg: supplier was falsy: " + supplier)
+      if(!tarif) {
+        throw new Error(req.originalUrl + ", msg: tarif was falsy: " + tarif)
       }
 
       const id: string | undefined | null = req.params.id;
@@ -18,7 +18,7 @@ router.put(SUPPLIER + "/:id", async (req: Request, res: Response, next: NextFunc
         throw new Error(req.originalUrl + ", msg: id was falsy: " + id)
       }
 
-      const response = await Put("/supplier/" + id, JSON.stringify(supplier));
+      const response = await Put("/tarif/" + id, JSON.stringify(tarif));
   
       if(!response) {
         throw new Error(req.originalUrl + ", msg: response was falsy: " + JSON.stringify(response))

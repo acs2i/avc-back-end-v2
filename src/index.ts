@@ -23,12 +23,6 @@ import draftGetRoutes from "./routes/draft/draftGet"
 import draftPostRoutes from "./routes/draft/draftPost"
 import draftPutRoutes from "./routes/draft/draftPut"
 
-import familyGetRoutes from "./routes/family/familyGet"
-import familyPostRoutes from "./routes/family/familyPost"
-import familyPutRoutes from "./routes/family/familyPut"
-
-import gridGetRoutes from "./routes/grid/gridGet"
-import gridPostRoutes from "./routes/grid/gridPost"
 
 import groupGetRoutes from "./routes/group/groupGet"
 import groupPostRoutes from "./routes/group/groupPost"
@@ -50,6 +44,10 @@ import supplierPutRoutes from "./routes/supplier/supplierPut"
 import tagGetRoutes from "./routes/tag/tagGet"
 import tagPostRoutes from "./routes/tag/tagPost"
 import tagPutRoutes from "./routes/tag/tagPut"
+
+import tarifGetRoutes from "./routes/tarif/tarifGet"
+import tarifPostRoutes from "./routes/tarif/tarifPost"
+import tarifPutRoutes from "./routes/tarif/tarifPut"
 
 dotenv.config();
 const app = express();
@@ -89,16 +87,6 @@ app.use(v1, dimensionPutRoutes);
 app.use(v1, draftGetRoutes);
 app.use(v1, draftPostRoutes);
 app.use(v1, draftPutRoutes);
-
-// Family ROUTES
-app.use(v1, familyGetRoutes);
-app.use(v1, familyPostRoutes);
-app.use(v1, familyPutRoutes);
-
-//Grid ROUTES
-app.use(v1, gridGetRoutes);
-app.use(v1, gridPostRoutes);
-
 // Group ROUTES
 app.use(v1, groupGetRoutes);
 app.use(v1, groupPostRoutes);
@@ -123,6 +111,12 @@ app.use(v1, supplierPutRoutes)
 app.use(v1, tagGetRoutes)
 app.use(v1, tagPostRoutes)
 app.use(v1, tagPutRoutes)
+
+// Tarif Routes
+app.use(v1, tarifGetRoutes)
+app.use(v1, tarifPostRoutes)
+app.use(v1, tarifPutRoutes)
+
 
 app.listen(PORT, () => {
   dbConnect();

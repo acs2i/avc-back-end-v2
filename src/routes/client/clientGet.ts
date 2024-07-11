@@ -1,48 +1,44 @@
 import express, { Request, Response, NextFunction } from "express";
 import { Get} from "../../services/fetch";
-import { COLLECTION } from "./shared";
+import { CLIENT } from "./shared";
 import { generalLimits } from "../../services/generalServices";
 const router = express.Router();
 
-//GET ALL COLLECTIONS
-// connecté à data lake - TESTED ON NEW DATA LAKE
-//@PGET
-//api/v1/collection
-router.get(COLLECTION, async (req: Request, res: Response, next: NextFunction) => {
+router.get(CLIENT, async (req: Request, res: Response, next: NextFunction) => {
     try {
 
       
       const {intPage, intLimit} = await generalLimits(req);
 
-      const response = await Get("/collection", undefined, intPage, intLimit);
+      const response = await Get("/client", undefined, intPage, intLimit);
 
       if(response.status !== 200) {
-        throw new Error("Erreur sur le coté de data lake serveur en cherchant les collection");
+        throw new Error("Erreur sur le coté de data lake serveur en cherchant les client");
       }
-      const collections = await response.json();
+      const result = await response.json();
   
-      res.status(200).json(collections);
+      res.status(200).json(result);
     } catch (err) {
       res.status(500).json({ error: { message: "un probleme est survenu" } });
     }
 });
 
 
-router.get(COLLECTION + "/search", async(req: Request, res: Response) => {
+router.get(CLIENT + "/search", async(req: Request, res: Response) => {
   try {
     
     const {intPage, intLimit} = await generalLimits(req);
 
-    const { code, label, type} = req.query;
+    const { type} = req.query;
 
-    const response = await Get("/collection/search", undefined, intPage, intLimit, {code, label, type});
+    const response = await Get("/client/search", undefined, intPage, intLimit, {type});
 
     if(response.status !== 200) {
-      throw new Error("Erreur sur le coté de data lake serveur en cherchant les collections");
+      throw new Error("Erreur sur le coté de data lake serveur en cherchant les client");
     }
     
-    const collections = await response.json();
-    res.status(200).json(collections);
+    const result = await response.json();
+    res.status(200).json(result);
 
   } catch(err) {
     console.error(err)
@@ -50,7 +46,7 @@ router.get(COLLECTION + "/search", async(req: Request, res: Response) => {
   }
 })
 
-router.get(COLLECTION + "/:id", async (req: Request, res: Response) => {
+router.get(CLIENT + "/:id", async (req: Request, res: Response) => {
   try {
 
       const id: string | undefined | null = req.params.id;
@@ -61,10 +57,10 @@ router.get(COLLECTION + "/:id", async (req: Request, res: Response) => {
       }
 
 
-      const response = await Get("/collection", id);
+      const response = await Get("/client", id);
 
       if(response.status !== 200) {
-          throw new Error("Le Get Id pour collection n'a pas donné un 200 status")
+          throw new Error("Le Get Id pour client n'a pas donné un 200 status")
       }
 
       const result = await response.json();

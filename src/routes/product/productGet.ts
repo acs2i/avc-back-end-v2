@@ -75,9 +75,9 @@ router.get(PRODUCT + "/search", async(req: Request, res: Response) => {
     }    
     
 
-    const { supplier, tag, tag_grouping, brand, collection, dimension, dimension_type } = req.query;
+    const { supplier, tag, brand, collection, dimension, dimension_type } = req.query;
 
-    const response = await Get("/product/search", undefined, intPage, intLimit,  { supplier, tag, tag_grouping, brand, collection, dimension, dimension_type });
+    const response = await Get("/product/search", undefined, intPage, intLimit,  { supplier, tag, brand, collection, dimension, dimension_type });
 
     if(response.status !== 200) {
       throw new Error("Erreur sur le coté de data lake serveur en cherchant les products");
