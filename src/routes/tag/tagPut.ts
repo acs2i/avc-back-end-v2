@@ -19,7 +19,7 @@ router.put(TAG + "/:id", async (req: Request, res: Response, next: NextFunction)
         throw new Error(req.originalUrl + ", msg: id was falsy: " + id)
       }
   
-      const response = await Put("/tag" + id, JSON.stringify(tag));
+      const response = await Put("/tag/" + id, JSON.stringify(tag));
   
       if(!response) {
         throw new Error(req.originalUrl + ", msg: response was falsy: " + JSON.stringify(response))
