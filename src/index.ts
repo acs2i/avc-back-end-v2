@@ -50,6 +50,8 @@ import tagGetRoutes from "./routes/tag/tagGet"
 import tagPostRoutes from "./routes/tag/tagPost"
 import tagPutRoutes from "./routes/tag/tagPut"
 
+import tagGroupingGetRoutes from "./routes/tagGrouping/tagGroupingGet"
+
 import tarifGetRoutes from "./routes/tarif/tarifGet"
 import tarifPostRoutes from "./routes/tarif/tarifPost"
 import tarifPutRoutes from "./routes/tarif/tarifPut"
@@ -123,6 +125,9 @@ app.use(v1, supplierPutRoutes)
 app.use(v1, tagGetRoutes)
 app.use(v1, tagPostRoutes)
 app.use(v1, tagPutRoutes)
+
+// Tag Grouping Routes
+app.use(v1, tagGroupingGetRoutes)
 
 // Tarif Routes
 app.use(v1, tarifGetRoutes)
