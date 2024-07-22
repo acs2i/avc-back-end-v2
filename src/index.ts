@@ -19,6 +19,11 @@ import dimensionGetRoutes from "./routes/dimension/dimensionGet"
 import dimensionPostRoutes from "./routes/dimension/dimensionPost"
 import dimensionPutRoutes from "./routes/dimension/dimensionPut"
 
+import dimensionGridGetRoutes from "./routes/dimensionGrid/dimensionGridGet"
+import dimensionGridPostRoutes from "./routes/dimensionGrid/dimensionGridPost"
+import dimensionGridPutRoutes from "./routes/dimensionGrid/dimensionGridPut"
+
+
 import draftGetRoutes from "./routes/draft/draftGet"
 import draftPostRoutes from "./routes/draft/draftPost"
 import draftPutRoutes from "./routes/draft/draftPut"
@@ -82,6 +87,13 @@ app.use(v1, collectionPutRoutes);
 app.use(v1, dimensionGetRoutes);
 app.use(v1, dimensionPostRoutes);
 app.use(v1, dimensionPutRoutes);
+
+
+// Dimension Grid ROUTES
+app.use(v1, dimensionGridGetRoutes);
+app.use(v1, dimensionGridPostRoutes);
+app.use(v1, dimensionGridPutRoutes);
+
 
 // Draft ROUTES
 app.use(v1, draftGetRoutes);
