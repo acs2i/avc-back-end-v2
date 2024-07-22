@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import HttpError from "../../models/http-errors";
 import { Get} from "../../services/fetch";
 import { TAG } from "./shared";
 import { generalLimits } from "../../services/generalServices";
@@ -26,6 +27,38 @@ router.get(TAG, async (req: Request, res: Response) => {
         console.error(err)
         res.status(500).json({ error: { message: "un probleme est survenu" } });
     }
+});
+
+
+router.get(TAG + "/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  let result = undefined;
+  try {
+
+    const response = await Get("/tag", id);
+
+    if(response) {
+      result = await response.json();
+    } else {
+      throw new HttpError("Un problème à propos de la creation de la reference s'est passé", 400);
+    }
+
+    if (!result) {
+      throw new HttpError(
+        "Impossible de trouver un utilisateur à l'adresse fournie",
+        404
+      )    
+    }
+  
+    res.status(200).json(result);
+
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({error: { message: "Un probleme est survenu "}})
+  }
+
+
 });
 
 export default router;
