@@ -2,6 +2,7 @@ import express, {Request, Response, NextFunction} from "express";
 import User from "../models/UserModel";
 import HttpError from "../models/http-errors";
 import bcrypt from "bcrypt";
+import { verifyToken } from "../middleware/auth";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
@@ -122,6 +123,113 @@ router.get("/all-users", async (req: Request, res: Response, next: NextFunction)
   } catch (err) {
     console.error("Error: ", err);
     res.status(500).json({ error: "Une erreur est survenue lors de la récupération des utilisateurs." });
+  }
+});
+
+
+//Userbyid
+//@GET
+//api/v1/auth/user/:id
+router.get("/:userId", verifyToken, async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).json({ error: "Une erreur est survenue lors de la récupération des utilisateurs." });
+  }
+});
+
+//Notifications
+//@GET
+//api/v1/auth/user/:userId/notifications
+router.get("/:userId/notifications", verifyToken, async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params;
+  const markAsRead = req.query.markAsRead === 'true';
+  try {
+    const user = await User.findById(userId).select('notifications');
+    
+    if (!user) {
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+    
+    res.status(200).json(user.notifications);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).json({ error: "Une erreur est survenue lors de la récupération des utilisateurs." });
+  }
+});
+
+//Mise a jour notifications
+//@PATCH
+//api/v1/auth/user/:userId/notifications
+router.patch("/:userId/notifications", verifyToken, async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params;
+  const markAsRead = req.query.markAsRead === 'true';
+
+  try {
+    const user = await User.findById(userId).select('notifications');
+    
+    if (!user) {
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+
+    if (markAsRead) {
+      user.notifications.forEach(notification => {
+        notification.read = true;
+      });
+      await user.save();
+    }
+    
+    res.status(200).json(user.notifications);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).json({ error: "Une erreur est survenue lors de la récupération des utilisateurs." });
+  }
+});
+
+
+
+//Update user
+//@GET
+//api/v1/auth/user/:id
+router.patch("/:userId", verifyToken, async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params;
+  const { username, authorization, email, password } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "Utilisateur non trouvé." });
+    }
+
+    if (username) {
+      user.username = username;
+    }
+
+    if (authorization) {
+      user.authorization = authorization;
+    }
+
+    if (email) {
+      user.email = email;
+    }
+
+    if (password) {
+      // Hash the new password before saving it
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+    }
+
+    // Sauvegarder les modifications
+    const updatedUser = await user.save();
+
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).json({ error: "Une erreur est survenue lors de la mise à jour de l'utilisateur." });
   }
 });
 

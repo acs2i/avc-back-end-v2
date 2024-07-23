@@ -15,9 +15,9 @@ router.post(BRAND, async (req: Request, res: Response, next: NextFunction) => {
     const brand = req.body; // creator is CREATOR ID
 
     try {
-      const { creatorId } = brand;
+      const { creator_id } = brand;
       // Rechercher l'utilisateur en utilisant son ID
-      const user = await User.findById(creatorId);
+      const user = await User.findById(creator_id);
 
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
@@ -37,7 +37,7 @@ router.post(BRAND, async (req: Request, res: Response, next: NextFunction) => {
 
 
       const updatedUser = await User.findByIdAndUpdate(
-        creatorId,
+        creator_id,
         {
           $push: {
             products: {

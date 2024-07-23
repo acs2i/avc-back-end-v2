@@ -26,7 +26,7 @@ interface DraftSchema {
 const draftSchema = new mongoose.Schema<DraftSchema>({
     creator_id:  {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "user",
         timestamp: true,
       },
     description_ref: {
