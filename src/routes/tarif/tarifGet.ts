@@ -35,6 +35,7 @@ router.get(TARIF + "/search", async(req: Request, res: Response) => {
       const {code, label} = req.query
   
       const response = await Get("/tarif/search", undefined, intPage, intLimit, {code, label});
+
   
       if(response.status !== 200) {
         throw new Error("Erreur sur le coté de data lake serveur en cherchant les tarif");

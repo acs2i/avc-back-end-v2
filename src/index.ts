@@ -57,14 +57,16 @@ import tarifPostRoutes from "./routes/tarif/tarifPost"
 import tarifPutRoutes from "./routes/tarif/tarifPut"
 
 dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 3001;
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
-
 app.use(
   cors()
-);
+)
+
 const v1 = "/api/v1";
 
 // ROUTES

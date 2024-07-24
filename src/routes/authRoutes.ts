@@ -43,7 +43,6 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
   if (additionalFields) {
     try {
       additionalFieldsMap = new Map(additionalFields.map((field: { key: string; value: any }) => [field.key, field.value]));
-      console.log("Additional Fields Map:", additionalFieldsMap);
     } catch (err) {
       const error = new HttpError(
         "Invalid format for additionalFields.",
@@ -64,7 +63,6 @@ router.post("/register", async (req: Request, res: Response, next: NextFunction)
 
   try {
     await newUser.save();
-    console.log("New user created:", newUser);  // Log the new user
   } catch (err) {
     console.error("Error saving user:", err);  // Log the error
     const error = new HttpError(

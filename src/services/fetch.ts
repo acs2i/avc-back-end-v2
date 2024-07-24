@@ -26,6 +26,8 @@ export const Get = async (endpoint: string, param: string | undefined = undefine
         }
     }
 
+    console.log("value: " , value)
+    console.log(dataLakeUri + endpoint + (param ? `/${param}` : "") + `?page=${page}&limit=${limit}${value}`)
     return await fetch(dataLakeUri + endpoint + (param ? `/${param}` : "") + `?page=${page}&limit=${limit}${value}`, {
             method: "GET",
             headers: {
@@ -47,7 +49,6 @@ export const Post = async(endpoint: string, body: string): Promise<any> => {
 }
 
 export const Put = async(endpoint: string, body: string): Promise<any> => {
-    console.log("ENDPOINT: " , dataLakeUri + endpoint)
     return await fetch(dataLakeUri + endpoint, {
         method: "PUT",
         headers: {

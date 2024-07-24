@@ -5,6 +5,30 @@ import { TAG } from "./shared";
 import { generalLimits } from "../../services/generalServices";
 const router = express.Router();
 
+router.get(TAG + "/search", async(req: Request, res: Response) => {
+  try {
+   
+    const {intPage, intLimit} = await generalLimits(req);
+
+    const { code,  name } = req.query;
+
+    console.log("code: " ,  code  , "  name: " , name)
+    const response = await Get("/tag/search", undefined, intPage, intLimit, {code, name});
+
+    if(response.status !== 200) {
+      throw new Error("Erreur sur le coté de data lake serveur en cherchant les brands");
+    }
+    
+    const brands = await response.json();
+    res.status(200).json(brands);
+
+  } catch(err) {
+    console.error(err)
+    res.status(500).json(err);
+  }
+
+})
+
 //GET ALL TAGS
 // connecté à data lake - TESTED ON NEW DATA LAKE
 //@PGET
