@@ -17,9 +17,9 @@ router.post(
 
     try {
 
-      const {creatorId} = collection;
+      const {creator_id} = collection;
       // Rechercher l'utilisateur en utilisant son ID
-      const user = await User.findById(creatorId);
+      const user = await User.findById(creator_id);
 
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
@@ -38,7 +38,7 @@ router.post(
 
       // Met a jour le champs products de l'utilisateur
       const updatedUser = await User.findByIdAndUpdate(
-        creatorId,
+        creator_id,
         {
           $push: {
             products: {

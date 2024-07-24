@@ -85,4 +85,30 @@ router.get(TAG + "/:id", async (req: Request, res: Response) => {
 
 });
 
+
+
+router.get(TAG + "/search", async(req: Request, res: Response) => {
+  try {
+   
+    const {intPage, intLimit} = await generalLimits(req);
+
+    const { code,  name } = req.query;
+
+
+    const response = await Get("/tag/search", undefined, intPage, intLimit, {code, name});
+
+    if(response.status !== 200) {
+      throw new Error("Erreur sur le coté de data lake serveur en cherchant les brands");
+    }
+    
+    const brands = await response.json();
+    res.status(200).json(brands);
+
+  } catch(err) {
+    console.error(err)
+    res.status(500).json(err);
+  }
+
+})
+
 export default router;
