@@ -5,6 +5,8 @@ import path from 'path';
 import fs from 'fs';
 import ExcelJS from 'exceljs';
 import Mustache from 'mustache';
+import dotenv from "dotenv"
+dotenv.config();
 
 const router = express.Router();
 
@@ -58,7 +60,7 @@ const processQueue = async () => {
           fs.mkdirSync(path.join(__dirname, 'public', 'pdfs'), { recursive: true });
         }
         await generatePDF(data, filePath);
-        responses[id].status(200).json({ message: 'PDF generated successfully', filePath: `localhost:3001/public/pdfs/${fileName}` });
+        responses[id].status(200).json({ message: 'PDF generated successfully', filePath: `localhost:${process.env.PORT}/public/pdfs/${fileName}` });
       } catch (error) {
         console.error('Error generating file:', error);
         responses[id].status(500).json({ error: 'Failed to generate file' });
