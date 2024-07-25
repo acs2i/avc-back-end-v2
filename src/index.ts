@@ -56,6 +56,7 @@ import tagGroupingGetRoutes from "./routes/tagGrouping/tagGroupingGet"
 import tarifGetRoutes from "./routes/tarif/tarifGet"
 import tarifPostRoutes from "./routes/tarif/tarifPost"
 import tarifPutRoutes from "./routes/tarif/tarifPut"
+import path from "path";
 
 dotenv.config();
 
@@ -64,6 +65,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
+app.use('/public', express.static(path.join(__dirname, 'routes', 'supplier', 'public')));
 app.use(
   cors()
 )

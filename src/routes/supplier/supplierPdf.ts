@@ -48,42 +48,32 @@ const queueMiddleware = (req: Request, res: Response, next: Function) => {
 
 // Fonction pour traiter le prochain élément de la file d'attente
 const processQueue = async () => {
-  if (queue.length > 0) {
-    const { id, data } = queue.shift()!;
-    saveQueue();
-    try {
-    //   if (data.type === 'pdf') {
+    if (queue.length > 0) {
+      const { id, data } = queue.shift()!;
+      saveQueue();
+      try {
         const fileName = `${Date.now()}.pdf`;
-        const filePath = path.join(__dirname, 'pdfs', fileName);
-        if (!fs.existsSync(path.join(__dirname, 'pdfs'))) {
-          fs.mkdirSync(path.join(__dirname, 'pdfs'));
+        const filePath = path.join(__dirname, 'public', 'pdfs', fileName);
+        if (!fs.existsSync(path.join(__dirname, 'public', 'pdfs'))) {
+          fs.mkdirSync(path.join(__dirname, 'public', 'pdfs'), { recursive: true });
         }
         await generatePDF(data, filePath);
-        responses[id].status(200).json({ message: 'PDF generated successfully', filePath });
-    //   } else if (data.type === 'xlsx') {
-    //     const fileName = `${Date.now()}.xlsx`;
-    //     const filePath = path.join(__dirname, 'xlsx', fileName);
-    //     if (!fs.existsSync(path.join(__dirname, 'xlsx'))) {
-    //       fs.mkdirSync(path.join(__dirname, 'xlsx'));
-    //     }
-    //     await generateXLSX(data, filePath);
-    //     responses[id].status(200).json({ message: 'XLSX generated successfully', filePath });
-    //   }
-    } catch (error) {
-      console.error('Error generating file:', error);
-      responses[id].status(500).json({ error: 'Failed to generate file' });
-    } finally {
-      delete responses[id];
-      activeSlots--;
-      saveQueue();
-      processQueue();
-
-      if (global.gc) {
-        global.gc();
+        responses[id].status(200).json({ message: 'PDF generated successfully', filePath: `localhost:3001/public/pdfs/${fileName}` });
+      } catch (error) {
+        console.error('Error generating file:', error);
+        responses[id].status(500).json({ error: 'Failed to generate file' });
+      } finally {
+        delete responses[id];
+        activeSlots--;
+        saveQueue();
+        processQueue();
+  
+        if (global.gc) {
+          global.gc();
+        }
       }
     }
-  }
-};
+  };
 
 // Fonction pour générer un PDF
 const generatePDF = async (data: any, filePath: string) => {
