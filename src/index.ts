@@ -44,6 +44,7 @@ import uvcPutRoutes from "./routes/uvc/uvcPut"
 import supplierGetRoutes from "./routes/supplier/supplierGet"
 import supplierPostRoutes from "./routes/supplier/supplierPost"
 import supplierPutRoutes from "./routes/supplier/supplierPut"
+import supplierPdfRoutes from "./routes/supplier/supplierPdf"
 
 
 import tagGetRoutes from "./routes/tag/tagGet"
@@ -122,6 +123,7 @@ app.use(v1, uvcPutRoutes)
 app.use(v1, supplierGetRoutes)
 app.use(v1, supplierPostRoutes)
 app.use(v1, supplierPutRoutes)
+app.use(v1, supplierPdfRoutes)
 
 // Tag Routes
 app.use(v1, tagGetRoutes)
