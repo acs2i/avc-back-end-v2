@@ -44,6 +44,7 @@ import uvcPutRoutes from "./routes/uvc/uvcPut"
 import supplierGetRoutes from "./routes/supplier/supplierGet"
 import supplierPostRoutes from "./routes/supplier/supplierPost"
 import supplierPutRoutes from "./routes/supplier/supplierPut"
+import supplierPdfRoutes from "./routes/supplier/supplierPdf"
 
 
 import tagGetRoutes from "./routes/tag/tagGet"
@@ -55,6 +56,7 @@ import tagGroupingGetRoutes from "./routes/tagGrouping/tagGroupingGet"
 import tarifGetRoutes from "./routes/tarif/tarifGet"
 import tarifPostRoutes from "./routes/tarif/tarifPost"
 import tarifPutRoutes from "./routes/tarif/tarifPut"
+import path from "path";
 
 dotenv.config();
 
@@ -63,6 +65,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
+app.use('/public', express.static(path.join(__dirname, 'routes', 'supplier', 'public')));
 app.use(
   cors()
 )
@@ -122,6 +125,7 @@ app.use(v1, uvcPutRoutes)
 app.use(v1, supplierGetRoutes)
 app.use(v1, supplierPostRoutes)
 app.use(v1, supplierPutRoutes)
+app.use(v1, supplierPdfRoutes)
 
 // Tag Routes
 app.use(v1, tagGetRoutes)
