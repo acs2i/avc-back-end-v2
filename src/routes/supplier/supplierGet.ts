@@ -1,3 +1,4 @@
+import HttpError from "../../models/http-errors";
 import { Get } from "../../services/fetch";
 import { generalLimits } from "../../services/generalServices";
 import { SUPPLIER } from "./shared";
@@ -26,6 +27,37 @@ router.get(SUPPLIER, async (req: Request, res: Response) => {
 
 
 })
+
+router.get(SUPPLIER + "/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  let result = undefined;
+  try {
+
+    const response = await Get("/supplier", id);
+
+    if(response) {
+      result = await response.json();
+    } else {
+      throw new HttpError("Un problème à propos de la cherche de supplier s'est passé", 400);
+    }
+
+    if (!result) {
+      throw new HttpError(
+        "Impossible de trouver un utilisateur à l'adresse fournie",
+        404
+      )    
+    }
+  
+    res.status(200).json(result);
+
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({error: { message: "Un probleme est survenu "}})
+  }
+
+
+});
 
 router.get(SUPPLIER + "/search", async(req: Request, res: Response) => {
     try {
