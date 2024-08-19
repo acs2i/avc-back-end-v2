@@ -61,9 +61,9 @@ const priceItemSchema = new mongoose.Schema<PriceItemSchema> ({
 
 const priceSchema = new mongoose.Schema<PriceSchema>(
   {
-    tarif_id: { type: mongoose.Schema.Types.ObjectId, ref: "tarif", default: "" },
+    // tarif_id: { type: mongoose.Schema.Types.ObjectId, ref: "tarif", default: "" },
     currency: { type: String },
-    supplier_id: { type: mongoose.Schema.Types.ObjectId, ref: "supplier", default: "" },
+    // supplier_id: { type: mongoose.Schema.Types.ObjectId, ref: "supplier", default: "" },
     price: [priceItemSchema],
     store: { type: String },
   },
