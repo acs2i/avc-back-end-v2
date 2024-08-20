@@ -121,7 +121,6 @@ router.get(
 
 router.get(DRAFT + "/user/:userId", async (req: Request, res: Response) => {
   const { userId } = req.params;
-
   try {
     const drafts = await DraftModel.find({ creator_id: userId }).populate("creator_id");
     res.status(200).json(drafts);

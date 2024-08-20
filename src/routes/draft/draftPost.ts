@@ -17,9 +17,9 @@ router.post(DRAFT, async (req: Request, res: Response) => {
     }
 
     const id = req.body.id;
-    const { designation_longue } = draft;
+    const { long_label } = draft;
 
-    const existingDraft = await DraftModel.findOne({ designation_longue, id });
+    const existingDraft = await DraftModel.findOne({ long_label, id });
 
     if (existingDraft) {
       throw new Error(
