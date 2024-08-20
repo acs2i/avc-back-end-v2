@@ -26,7 +26,7 @@ export const Get = async (endpoint: string, param: string | undefined = undefine
         }
     }
 
-    console.log("value: " , value)
+    console.log("TEST value: " , value)
     console.log(dataLakeUri + endpoint + (param ? `/${param}` : "") + `?page=${page}&limit=${limit}${value}`)
     return await fetch(dataLakeUri + endpoint + (param ? `/${param}` : "") + `?page=${page}&limit=${limit}${value}`, {
             method: "GET",
