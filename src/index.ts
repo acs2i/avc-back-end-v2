@@ -58,6 +58,7 @@ import tarifPostRoutes from "./routes/tarif/tarifPost"
 import tarifPutRoutes from "./routes/tarif/tarifPut"
 
 import userFieldGetRoutes from "./routes/user-field/userFieldGet"
+import userFieldPostRoutes from "./routes/user-field/userFieldPost"
 
 import path from "path";
 
@@ -144,6 +145,7 @@ app.use(v1, tarifPostRoutes)
 app.use(v1, tarifPutRoutes)
 
 app.use(v1, userFieldGetRoutes)
+app.use(v1, userFieldPostRoutes)
 
 
 app.listen(PORT, () => {
