@@ -56,6 +56,9 @@ import tagGroupingGetRoutes from "./routes/tagGrouping/tagGroupingGet"
 import tarifGetRoutes from "./routes/tarif/tarifGet"
 import tarifPostRoutes from "./routes/tarif/tarifPost"
 import tarifPutRoutes from "./routes/tarif/tarifPut"
+
+import userFieldGetRoutes from "./routes/user-field/userFieldGet"
+
 import path from "path";
 
 dotenv.config();
@@ -139,6 +142,8 @@ app.use(v1, tagGroupingGetRoutes)
 app.use(v1, tarifGetRoutes)
 app.use(v1, tarifPostRoutes)
 app.use(v1, tarifPutRoutes)
+
+app.use(v1, userFieldGetRoutes)
 
 
 app.listen(PORT, () => {
