@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import { Get } from "../../services/fetch";
 import { USERFIELD } from "./shared";
 import { generalLimits } from "../../services/generalServices";
+import HttpError from "../../models/http-errors";
 const router = express.Router();
 
 //GET ALL BRANDS
@@ -24,6 +25,37 @@ router.get(USERFIELD, async (req: Request, res: Response, next: NextFunction) =>
       console.error(err)
       res.status(500).json(err);
     }
+});
+
+router.get(USERFIELD + "/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  let result = undefined;
+  try {
+
+    const response = await Get("/user-field", id);
+
+    if(response) {
+      result = await response.json();
+    } else {
+      throw new HttpError("Un problème à propos de la cherche de supplier s'est passé", 400);
+    }
+
+    if (!result) {
+      throw new HttpError(
+        "Impossible de trouver un utilisateur à l'adresse fournie",
+        404
+      )    
+    }
+  
+    res.status(200).json(result);
+
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({error: { message: "Un probleme est survenu "}})
+  }
+
+
 });
 
 
