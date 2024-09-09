@@ -10,22 +10,11 @@ const router = express.Router();
 router.put(PRODUCT + "/:id", async( req: Request, res: Response) => {
   try {
     
-    const {product , creatorId} = req.body;
-
+    const product = req.body;
+    console.log(req.body)
     if(!product) {
       throw new Error(req.originalUrl + ", msg: Product was falsy: " + product)
     }
-
-   
-    // Vérifier si l'utilisateur existe
-    // the user is not currently accounted for in the data already so this wont help us. 
-    // we cant go back to associate ids with the items
-    // const user = await User.findById(creatorId);
-
-    // if (!user) {
-    //   throw new HttpError("Utilisateur non trouvé.", 404);
-    // }
-
     const id: string | undefined | null = req.params.id;
 
     if(!id) {
