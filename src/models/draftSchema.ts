@@ -120,10 +120,13 @@ const draftSchema = new mongoose.Schema<DraftSchema>(
     tbeu_pmeu: { type: Number },
     imgPath: { type: String },
     status: { type: String },
-    additional_fields: {
-      type: Map,
-      of: mongoose.Schema.Types.Mixed,
-    },
+    additional_fields: [
+      {
+        label: { type: String},
+        value: { type: String},
+        field_type: { type: String},
+      },
+    ],
     uvc: [uvcSchema],
   },
   { timestamps: true, collection: "draft" }
