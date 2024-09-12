@@ -13,11 +13,11 @@ router.get(SUPPLIER + "/search", async(req: Request, res: Response) => {
     
     const {intPage, intLimit} = await generalLimits(req);
 
-    const {code, company_name, address, status, country} = req.query
+    const {code, company_name, address,city, status, country} = req.query
     
     console.log("company name: " , company_name)
     
-    const response = await Get("/supplier/search", undefined, intPage, intLimit, {code, company_name, address, status, country});
+    const response = await Get("/supplier/search", undefined, intPage, intLimit, {code, company_name, address,city, status, country});
 
     if(response.status !== 200) {
       throw new Error("Erreur sur le coté de data lake serveur en cherchant les products");
