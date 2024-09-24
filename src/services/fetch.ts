@@ -48,6 +48,20 @@ export const Post = async(endpoint: string, body: string): Promise<any> => {
     })
 }
 
+
+export const PostCsv = async(endpoint: string, body: string): Promise<any> => {
+    console.log("datalake uri: " , dataLakeUri +  "/csv")
+    return await fetch(dataLakeUri + "/csv", {
+        method: "POST",
+        headers: {
+            "Content-Type": "text/csv",
+            "app-id": `${dataLakeApiKey}`
+        },
+        body
+    })
+}
+
+
 export const Put = async(endpoint: string, body: string): Promise<any> => {
     return await fetch(dataLakeUri + endpoint, {
         method: "PUT",
