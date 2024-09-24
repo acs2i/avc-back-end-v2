@@ -14,7 +14,7 @@ dotenv.config();
 
 const dataLakeApiKey = process.env.DATA_LAKE_API_KEY
 const dbUri = process.env.SERVER_DATA_LAKE_URI_LOCAL;
-const avcDbName = process.env.DB_NAME
+const avcDbName = "preref"
 
 const router = express.Router()
 // Multer setup for handling file uploads
