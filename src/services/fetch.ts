@@ -27,8 +27,10 @@ export const Get = async (endpoint: string, param: string | undefined = undefine
     }
 
     console.log("TEST value: " , value)
-    console.log(dataLakeUri + endpoint + (param ? `/${param}` : "") + `?page=${page}&limit=${limit}${value}`)
-    return await fetch(dataLakeUri + endpoint + (param ? `/${param}` : "") + `?page=${page}&limit=${limit}${value}`, {
+
+
+    console.log(dataLakeUri + endpoint + (param ? `/${param}` : "") + `?page=${page}&limit=${limit}${value ? value : ""}`)
+    return await fetch(dataLakeUri + endpoint + (param ? `/${param}` : "") + `?page=${page}&limit=${limit}${value ? value : ""}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

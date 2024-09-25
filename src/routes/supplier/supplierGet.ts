@@ -33,6 +33,38 @@ router.get(SUPPLIER + "/search", async(req: Request, res: Response) => {
 
 })
 
+router.get(SUPPLIER + "/field/:field/value/:value", async (req: Request, res: Response) => {
+  const { value , field } = req.params;
+
+  let result = undefined;
+  try {
+
+    const response = await Get(`/supplier/field/${field}/value`, value);
+
+    if(response) {
+      result = await response.json();
+    } else {
+      throw new HttpError("Un problème à propos de la creation de la reference s'est passé", 400);
+    }
+
+    if (!result) {
+      throw new HttpError(
+        "Impossible de trouver un utilisateur à l'adresse fournie",
+        404
+      )    
+    }
+  
+    res.status(200).json(result);
+
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({error: { message: "Un probleme est survenu "}})
+  }
+
+
+});
+
+
 router.get(SUPPLIER + "/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
 
