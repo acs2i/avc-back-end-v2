@@ -13,32 +13,23 @@ router.post(DRAFT + "/import", async (req: Request, res: Response) => {
  
     console.log("HERERRERE")
     /* Check to make sure every key exists  */
+    // Also, the say "ids" but they're really the NAMES or CODES of each one. This was easier for Vince to implement on the front end
+    const {tag_ids, supplier_ids, brand_ids, collection_ids, reference, creator_id} = req.body; 
 
-    const {tagNames, subTagNames, 
-      subSubTagNames, supplierNames, brands, collections, reference, creator_id} = req.body; 
-
-      if (!tagNames) {
-        throw new Error("tagNames does not exist");
+      if (!tag_ids) {
+        throw new Error("tag_ids does not exist");
       }
       
-      if (!subTagNames) {
-        throw new Error("subTagNames does not exist");
+      if (!supplier_ids) {
+        throw new Error("supplier_ids does not exist");
       }
       
-      if (!subSubTagNames) {
-        throw new Error("subSubTagNames does not exist");
+      if (!brand_ids) {
+        throw new Error("brand_ids does not exist");
       }
       
-      if (!supplierNames) {
-        throw new Error("supplierNames does not exist");
-      }
-      
-      if (!brands) {
-        throw new Error("brands does not exist");
-      }
-      
-      if (!collections) {
-        throw new Error("collections does not exist");
+      if (!collection_ids) {
+        throw new Error("collection_ids does not exist");
       }
       
       if (!reference) {
@@ -50,70 +41,38 @@ router.post(DRAFT + "/import", async (req: Request, res: Response) => {
       }
       
 
-    const tag_ids : any[]= []
+    const finalTagIds : any[]= []
     // Make sure tag ids exist
-    if(tagNames.length > 0) {
-      for(let tagName of tagNames) {
+    if(tag_ids.length > 0) {
+      for(let tagName of tag_ids) {
         const response = await Get("/tag/field/code/value", tagName);
         if(!response) {
           throw new Error(`The tag with this name was not found: ${tagName}`)
         }
         // Check to make sure the family is family
         let result: any[] = await response.json();
-        let finalResult = result.filter((val, i) => val.level.toLowerCase().trim() === "famille" )
+        let finalResult = result.filter((val, i) => { 
+          
+          let levelName;
+
+          if(i === 0) levelName = "famille"
+          if(i === 1) levelName = "sous-famille"
+          else levelName = "sous-sous-famille"
+
+          return val.level.toLowerCase().trim() === levelName
+        } )
         if(finalResult.length === 0) {
           throw new Error(`No matching result with a level of family  ${finalResult}`)
         }
         // Push all the ids into the tag Ids
-        finalResult.forEach((r) => tag_ids.push(r._id))
-      }
-    }
-
-    if(subTagNames.length > 0) {
-      for(let subTagName of subTagNames) {
-
-        const response = await Get("/tag/field/code/value", subTagName);
-        if(!response) {
-          throw new Error(`The tag with this name was not found: ${subTagName}`)
-        }
-
-        // Check to make sure the family is  sub family
-        let result: any[] = await response.json();
-
-        let finalResult = result.filter((val, i) => val.level === "sous-famille" )
-        
-        if(finalResult.length === 0) {
-          throw new Error(`No matching result with a level of sub family  ${finalResult}`)
-        }
-
-        finalResult.forEach((r) => tag_ids.push(r._id))
-
+        finalResult.forEach((r) => finalTagIds.push(r._id))
       }
     }
 
 
-    //  sous-sous-famille
-    if(subSubTagNames.length > 0) {
-      for(let subSubTagName of subSubTagNames) {
-        const response = await Get("/tag/field/code/value", subSubTagName);
-        if(!response) {
-          throw new Error(`The tag with this name was not found: ${subSubTagName}`)
-        }
-
-        // Check to make sure the family is  sub family
-        let result: any[] = await response.json();
-        let finalResult = result.filter((val, i) => val.level === "sous-sous-famille" )
-
-        if(finalResult.length === 0) {
-          throw new Error(`No matching result with a leve of sub sub family  ${finalResult}`)
-        }
-        finalResult.forEach((r) => tag_ids.push(r._id))
-      }
-    }
-    
-    let suppliers: any[] = []
-    if(supplierNames.length > 0) {
-      for(let supplierName of supplierNames) {
+    // let suppliers: any[] = []
+    if(supplier_ids.length > 0) {
+      for(let supplierName of supplier_ids) {
         const response = await Get("/supplier/field/company_name/value", supplierName)
 
         if(!response) {
@@ -128,14 +87,14 @@ router.post(DRAFT + "/import", async (req: Request, res: Response) => {
 
         console.log("result: " , result)
 
-        suppliers= [...result]
+        // suppliers= [...result]
       }
     }
 
-    let brand_ids: any[] = []
+    // let finalBrandIds: any[] = []
     
-    if(brands.length > 0) {
-      for(let brand of brands) {
+    if(brand_ids.length > 0) {
+      for(let brand of brand_ids) {
         const response = await Get("/brand/field/code/value", brand)
 
         if(!response) {
@@ -149,14 +108,14 @@ router.post(DRAFT + "/import", async (req: Request, res: Response) => {
           throw new Error(`The result of the brand with this name was not found: ${brand}`)
         }
 
-        result.forEach((r: any) => brand_ids.push(r._id))
+        // result.forEach((r: any) => finalBrandIds.push(r._id))
         
       }
     }
 
-    let collection_ids = []
+    // let finalCollectionIds = []
 
-    for(let collection of collections) {
+    for(let collection of collection_ids) {
       const response = await Get("/collection/field/code/value", collection)
 
       if(!response) {
@@ -170,7 +129,7 @@ router.post(DRAFT + "/import", async (req: Request, res: Response) => {
 
       }
 
-      collection_ids.push(result._id)
+      // finalCollectionIds.push(result._id)
 
 
     }
@@ -193,7 +152,7 @@ router.post(DRAFT + "/import", async (req: Request, res: Response) => {
     //   finalSupplierObj.push({ supplier_id: suppliers[i]._id})
     // }
 
-    // const draft = { collection_ids, brand_ids, tag_ids, reference , suppliers : finalSupplierObj} 
+    // const draft = { collection_ids, brand_ids, finalTagIds, reference , suppliers : finalSupplierObj} 
 
     // const newDraft = await new DraftModel({ ...draft });
 
