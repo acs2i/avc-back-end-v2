@@ -8,8 +8,6 @@ const router = express.Router()
 
 router.get(SUPPLIER + "/search", async(req: Request, res: Response) => {
   try {
-
-    console.log("HEREEEE")
     
     const {intPage, intLimit} = await generalLimits(req);
 

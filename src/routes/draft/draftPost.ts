@@ -11,8 +11,11 @@ const router = express.Router();
 router.post(DRAFT + "/import", async (req: Request, res: Response) => {
   try {
  
-    console.log("HERERRERE")
-    /* Check to make sure every key exists  */
+    /* Check to make sure every key exists  
+    
+    
+
+    */
 
     const {tagNames, subTagNames, 
       subSubTagNames, supplierNames, brands, collections, reference, creator_id} = req.body; 

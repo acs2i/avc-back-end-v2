@@ -44,9 +44,19 @@ interface DraftSchema extends Document {
   dimension_types: string[];
   brand_ids: ObjectId[];
   collection_ids: ObjectId[];
+  tax: number;
   peau: number;
   tbeu_pb: number;
   tbeu_pmeu: number;
+  height: string;
+  width: string;
+  long: string;
+  comment: string;
+  size_unit: string;
+  weigth_unit: string;
+  weight: string;
+  weight_brut: string;
+  weight_net: string;
   imgPath: string;
   status: string;
   additional_fields: any;
@@ -115,9 +125,19 @@ const draftSchema = new mongoose.Schema<DraftSchema>(
     collection_ids: [
       { type: mongoose.Schema.Types.ObjectId, ref: "collection" },
     ],
+    tax: {type: Number},
     peau: { type: Number },
     tbeu_pb: { type: Number },
     tbeu_pmeu: { type: Number },
+    height: {type: String},
+    width: {type: String},
+    long: {type: String},
+    size_unit: {type: String},
+    weigth_unit: {type: String},
+    weight: {type: String},
+    weight_brut: {type: String},
+    weight_net: {type: String},
+    comment: { type: String, maxlength: 3000 },
     imgPath: { type: String },
     status: { type: String },
     additional_fields: [
