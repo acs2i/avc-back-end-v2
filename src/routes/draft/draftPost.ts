@@ -209,7 +209,7 @@ router.post(DRAFT, async (req: Request, res: Response) => {
         req.originalUrl +
           " msg: draft save did not work for some reason: " +
           draft
-      );
+      ); 5
     }
 
     const result: Document | null | undefined = await newDraft.save({
