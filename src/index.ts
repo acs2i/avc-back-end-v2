@@ -63,6 +63,8 @@ import tarifPutRoutes from "./routes/tarif/tarifPut"
 import userFieldGetRoutes from "./routes/user-field/userFieldGet"
 import userFieldPostRoutes from "./routes/user-field/userFieldPost"
 
+import unitGetRoutes from "./routes/unit/unitGet"
+
 import path from "path";
 
 dotenv.config();
@@ -152,6 +154,8 @@ app.use(v1, tarifPutRoutes)
 
 app.use(v1, userFieldGetRoutes)
 app.use(v1, userFieldPostRoutes)
+
+app.use(v1, unitGetRoutes)
 
 
 app.listen(PORT, () => {
