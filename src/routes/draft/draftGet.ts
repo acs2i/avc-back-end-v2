@@ -13,7 +13,12 @@ router.get(DRAFT + "/id", async (req: Request, res: Response) => {
  
     /* Check to make sure every key exists  */
     // Also, the say "ids" but they're really the NAMES or CODES of each one. This was easier for Vince to implement on the front end
-    const {tag_ids, supplier_ids, brand_ids, collection_ids, reference, creator_id} = req.query; 
+    const tag_ids: string[] = req.query.tag_ids as string[]
+    const supplier_ids: string[] = req.query.supplier_ids as string[]
+    const brand_ids: string[] = req.query.brand_ids as string[];
+    const collection_ids: string[] = req.query.collection_ids as string[]
+    const reference: string = req.query.reference as string;
+    const creator_id: string = req.query.creator_id as string;
 
     // Vérifications des champs
     if (!tag_ids || !Array.isArray(tag_ids)) {
