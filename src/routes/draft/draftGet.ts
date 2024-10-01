@@ -13,7 +13,7 @@ router.get(DRAFT + "/id", async (req: Request, res: Response) => {
  
     /* Check to make sure every key exists  */
     // Also, the say "ids" but they're really the NAMES or CODES of each one. This was easier for Vince to implement on the front end
-    const {tag_ids, supplier_ids, brand_ids, collection_ids, reference, creator_id} = req.body; 
+    const {tag_ids, supplier_ids, brand_ids, collection_ids, reference, creator_id} = req.query; 
 
       if (!tag_ids) {
         throw new Error("tag_ids does not exist");
@@ -183,7 +183,7 @@ router.get(DRAFT + "/id", async (req: Request, res: Response) => {
 
 router.get(
   DRAFT + "/:id",
-  verifyToken,
+  // verifyToken,
   async (req: Request & { user?: { id: string } }, res: Response) => {
     try {
       const _id = req.params.id;
