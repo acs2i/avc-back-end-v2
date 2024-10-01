@@ -82,7 +82,7 @@ const priceSchema = new mongoose.Schema<PriceSchema>(
 
 const supplierSchema = new mongoose.Schema<SupplierSchema>(
   {
-    supplier_id: { type: mongoose.Schema.Types.ObjectId, ref: "supplier" },
+    supplier_id: { type: mongoose.Schema.Types.Mixed, ref: "supplier" },
     supplier_ref: { type: String },
     pcb: { type: String },
     custom_cat: { type: String },
@@ -118,13 +118,11 @@ const draftSchema = new mongoose.Schema<DraftSchema>(
     short_label: { type: String },
     long_label: { type: String },
     type: { type: String },
-    tag_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: "tag" }],
+    tag_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "tag" }],
     suppliers: [supplierSchema],
     dimension_types: [{ type: String }],
-    brand_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: "brand" }],
-    collection_ids: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "collection" },
-    ],
+    brand_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "brand" }],
+    collection_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "collection" }],
     tax: {type: Number},
     peau: { type: Number },
     tbeu_pb: { type: Number },

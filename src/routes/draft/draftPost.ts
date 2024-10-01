@@ -228,6 +228,10 @@ router.post(DRAFT, async (req: Request, res: Response) => {
   }
 });
 
+
+
+
+
 router.post(DRAFT + "/batch", async (req: Request, res: Response) => {
   try  {
     const drafts = req.body.drafts;
