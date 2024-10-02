@@ -55,16 +55,10 @@ router.get(DRAFT + "/id", async (req: Request, res: Response) => {
         }
 
         let result: any[] = await response.json();
-        let finalResult = result.filter((val, i) => {
-          let levelName = i === 0 ? "famille" : i === 1 ? "sous-famille" : "sous-sous-famille";
-          return val.level.toLowerCase().trim() === levelName;
-        });
-
-        if (finalResult.length === 0) {
-          throw new Error(`No matching result with a level of family  ${finalResult}`);
+        
+        if(result.length > 0) {
+          finalTagIds.push(result[0]._id)
         }
-
-        finalResult.forEach((r) => finalTagIds.push(r._id));
       }
     }
 
@@ -124,7 +118,9 @@ router.get(DRAFT + "/id", async (req: Request, res: Response) => {
       throw new Error(`${req.originalUrl}, msg: There already is a draft with this name`);
     }
 
-    const result = { finalCollectionIds, finalBrandIds, finalTagIds, suppliers };
+    const result = { 
+      finalCollectionIds, 
+      finalBrandIds, finalTagIds, suppliers };
     res.status(200).json(result);
   } catch (err) {
     console.error(err);
