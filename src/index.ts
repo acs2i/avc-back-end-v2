@@ -63,6 +63,14 @@ import tarifPutRoutes from "./routes/tarif/tarifPut"
 import userFieldGetRoutes from "./routes/user-field/userFieldGet"
 import userFieldPostRoutes from "./routes/user-field/userFieldPost"
 
+import taxGetRoutes from "./routes/tax/taxGet"
+import taxPostRoutes from "./routes/tax/taxPost"
+import taxPutRoutes from "./routes/tax/taxPut"
+
+import blockGetRoutes from "./routes/block/blockGet"
+import blockPostRoutes from "./routes/block/blockPost"
+import blockPutRoutes from "./routes/block/BlockPut"
+
 import unitGetRoutes from "./routes/unit/unitGet"
 
 import path from "path";
@@ -156,6 +164,14 @@ app.use(v1, userFieldGetRoutes)
 app.use(v1, userFieldPostRoutes)
 
 app.use(v1, unitGetRoutes)
+
+app.use(v1, taxGetRoutes)
+app.use(v1, taxPostRoutes)
+app.use(v1, taxPutRoutes)
+
+app.use(v1, blockGetRoutes)
+app.use(v1, blockPostRoutes)
+app.use(v1, blockPutRoutes)
 
 
 app.listen(PORT, () => {

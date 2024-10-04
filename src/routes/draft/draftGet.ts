@@ -10,7 +10,15 @@ const router = express.Router();
 
 router.get(DRAFT + "/id", async (req: Request, res: Response) => {
   try {
-    const { tag_ids, supplier_ids, brand_ids, collection_ids, reference, creator_id } = req.body;
+ 
+    /* Check to make sure every key exists  */
+    // Also, the say "ids" but they're really the NAMES or CODES of each one. This was easier for Vince to implement on the front end
+    const tag_ids: string[] = req.query.tag_ids as string[]
+    const supplier_ids: string[] = req.query.supplier_ids as string[]
+    const brand_ids: string[] = req.query.brand_ids as string[];
+    // const collection_ids: string[] = req.query.collection_ids as string[]
+    // const reference: string = req.query.reference as string;
+    // const creator_id: string = req.query.creator_id as string;
 
     // Vérifications des champs
     if (!tag_ids || !Array.isArray(tag_ids)) {
@@ -25,17 +33,17 @@ router.get(DRAFT + "/id", async (req: Request, res: Response) => {
       throw new Error("brand_ids does not exist or is not an array");
     }
 
-    if (!collection_ids || !Array.isArray(collection_ids)) {
-      throw new Error("collection_ids does not exist or is not an array");
-    }
+    // if (!collection_ids || !Array.isArray(collection_ids)) {
+    //   throw new Error("collection_ids does not exist or is not an array");
+    // }
 
-    if (!reference) {
-      throw new Error("reference does not exist");
-    }
+    // if (!reference) {
+    //   throw new Error("reference does not exist");
+    // }
 
-    if (!creator_id) {
-      throw new Error("creator_id does not exist");
-    }
+    // if (!creator_id) {
+    //   throw new Error("creator_id does not exist");
+    // }
 
     const finalTagIds: any[] = [];
     // Vérifiez si tag_ids est un tableau et qu'il contient des éléments
@@ -94,29 +102,29 @@ router.get(DRAFT + "/id", async (req: Request, res: Response) => {
       }
     }
 
-    let finalCollectionIds: any[] = [];
-    if (Array.isArray(collection_ids) && collection_ids.length > 0) {
-      for (let collection of collection_ids) {
-        const response = await Get("/collection/field/code/value", collection);
-        if (!response) {
-          throw new Error(`The collection with this name was not found: ${collection}`);
-        }
+    // let finalCollectionIds: any[] = [];
+    // if (Array.isArray(collection_ids) && collection_ids.length > 0) {
+    //   for (let collection of collection_ids) {
+    //     const response = await Get("/collection/field/code/value", collection);
+    //     if (!response) {
+    //       throw new Error(`The collection with this name was not found: ${collection}`);
+    //     }
 
-        let result: any = await response.json();
-        if (result.length === 0) {
-          throw new Error(`The result of the collection with this name was not found: ${collection}`);
-        }
+    //     let result: any = await response.json();
+    //     if (result.length === 0) {
+    //       throw new Error(`The result of the collection with this name was not found: ${collection}`);
+    //     }
 
-        finalCollectionIds.push(result._id);
-      }
-    }
+    //     finalCollectionIds.push(result._id);
+    //   }
+    // }
 
-    const existingDraft = await DraftModel.findOne({ reference });
-    if (existingDraft) {
-      throw new Error(`${req.originalUrl}, msg: There already is a draft with this name`);
-    }
+    // const existingDraft = await DraftModel.findOne({ reference });
+    // if (existingDraft) {
+    //   throw new Error(`${req.originalUrl}, msg: There already is a draft with this name`);
+    // }
 
-    const result = { finalCollectionIds, finalBrandIds, finalTagIds, suppliers };
+    const result = {  finalBrandIds, finalTagIds, suppliers };
     res.status(200).json(result);
   } catch (err) {
     console.error(err);
@@ -126,7 +134,7 @@ router.get(DRAFT + "/id", async (req: Request, res: Response) => {
 
 router.get(
   DRAFT + "/:id",
-  verifyToken,
+  // verifyToken,
   async (req: Request & { user?: { id: string } }, res: Response) => {
     try {
       const _id = req.params.id;
