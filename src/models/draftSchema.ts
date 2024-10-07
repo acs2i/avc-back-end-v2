@@ -44,7 +44,7 @@ interface DraftSchema extends Document {
   dimension_types: string[];
   brand_ids: ObjectId[];
   collection_ids: ObjectId[];
-  tax: number;
+  tax: string;
   peau: number;
   tbeu_pb: number;
   tbeu_pmeu: number;
@@ -123,7 +123,7 @@ const draftSchema = new mongoose.Schema<DraftSchema>(
     dimension_types: [{ type: String }],
     brand_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "brand" }],
     collection_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "collection" }],
-    tax: {type: Number},
+    tax: {type: String},
     peau: { type: Number },
     tbeu_pb: { type: Number },
     tbeu_pmeu: { type: Number },
