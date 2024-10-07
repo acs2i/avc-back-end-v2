@@ -50,13 +50,12 @@ interface DraftSchema extends Document {
   tbeu_pmeu: number;
   height: string;
   width: string;
-  long: string;
+  length: string;
   comment: string;
   size_unit: string;
   weigth_unit: string;
-  weight: string;
-  weight_brut: string;
-  weight_net: string;
+  gross_weight: string;
+  net_weight: string;
   imgPath: string;
   status: string;
   additional_fields: any;
@@ -129,12 +128,11 @@ const draftSchema = new mongoose.Schema<DraftSchema>(
     tbeu_pmeu: { type: Number },
     height: {type: String},
     width: {type: String},
-    long: {type: String},
+    length: {type: String},
     size_unit: {type: String},
     weigth_unit: {type: String},
-    weight: {type: String},
-    weight_brut: {type: String},
-    weight_net: {type: String},
+    gross_weight: {type: String},
+    net_weight: {type: String},
     comment: { type: String, maxlength: 3000 },
     imgPath: { type: String },
     status: { type: String },
