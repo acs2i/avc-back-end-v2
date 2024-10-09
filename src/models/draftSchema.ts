@@ -35,7 +35,7 @@ interface SupplierSchema {
 interface DraftSchema extends Document {
   creator_id: ObjectId;
   reference: string;
-  name: string;
+  alias: string;
   short_label: string;
   long_label: string;
   type: string;
@@ -113,7 +113,7 @@ const draftSchema = new mongoose.Schema<DraftSchema>(
       timestamp: true,
     },
     reference: { type: String },
-    name: { type: String },
+    alias: { type: String },
     short_label: { type: String },
     long_label: { type: String },
     type: { type: String },
