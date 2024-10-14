@@ -8,7 +8,7 @@ import { Get } from "../../services/fetch";
 
 const router = express.Router();
 
-router.get(DRAFT + "/id", async (req: Request, res: Response) => {
+router.get(DRAFT + "/verification", async (req: Request, res: Response) => {
   try {
  
     /* Check to make sure every key exists  */
@@ -25,13 +25,13 @@ router.get(DRAFT + "/id", async (req: Request, res: Response) => {
       throw new Error("tag_ids does not exist or is not an array");
     }
     
-    if (!supplier_ids || !Array.isArray(supplier_ids)) {
-      throw new Error("supplier_ids does not exist or is not an array");
-    }
+    // if (!supplier_ids || !Array.isArray(supplier_ids)) {
+    //   throw new Error("supplier_ids does not exist or is not an array");
+    // }
 
-    if (!brand_ids || !Array.isArray(brand_ids)) {
-      throw new Error("brand_ids does not exist or is not an array");
-    }
+    // if (!brand_ids || !Array.isArray(brand_ids)) {
+    //   throw new Error("brand_ids does not exist or is not an array");
+    // }
 
     // if (!collection_ids || !Array.isArray(collection_ids)) {
     //   throw new Error("collection_ids does not exist or is not an array");
@@ -49,12 +49,15 @@ router.get(DRAFT + "/id", async (req: Request, res: Response) => {
     // Vérifiez si tag_ids est un tableau et qu'il contient des éléments
     if (Array.isArray(tag_ids) && tag_ids.length > 0) {
       for (let tagName of tag_ids) {
+        console.log("tag name: "  ,tagName)
         const response = await Get("/tag/field/code/value", tagName);
         if (!response) {
           throw new Error(`The tag with this name was not found: ${tagName}`);
         }
 
         let result: any[] = await response.json();
+
+        console.log("result: "  ,result)
         
         if(result.length > 0) {
           finalTagIds.push(result[0]._id)
