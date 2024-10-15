@@ -37,6 +37,7 @@ import groupPostRoutes from "./routes/group/groupPost"
 import groupPutRoutes from "./routes/group/groupPut"
 
 import isoCodeGetRoutes from "./routes/isoCode/isoCodeGet"
+import isoCodePutRoutes from "./routes/isoCode/isoCodePut"
 
 
 import productGetRoutes from "./routes/product/productGet"
@@ -135,6 +136,7 @@ app.use(v1, groupPostRoutes);
 app.use(v1, groupPutRoutes);
 
 app.use(v1, isoCodeGetRoutes)
+app.use(v1, isoCodePutRoutes)
 
 
 // Product ROUTES

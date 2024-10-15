@@ -2,15 +2,16 @@ import express, { Request, Response } from "express";
 import HttpError from "../../models/http-errors";
 import { Get} from "../../services/fetch";
 import { generalLimits } from "../../services/generalServices";
+import { ISO_CODE } from "./shared";
 const router = express.Router();
 
-router.get("/iso-code", async (req: Request, res: Response) => {
+router.get(ISO_CODE, async (req: Request, res: Response) => {
     try {
 
       
       const {intPage, intLimit} = await generalLimits(req);
 
-      const response = await Get("/iso-code", undefined, intPage, intLimit);
+      const response = await Get(ISO_CODE, undefined, intPage, intLimit);
 
       if(response.status !== 200) {
         throw new Error("Did not receive a proper response from data lake");
@@ -24,13 +25,13 @@ router.get("/iso-code", async (req: Request, res: Response) => {
     }
 });
 
-router.get("/iso-code" + "/:id", async (req: Request, res: Response) => {
+router.get(ISO_CODE + "/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
 
   let result = undefined;
   try {
 
-    const response = await Get("/iso-code", id);
+    const response = await Get(ISO_CODE, id);
 
     if(response) {
       result = await response.json();
