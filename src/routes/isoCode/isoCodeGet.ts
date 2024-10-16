@@ -25,6 +25,30 @@ router.get(ISO_CODE, async (req: Request, res: Response) => {
     }
 });
 
+router.get(ISO_CODE + "/search", async(req: Request, res: Response) => {
+  try {
+   
+    const {intPage, intLimit} = await generalLimits(req);
+
+    const { alpha2Code, alpha3Code, numeric, countryName } = req.query;
+
+
+    const response = await Get("/iso-code/search", undefined, intPage, intLimit, {alpha2Code, alpha3Code, numeric, countryName});
+
+    if(response.status !== 200) {
+      throw new Error("Erreur sur le coté de data lake serveur en cherchant les brands");
+    }
+    
+    const brands = await response.json();
+    res.status(200).json(brands);
+
+  } catch(err) {
+    console.error(err)
+    res.status(500).json(err);
+  }
+
+})
+
 router.get(ISO_CODE + "/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
 
