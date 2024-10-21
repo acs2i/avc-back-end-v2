@@ -29,6 +29,28 @@ router.get(TAX, async (req: Request, res: Response) => {
     }
 });
 
+router.get(TAX + "/search", async(req: Request, res: Response) => {
+  try {
+    
+    const {intPage, intLimit} = await generalLimits(req);
+
+    const { code, label} = req.query;
+
+    const response = await Get("/tax/search", undefined, intPage, intLimit, {code, label});
+
+    if(response.status !== 200) {
+      throw new Error("Erreur sur le coté de data lake serveur en cherchant les collections");
+    }
+    
+    const collections = await response.json();
+    res.status(200).json(collections);
+
+  } catch(err) {
+    console.error(err)
+    res.status(500).json(err);
+  }
+})
+
 
 router.get(TAX + "/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
