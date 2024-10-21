@@ -53,6 +53,47 @@ router.get(PRODUCT + "/ga-libelle/:GA_LIBELLE", async(req: Request, res: Respons
   }
 })
 */
+
+router.get(PRODUCT + "/aggregate", async(req: Request, res: Response) => {
+  try {
+
+    const response = await Get("/product/aggregate", undefined);
+
+    if(response.status !== 200) {
+      throw new Error("Erreur sur le coté de data lake serveur en cherchant les products");
+    }
+
+    const results = await response.json();
+    console.log("aggreate: "  ,results)
+    res.status(200).json(results);
+
+  } catch(err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+})
+
+router.get(PRODUCT + "/bar-graph-data", async(req: Request, res: Response) => {
+  try {
+
+    const response = await Get("/product/bar-graph-data", undefined);
+
+    if(response.status !== 200) {
+      throw new Error("Erreur sur le coté de data lake serveur en cherchant les products");
+    }
+
+    const results = await response.json();
+    console.log("bar-graph-data: "  ,results)
+    res.status(200).json(results);
+
+  } catch(err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+})
+
+
+
 router.get(PRODUCT + "/search", async(req: Request, res: Response) => {
   try {
     const page: string | any | string[] | undefined = req.query.page;
@@ -75,15 +116,17 @@ router.get(PRODUCT + "/search", async(req: Request, res: Response) => {
     }    
     
 
-    const { reference, supplier, tag, brand, long_label, collection, dimension, dimension_type, status } = req.query;
+    const { reference, supplier, tag, brand, long_label, collection, dimension, dimension_type, status, creation_date } = req.query;
 
-    const response = await Get("/product/search", undefined, intPage, intLimit,  {reference, supplier, tag, brand, long_label, collection, dimension, dimension_type, status });
+    const response = await Get("/product/search", undefined, intPage, intLimit,  {reference, supplier, tag, brand, long_label, collection, dimension, dimension_type, status, creation_date });
 
     if(response.status !== 200) {
       throw new Error("Erreur sur le coté de data lake serveur en cherchant les products");
     }
     
     const results = await response.json();
+
+    console.log("results:  " , results)
     res.status(200).json(results);
 
   } catch(err) {

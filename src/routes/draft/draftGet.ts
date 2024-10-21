@@ -49,15 +49,12 @@ router.get(DRAFT + "/verification", async (req: Request, res: Response) => {
     // Vérifiez si tag_ids est un tableau et qu'il contient des éléments
     if (Array.isArray(tag_ids) && tag_ids.length > 0) {
       for (let tagName of tag_ids) {
-        console.log("tag name: "  ,tagName)
         const response = await Get("/tag/field/code/value", tagName);
         if (!response) {
           throw new Error(`The tag with this name was not found: ${tagName}`);
         }
 
         let result: any[] = await response.json();
-
-        console.log("result: "  ,result)
         
         if(result.length > 0) {
           finalTagIds.push(result[0]._id)
@@ -130,6 +127,28 @@ router.get(DRAFT + "/verification", async (req: Request, res: Response) => {
     res.status(400).json({});
   }
 });
+
+router.get(
+  DRAFT + "/status",
+  
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+
+      const draft = await DraftModel.find({status: "A"});
+      console.log("here: "  ,draft)
+      res.status(200).json(draft);
+    } catch (err) {
+      console.error("Error: ", err);
+      res.status(500).json({
+        error:
+          "Une erreur est survenue lors de la récupération des brouillons.",
+      });
+    }
+  }
+);
+
 
 router.get(
   DRAFT + "/:id",

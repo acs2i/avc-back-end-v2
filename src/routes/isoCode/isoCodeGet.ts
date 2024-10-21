@@ -5,6 +5,61 @@ import { generalLimits } from "../../services/generalServices";
 import { ISO_CODE } from "./shared";
 const router = express.Router();
 
+
+router.get(ISO_CODE + "/search",async(req: Request, res: Response) => {
+  try {
+      
+      const {intLimit, intPage} = await generalLimits(req);
+
+      let filter: any = { $and: [] }  // any to make typescript stop complaining
+
+      const {iso1, iso2, iso3, countryName} = req.query
+  
+      if(countryName) {
+          const regEx = new RegExp(countryName as string, "i");
+          filter.$and.push({ countryName: regEx })
+      }
+
+      console.log("filter: "  ,filter)
+      // shard by region/ by range of user
+      // crate read replicas - updated by eventualy consistency/async messaing
+      // if not high writes you can index the data base for the queries so the reads can be easily accessed
+      
+  
+      if(iso1) {
+          const regEx = new RegExp(iso1 as string, "i");
+          filter.$and.push({ iso1: regEx })
+      }
+
+      if(iso2) {
+          const regEx = new RegExp(iso2 as string, "i");
+          filter.$and.push({ iso2: regEx })
+      }
+
+      if(iso3) {
+          const regEx = new RegExp(iso3 as string, "i");
+          filter.$and.push({ iso3: regEx })
+      }
+
+      const response = await Get("/iso-code/search", undefined, intPage, intLimit, {iso1, iso2, iso3});
+
+      if ( response === null ||  response === undefined) {
+          throw new Error(req.originalUrl + ", msg: find error")
+      }
+
+      const results = await response.json();
+
+      res.status(200).json(results)
+  
+  } catch(err) {
+    console.error(err)
+    res.status(500).json(err);
+  }
+
+
+
+})
+
 router.get(ISO_CODE, async (req: Request, res: Response) => {
     try {
 

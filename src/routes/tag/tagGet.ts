@@ -10,10 +10,10 @@ router.get(TAG + "/search", async(req: Request, res: Response) => {
    
     const {intPage, intLimit} = await generalLimits(req);
 
-    const { code,  name, level } = req.query;
+    const { code,  name, level, status } = req.query;
 
     console.log("code: " ,  code  , "  name: " , name, " level: ", level)
-    const response = await Get("/tag/search", undefined, intPage, intLimit, {code, name, level});
+    const response = await Get("/tag/search", undefined, intPage, intLimit, {code, name, level, status});
 
     if(response.status !== 200) {
       throw new Error("Erreur sur le coté de data lake serveur en cherchant les brands");

@@ -32,10 +32,10 @@ router.get(BRAND + "/search", async(req: Request, res: Response) => {
      
       const {intPage, intLimit} = await generalLimits(req);
 
-      const { code,  label } = req.query;
+      const { code,  label, status } = req.query;
 
 
-      const response = await Get("/brand/search", undefined, intPage, intLimit, {code, label});
+      const response = await Get("/brand/search", undefined, intPage, intLimit, {code, label, status});
   
       if(response.status !== 200) {
         throw new Error("Erreur sur le coté de data lake serveur en cherchant les brands");

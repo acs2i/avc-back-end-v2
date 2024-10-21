@@ -37,9 +37,9 @@ router.get(UVC + "/search", async(req: Request, res: Response) => {
       
       const {intPage, intLimit} = await generalLimits(req);
 
-      const {dimensions, eans} = req.query
+      const {dimensions, eans, status} = req.query
   
-      const response = await Get("/uvc/search", undefined, intPage, intLimit, {dimensions, eans});
+      const response = await Get("/uvc/search", undefined, intPage, intLimit, {dimensions, eans, status});
   
       if(response.status !== 200) {
         throw new Error("Erreur sur le coté de data lake serveur en cherchant les uvc");
