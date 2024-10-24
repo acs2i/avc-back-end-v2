@@ -64,7 +64,6 @@ router.get(PRODUCT + "/aggregate", async(req: Request, res: Response) => {
     }
 
     const results = await response.json();
-    console.log("aggreate: "  ,results)
     res.status(200).json(results);
 
   } catch(err) {
@@ -83,7 +82,6 @@ router.get(PRODUCT + "/bar-graph-data", async(req: Request, res: Response) => {
     }
 
     const results = await response.json();
-    console.log("bar-graph-data: "  ,results)
     res.status(200).json(results);
 
   } catch(err) {
@@ -125,8 +123,6 @@ router.get(PRODUCT + "/search", async(req: Request, res: Response) => {
     }
     
     const results = await response.json();
-
-    console.log("results:  " , results)
     res.status(200).json(results);
 
   } catch(err) {

@@ -13,7 +13,6 @@ router.get(SUPPLIER + "/search", async(req: Request, res: Response) => {
 
     const {code, company_name, address,city, status, country} = req.query
     
-    console.log("company name: " , company_name)
     
     const response = await Get("/supplier/search", undefined, intPage, intLimit, {code, company_name, address,city, status, country});
 
