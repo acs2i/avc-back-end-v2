@@ -34,9 +34,9 @@ router.get(TAX + "/search", async(req: Request, res: Response) => {
     
     const {intPage, intLimit} = await generalLimits(req);
 
-    const { code, label, status} = req.query;
+    const { code, label, rate, status} = req.query;
 
-    const response = await Get("/tax/search", undefined, intPage, intLimit, {code, label, status});
+    const response = await Get("/tax/search", undefined, intPage, intLimit, {code, label, rate, status});
 
     if(response.status !== 200) {
       throw new Error("Erreur sur le coté de data lake serveur en cherchant les collections");

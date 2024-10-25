@@ -5,56 +5,26 @@ import { generalLimits } from "../../services/generalServices";
 import { ISO_CODE } from "./shared";
 const router = express.Router();
 
-
-router.get(ISO_CODE + "/search",async(req: Request, res: Response) => {
+router.get(ISO_CODE + "/search", async(req: Request, res: Response) => {
   try {
-      
-      const {intLimit, intPage} = await generalLimits(req);
+    
+      const {intPage, intLimit} = await generalLimits(req);       
 
-      let filter: any = { $and: [] }  // any to make typescript stop complaining
+    const {alpha2Code, alpha3Code, numeric, countryName} = req.query;
 
-      const {iso1, iso2, iso3, countryName, status} = req.query
-  
-      if(countryName) {
-          const regEx = new RegExp(countryName as string, "i");
-          filter.$and.push({ countryName: regEx })
-      }
+    const response = await Get("/iso-code/search", undefined, intPage, intLimit, { alpha2Code, alpha3Code, numeric, countryName});
 
-      // shard by region/ by range of user
-      // crate read replicas - updated by eventualy consistency/async messaing
-      // if not high writes you can index the data base for the queries so the reads can be easily accessed
-      
-  
-      if(iso1) {
-          const regEx = new RegExp(iso1 as string, "i");
-          filter.$and.push({ iso1: regEx })
-      }
+    if(response.status !== 200) {
+      throw new Error("Erreur sur le coté de data lake serveur en cherchant les families");
+    }
+    
+    const families = await response.json();
+    res.status(200).json(families);
 
-      if(iso2) {
-          const regEx = new RegExp(iso2 as string, "i");
-          filter.$and.push({ iso2: regEx })
-      }
-
-      if(iso3) {
-          const regEx = new RegExp(iso3 as string, "i");
-          filter.$and.push({ iso3: regEx })
-      }
-
-      const response = await Get("/iso-code/search", undefined, intPage, intLimit, {iso1, iso2, iso3, status});
-
-      if ( response === null ||  response === undefined) {
-          throw new Error(req.originalUrl + ", msg: find error")
-      }
-
-      const results = await response.json();
-
-      res.status(200).json(results)
-  
   } catch(err) {
     console.error(err)
     res.status(500).json(err);
   }
-
 
 
 })

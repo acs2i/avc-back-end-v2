@@ -10,7 +10,7 @@ router.get(TAG + "/search", async(req: Request, res: Response) => {
    
     const {intPage, intLimit} = await generalLimits(req);
 
-    const { code,  name, level, status } = req.query;
+    const { code, name, level, status } = req.query;
 
     const response = await Get("/tag/search", undefined, intPage, intLimit, {code, name, level, status});
 
