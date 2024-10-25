@@ -137,7 +137,6 @@ router.get(
     try {
 
       const draft = await DraftModel.find({status: "A"});
-      console.log("here: "  ,draft)
       res.status(200).json(draft);
     } catch (err) {
       console.error("Error: ", err);

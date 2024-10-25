@@ -12,7 +12,6 @@ router.get(TAG + "/search", async(req: Request, res: Response) => {
 
     const { code,  name, level, status } = req.query;
 
-    console.log("code: " ,  code  , "  name: " , name, " level: ", level)
     const response = await Get("/tag/search", undefined, intPage, intLimit, {code, name, level, status});
 
     if(response.status !== 200) {

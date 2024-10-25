@@ -20,7 +20,6 @@ router.get(ISO_CODE + "/search",async(req: Request, res: Response) => {
           filter.$and.push({ countryName: regEx })
       }
 
-      console.log("filter: "  ,filter)
       // shard by region/ by range of user
       // crate read replicas - updated by eventualy consistency/async messaing
       // if not high writes you can index the data base for the queries so the reads can be easily accessed
