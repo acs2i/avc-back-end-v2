@@ -25,6 +25,30 @@ router.get(DIMENSION_GRID, async(req: Request, res: Response) => {
     }
 })
 
+router.get(DIMENSION_GRID + "/search", async(req: Request, res: Response) => {
+    try {
+      
+        const {intPage, intLimit} = await generalLimits(req);       
+
+      const {label, code, status} = req.query;
+  
+      const response = await Get("/dimension/search", undefined, intPage, intLimit, { label, code, status});
+  
+      if(response.status !== 200) {
+        throw new Error("Erreur sur le coté de data lake serveur en cherchant les families");
+      }
+      
+      const families = await response.json();
+      res.status(200).json(families);
+  
+    } catch(err) {
+      console.error(err)
+      res.status(500).json(err);
+    }
+  
+  
+  })
+
 router.get(DIMENSION_GRID + "/:id", async(req: Request, res: Response) => {
     try {
 

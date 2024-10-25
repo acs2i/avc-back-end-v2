@@ -33,9 +33,9 @@ router.get(COLLECTION + "/search", async(req: Request, res: Response) => {
     
     const {intPage, intLimit} = await generalLimits(req);
 
-    const { code, label, type} = req.query;
+    const { code, label, type, status} = req.query;
 
-    const response = await Get("/collection/search", undefined, intPage, intLimit, {code, label, type});
+    const response = await Get("/collection/search", undefined, intPage, intLimit, {code, label, type, status});
 
     if(response.status !== 200) {
       throw new Error("Erreur sur le coté de data lake serveur en cherchant les collections");

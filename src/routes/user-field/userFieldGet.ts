@@ -27,6 +27,28 @@ router.get(USERFIELD, async (req: Request, res: Response, next: NextFunction) =>
     }
 });
 
+router.get(USERFIELD + "/search", async(req: Request, res: Response) => {
+  try {
+    
+    const {intPage, intLimit} = await generalLimits(req);
+
+    const { code, label, status} = req.query;
+
+    const response = await Get("/user-field/search", undefined, intPage, intLimit, {code, label, status});
+
+    if(response.status !== 200) {
+      throw new Error("Erreur sur le coté de data lake serveur en cherchant les collections");
+    }
+    
+    const collections = await response.json();
+    res.status(200).json(collections);
+
+  } catch(err) {
+    console.error(err)
+    res.status(500).json(err);
+  }
+})
+
 router.get(USERFIELD + "/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
 

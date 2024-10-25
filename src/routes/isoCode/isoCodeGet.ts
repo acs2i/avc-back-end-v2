@@ -13,7 +13,7 @@ router.get(ISO_CODE + "/search",async(req: Request, res: Response) => {
 
       let filter: any = { $and: [] }  // any to make typescript stop complaining
 
-      const {iso1, iso2, iso3, countryName} = req.query
+      const {iso1, iso2, iso3, countryName, status} = req.query
   
       if(countryName) {
           const regEx = new RegExp(countryName as string, "i");
@@ -41,7 +41,7 @@ router.get(ISO_CODE + "/search",async(req: Request, res: Response) => {
           filter.$and.push({ iso3: regEx })
       }
 
-      const response = await Get("/iso-code/search", undefined, intPage, intLimit, {iso1, iso2, iso3});
+      const response = await Get("/iso-code/search", undefined, intPage, intLimit, {iso1, iso2, iso3, status});
 
       if ( response === null ||  response === undefined) {
           throw new Error(req.originalUrl + ", msg: find error")
