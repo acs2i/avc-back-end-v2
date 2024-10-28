@@ -30,6 +30,14 @@ router.post(
 
       const response = await Post("/collection", body);
 
+      if (response.status === 409) {
+        const errorData = await response.json();
+        throw new HttpError(
+          errorData.message || "Une marque avec ce code existe déjà",
+          409
+        );
+      }
+
       if(response.status !== 200 ){
         throw new HttpError("Erreur sur le coté data lake à propos de Post collection " + JSON.stringify(response), 400);
       }
@@ -59,6 +67,12 @@ router.post(
 
       res.status(200).json(savedCollection);
     } catch (err) {
+      if (err instanceof HttpError && err.code === 409) {
+        return res.status(409).json({
+          message: err.message,
+          error: "DUPLICATE_CODE",
+        });
+      }
       console.error(err)
       return next(err);
     }
