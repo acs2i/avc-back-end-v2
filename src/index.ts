@@ -66,6 +66,7 @@ import tarifPutRoutes from "./routes/tarif/tarifPut"
 
 import userFieldGetRoutes from "./routes/user-field/userFieldGet"
 import userFieldPostRoutes from "./routes/user-field/userFieldPost"
+import userFieldPutRoutes from "./routes/user-field/userFieldPut"
 
 import taxGetRoutes from "./routes/tax/taxGet"
 import taxPostRoutes from "./routes/tax/taxPost"
@@ -170,6 +171,7 @@ app.use(v1, tarifPutRoutes)
 
 app.use(v1, userFieldGetRoutes)
 app.use(v1, userFieldPostRoutes)
+app.use(v1, userFieldPutRoutes)
 
 app.use(v1, unitGetRoutes)
 
