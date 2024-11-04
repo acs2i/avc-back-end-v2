@@ -16,10 +16,10 @@ const router = express.Router();
 router.post(PRODUCT, async (req: Request, res: Response, next: NextFunction) => {
     try {
   
-      const { creatorId, product } : { creatorId: string | undefined | null, product: any } = req.body;
+      const { creator_id, product } : { creator_id: string | undefined | null, product: any } = req.body;
 
-      if(!creatorId) {
-        throw new HttpError("Erreur a propos de creatorId: "+ creatorId , 400);
+      if(!creator_id) {
+        throw new HttpError("Erreur a propos de creatorId: "+ creator_id , 400);
       }
 
       const body = JSON.stringify({ ...product})
@@ -32,7 +32,7 @@ router.post(PRODUCT, async (req: Request, res: Response, next: NextFunction) => 
 
       const data = await response.json(); // notez: eventuellement ajoute l'interface de reference du datalake?
 
-      const user = await User.findById(creatorId);
+      const user = await User.findById(creator_id);
 
       if (!user) {
         throw new HttpError("Utilisateur non trouvé.", 404);
@@ -40,7 +40,7 @@ router.post(PRODUCT, async (req: Request, res: Response, next: NextFunction) => 
 
       // Met a jour le champs products de l'utilisateur
       const updatedUser = await User.findByIdAndUpdate(
-        creatorId,
+        creator_id,
         {
           $push: {
             products: {
@@ -58,7 +58,7 @@ router.post(PRODUCT, async (req: Request, res: Response, next: NextFunction) => 
         res.status(200).json(data);
       } else {
         // delete reference
-        Delete("/product", creatorId)
+        Delete("/product", creator_id)
         throw new HttpError("Erreur a propos de updated user: "+ updatedUser , 400);
 
       }

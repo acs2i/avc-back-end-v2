@@ -76,6 +76,9 @@ import blockGetRoutes from "./routes/block/blockGet"
 import blockPostRoutes from "./routes/block/blockPost"
 import blockPutRoutes from "./routes/block/BlockPut"
 
+import conditionPostRoutes from "./routes/condition/conditionPost"
+import conditionGetRoutes from "./routes/condition/conditionGet"
+
 import unitGetRoutes from "./routes/unit/unitGet"
 
 import path from "path";
@@ -182,6 +185,9 @@ app.use(v1, taxPutRoutes)
 app.use(v1, blockGetRoutes)
 app.use(v1, blockPostRoutes)
 app.use(v1, blockPutRoutes)
+
+app.use(v1, conditionPostRoutes)
+app.use(v1, conditionGetRoutes)
 
 
 app.listen(PORT, () => {
