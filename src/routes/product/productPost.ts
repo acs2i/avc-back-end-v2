@@ -49,7 +49,6 @@ router.post(
 
 
       const body = JSON.stringify(product );
-      console.log("Données envoyées au Data Lake :", body);
       // Envoie de la requête pour créer le produit dans le data lake
       const response = await Post("/product", body);
 
