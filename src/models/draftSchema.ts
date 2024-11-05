@@ -58,6 +58,7 @@ interface DraftSchema extends Document {
   net_weight: string;
   imgPath: string;
   status: string;
+  step: number;
   additional_fields: any;
   uvc: UvcSchema[];
 }
@@ -136,6 +137,7 @@ const draftSchema = new mongoose.Schema<DraftSchema>(
     comment: { type: String, maxlength: 3000 },
     imgPath: { type: String },
     status: { type: String },
+    step: {type: Number, default: 1},
     additional_fields: [
       {
         label: { type: String},
