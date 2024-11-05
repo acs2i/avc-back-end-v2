@@ -46,8 +46,6 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const product = req.body;
-      console.log("Contenu de req.body :", req.body);
-      console.log("product :", product);
 
 
       const body = JSON.stringify(product );
