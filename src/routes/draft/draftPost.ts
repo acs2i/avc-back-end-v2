@@ -3,8 +3,21 @@ import express, { Request, Response } from "express";
 import { DRAFT } from "./shared";
 import DraftModel from "../../models/draftSchema";
 import User from "../../models/UserModel";
-import { Document, Query } from "mongoose";
-import { Get } from "../../services/fetch";
+import { Document, Query, Types } from "mongoose";
+import { Post } from "../../services/fetch";
+
+
+interface ProcessedProduct {
+  tag_ids: string[];
+  long_label: string;
+  short_label: string;
+  suppliers: Array<{
+    supplier_id: string;
+    supplier_ref: string;
+  }>;
+  brand_ids: string[];
+  collection_ids: string[];
+}
 
 const router = express.Router();
 
@@ -229,21 +242,113 @@ router.post(DRAFT, async (req: Request, res: Response) => {
 });
 
 
+// router.post(DRAFT + "/batch", async (req: Request, res: Response) => {
+//   try {
+//       const productData = req.body;
+      
+//       if(!productData) {
+//           throw new Error(req.originalUrl + ", msg: product data was falsy: " + productData)
+//       }
+
+//       const response = await Post("/product-batch", JSON.stringify(productData));
+
+//       if(response.status !== 200) {
+//           throw new Error("Response status was not 200: " + JSON.stringify(response))
+//       }
+
+//       const document = await response.json();
+
+//       res.status(200).json(document)
+
+//   } catch(err) {
+//       console.error(err);
+//       res.status(400).json(err)
+//   }
+// })
 
 
 
 router.post(DRAFT + "/batch", async (req: Request, res: Response) => {
-  try  {
-    const drafts = req.body.drafts;
-    const userId = req.body.creator_id;
+  try {
+    const { drafts, creator_id } = req.body;
 
-    if (drafts.length === 0) {
-      throw new Error("req.body was empty");
+    if (!drafts || drafts.length === 0) {
+      throw new Error("No products data provided");
     }
 
-    if(!userId) {
-      throw new Error("No user id was present on the request")
+    if (!creator_id) {
+      throw new Error("No creator_id provided");
     }
+
+    // Appel à la route product-batch pour obtenir les données transformées
+    const response = await Post("/product/product-batch", JSON.stringify(drafts));
+
+    if (response.status !== 200) {
+      throw new Error(`Failed to process products: ${response.statusText}`);
+    }
+
+    const processedProducts: ProcessedProduct[] = await response.json();
+
+    // Préparation des drafts avec les données transformées et conversion en ObjectId
+    const drafts_with_ids = processedProducts.map(product => ({
+      ...product,
+      creator_id: new Types.ObjectId(creator_id),
+      tag_ids: product.tag_ids.map(id => new Types.ObjectId(id)),
+      suppliers: product.suppliers.map(supplier => ({
+        ...supplier,
+        supplier_id: new Types.ObjectId(supplier.supplier_id)
+      })),
+      brand_ids: product.brand_ids.map(id => new Types.ObjectId(id)),
+      collection_ids: product.collection_ids.map(id => new Types.ObjectId(id)),
+      status: 'draft',
+      step: 1,
+      type: "Marchandise",
+      peau: 0,
+      tbeu_pb: 0,
+      tbeu_pmeu: 0,
+      imgPath: "",
+      dimension_types: ["Couleur/Taille"],
+      additional_fields: [],
+      uvc: []
+    }));
+
+    // Insertion des drafts dans la base de données
+    const insertedDrafts = await DraftModel.insertMany(drafts_with_ids);
+    const draftIds = insertedDrafts.map(draft => draft._id);
+
+    // Mise à jour de l'utilisateur avec les nouveaux drafts
+    await User.findByIdAndUpdate(
+      creator_id, 
+      { $push: { products: { $each: draftIds } } }
+    );
+
+    // Renvoie les drafts créés
+    res.status(200).json(insertedDrafts);
+
+  } catch (err) {
+    console.error('Error in DRAFT/batch:', err);
+    res.status(400).json({
+      error: err instanceof Error ? err.message : 'An unknown error occurred'
+    });
+  }
+});
+
+
+
+
+
+// router.post(DRAFT + "/batch", async (req: Request, res: Response) => {
+//   try  {
+//     const drafts = req.body.drafts;
+//     const userId = req.body.creator_id;
+
+//     if (drafts.length === 0) {
+//       throw new Error("req.body was empty");
+//     }
+
+//     if(!userId) {
+//       throw new Error("No user id was present on the request")
+//     }
 
     // const id = req.body.id;
     // const { long_label } = draft;
@@ -275,20 +380,20 @@ router.post(DRAFT + "/batch", async (req: Request, res: Response) => {
     //   });
     // }
 
-    const insertedDrafts : any[] = await DraftModel.insertMany(drafts)
-    const draftIds = insertedDrafts.map((draft) => draft._id);
+//     const insertedDrafts : any[] = await DraftModel.insertMany(drafts)
+//     const draftIds = insertedDrafts.map((draft) => draft._id);
 
-    await User.findByIdAndUpdate(userId, {
-      $push: { products: draftIds},
-    });
+//     await User.findByIdAndUpdate(userId, {
+//       $push: { products: draftIds},
+//     });
     
 
-    res.status(200).json(insertedDrafts);
-  } catch (err) {
-    console.error(err);
-    res.status(400).json({});
-  }
-});
+//     res.status(200).json(insertedDrafts);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(400).json({});
+//   }
+// });
 
 router.post(DRAFT + "/draft/:id", verifyToken, async (req: Request, res: Response) => {
   const { id } = req.params;
