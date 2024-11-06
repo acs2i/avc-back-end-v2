@@ -38,7 +38,7 @@ router.put(DRAFT + "/bulkUpdate", verifyToken, async (req: Request,res: Response
     }
 });
 
-router.put(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: string}}, res: Response) => {
+router.put(DRAFT + "/:id", async (req: Request & { user?: {id: string}}, res: Response) => {
     try {
 
         const draft = req.body;
@@ -48,11 +48,7 @@ router.put(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: stri
             throw new Error(req.originalUrl + ", msg: req.body was falsy")
         }
 
-        if(!req.user) {
-            throw new Error(req.originalUrl + ", msg: User was not authenticated");
-        }
-
-        const _id: string | undefined | null = req.params.id;
+              const _id: string | undefined | null = req.params.id;
 
         if(!_id) {
             throw new Error(req.originalUrl + ", msg: _id was falsy: " + _id)
@@ -64,18 +60,8 @@ router.put(DRAFT + "/:id", verifyToken, async (req: Request & { user?: {id: stri
         if(!targetedDraft) {
             throw new Error(req.originalUrl + ", msg: targeted draft was not found")
         }
-
-        // Make sure authorization token matches
-        const creatorId: string = targetedDraft.creator_id as unknown as string;
-        const idFromToken = req.user.id;
-
-        // JAKE/VINCE/WALID/MARTIN - Il faut le mettre à jour quand le system de droit est implementé
-        if(creatorId !=  idFromToken) {
-            throw new Error(req.originalUrl + ", msg: you are not authorized to edit this id")
-        }
-
-
-        const response: UpdateWriteOpResult= await DraftModel.updateOne({ _id}, {$set: draft })
+        
+             const response: UpdateWriteOpResult= await DraftModel.updateOne({ _id}, {$set: draft })
 
         if (response.acknowledged === true && response.matchedCount === 1 && response.modifiedCount === 1) {
             res.status(200).json(response)
