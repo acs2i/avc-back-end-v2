@@ -300,7 +300,7 @@ router.post(DRAFT + "/batch", async (req: Request, res: Response) => {
       })),
       brand_ids: product.brand_ids.map(id => new Types.ObjectId(id)),
       collection_ids: product.collection_ids.map(id => new Types.ObjectId(id)),
-      status: 'draft',
+      status: 'A',
       step: 1,
       type: "Marchandise",
       peau: 0,
