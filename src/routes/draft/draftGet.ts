@@ -334,23 +334,22 @@ router.get(DRAFT + "/user/:userId/enrichie", async (req: Request, res: Response)
 
     const enrichedDrafts = await Promise.all(
       drafts.map(async (draft) => {
-        const brandName =
-          draft.brand_ids[0] && draft.brand_ids[0] instanceof ObjectId
-            ? await fetchBrandDetails(draft.brand_ids[0].toString())
-            : "Marque inconnue";
+        const brandName = draft.brand_ids[0]
+        ? await fetchBrandDetails(draft.brand_ids[0].toString())
+        : "Marque inconnue";
 
         const familyName =
-          draft.tag_ids[0] && draft.tag_ids[0] instanceof ObjectId
+          draft.tag_ids[0] && draft.tag_ids[0]
             ? await fetchTagDetails(draft.tag_ids[0].toString())
             : "Famille inconnue";
 
         const subFamilyName =
-          draft.tag_ids[1] && draft.tag_ids[1] instanceof ObjectId
+          draft.tag_ids[1] && draft.tag_ids[1]
             ? await fetchTagDetails(draft.tag_ids[1].toString())
             : "Sous famille inconnue";
 
         const supplierName =
-          draft.suppliers[0]?.supplier_id && draft.suppliers[0].supplier_id instanceof ObjectId
+          draft.suppliers[0]?.supplier_id && draft.suppliers[0].supplier_id
             ? await fetchSupplierDetails(draft.suppliers[0].supplier_id.toString())
             : "Fournisseur inconnu";
 

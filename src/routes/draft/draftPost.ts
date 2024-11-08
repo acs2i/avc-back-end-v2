@@ -242,32 +242,6 @@ router.post(DRAFT, async (req: Request, res: Response) => {
 });
 
 
-// router.post(DRAFT + "/batch", async (req: Request, res: Response) => {
-//   try {
-//       const productData = req.body;
-      
-//       if(!productData) {
-//           throw new Error(req.originalUrl + ", msg: product data was falsy: " + productData)
-//       }
-
-//       const response = await Post("/product-batch", JSON.stringify(productData));
-
-//       if(response.status !== 200) {
-//           throw new Error("Response status was not 200: " + JSON.stringify(response))
-//       }
-
-//       const document = await response.json();
-
-//       res.status(200).json(document)
-
-//   } catch(err) {
-//       console.error(err);
-//       res.status(400).json(err)
-//   }
-// })
-
-
-
 router.post(DRAFT + "/batch", async (req: Request, res: Response) => {
   try {
     const { drafts, creator_id } = req.body;

@@ -11,7 +11,7 @@ import brandGetRoutes from "./routes/brand/brandGet"
 import brandPostRoutes from "./routes/brand/brandPost"
 import brandPutRoutes from "./routes/brand/brandPut"
 
-import csvRoutes from "./routes/csv/csvRoutes"
+import csvGetRoutes from "./routes/csv/csvGet"
 
 
 import collectionGetRoutes from "./routes/collection/collectionGet"
@@ -111,7 +111,7 @@ app.use(v1, brandPostRoutes);
 app.use(v1, brandPutRoutes);
 
 // CSV ROUTES
-app.use(v1, csvRoutes)
+app.use(v1, csvGetRoutes)
 
 // COLLECTION ROUTES
 app.use(v1, collectionGetRoutes);

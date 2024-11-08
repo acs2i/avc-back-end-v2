@@ -61,6 +61,33 @@ router.get(SUPPLIER + "/field/:field/value/:value", async (req: Request, res: Re
 
 });
 
+router.get(
+  SUPPLIER + "/export/:id",
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+      const response = await Get("/export", id);
+      const data = await response.json();
+      if (!data.filePath) {
+        return res.status(500).json({ error: "File path is missing from first backend response" });
+      }
+      const filePath = data.filePath;
+      console.log("Chemin du fichier récupéré :", filePath);
+  
+  
+      // Téléchargement du fichier
+      res.download(filePath, (err) => {
+        if (err) {
+          console.error("Erreur de téléchargement du fichier CSV :", err);
+          res.status(500).send("Erreur de téléchargement du fichier CSV");
+        }
+      });
+    } catch (error) {
+      console.error("Erreur lors de la récupération du CSV :", error); // Ajout de log pour les erreurs
+      res.status(500).json({ error: "Erreur lors de la récupération du CSV depuis le premier backend" });
+    }
+  }
+);
 
 router.get(SUPPLIER + "/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -115,6 +142,7 @@ router.get(SUPPLIER, async (req: Request, res: Response) => {
 
 
 })
+
 
 
 

@@ -46,27 +46,40 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const product = req.body;
+      console.log("Tentative de création de produit avec les données:", product);
 
-
-      const body = JSON.stringify(product );
+      const body = JSON.stringify(product);
+      
       // Envoie de la requête pour créer le produit dans le data lake
       const response = await Post("/product", body);
 
-      if (response.status !== 200) {
-        throw new HttpError(
-          "Erreur à propos de la requête vers le data lake pour référence",
-          400
-        );
+      // Vérification de la réponse du premier backend
+      if (response.status === 400) {
+        const errorData = await response.json();
+        console.warn("Erreur 400 reçue du data lake :", errorData);
+        return res.status(400).json({
+          error: errorData.error || "Erreur inconnue lors de la validation du produit",
+          status: 400
+        });
+      } else if (!response.ok) {
+        // Pour les autres erreurs, log et lance une exception générique
+        throw new Error("Erreur à propos de la requête vers le data lake pour référence");
       }
 
+      // Si tout va bien, extrait les données du produit créé
       const data = await response.json();
+      console.log("Produit créé avec succès :", data);
 
-      // Retourner les données du produit créé
+      // Retourner les données du produit créé au client
       res.status(200).json(data);
-      
+
     } catch (err) {
-      console.error(err);
-      next(err);
+      console.error("Erreur lors de l'appel au data lake :", err);
+      res.status(500).json({
+        error: "Erreur lors de la création du produit",
+        status: 500,
+        details: "erreur"
+      });
     }
   }
 );
