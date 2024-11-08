@@ -5,6 +5,8 @@ import DraftModel from "../../models/draftSchema";
 import GroupModel from "../../models/groupSchema";
 import User from "../../models/UserModel";
 import { Get } from "../../services/fetch";
+import axios from "axios";
+import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
@@ -270,6 +272,103 @@ router.get(DRAFT + "/user/:userId", async (req: Request, res: Response) => {
     console.error("Error: ", err);
     res.status(500).json({
       error: "Une erreur est survenue lors de la récupération des brouillons.",
+    });
+  }
+});
+
+async function fetchBrandDetails(brandId: string): Promise<string> {
+  try {
+    const response = await Get("/brand", brandId);
+
+    if (!response.ok) {
+      console.error(`Erreur lors de la récupération de la marque pour l'ID: ${brandId}`, response.statusText);
+      return "Marque inconnue";
+    }
+
+    const data = await response.json();
+    return data.label || "Marque inconnue";
+  } catch (error) {
+    console.error(`Erreur lors de la récupération de la marque pour l'ID: ${brandId}`, error);
+    return "Marque inconnue";
+  }
+}
+
+async function fetchSupplierDetails(supplierId: string): Promise<string> {
+  try {
+    const response = await Get("/supplier", supplierId);
+
+    if (!response.ok) {
+      console.error(`Erreur lors de la récupération du fournisseur pour l'ID: ${supplierId}`, response.statusText);
+      return "Fournisseur inconnu";
+    }
+
+    const data = await response.json();
+    return data.company_name || "Fournisseur inconnu";
+  } catch (error) {
+    console.error(`Erreur lors de la récupération du fournisseur pour l'ID: ${supplierId}`, error);
+    return "Fournisseur inconnu";
+  }
+}
+
+async function fetchTagDetails(tagId: string): Promise<string> {
+  try {
+    const response = await Get("/tag", tagId);
+
+    if (!response.ok) {
+      console.error(`Erreur lors de la récupération du tag pour l'ID: ${tagId}`, response.statusText);
+      return "Nom de tag inconnu";
+    }
+
+    const data = await response.json();
+    return data.name || "Nom de tag inconnu";
+  } catch (error) {
+    console.error(`Erreur lors de la récupération du tag pour l'ID: ${tagId}`, error);
+    return "Nom de tag inconnu";
+  }
+}
+
+router.get(DRAFT + "/user/:userId/enrichie", async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  try {
+    const drafts = await DraftModel.find({ creator_id: userId }).lean();
+
+    const enrichedDrafts = await Promise.all(
+      drafts.map(async (draft) => {
+        const brandName =
+          draft.brand_ids[0] && draft.brand_ids[0] instanceof ObjectId
+            ? await fetchBrandDetails(draft.brand_ids[0].toString())
+            : "Marque inconnue";
+
+        const familyName =
+          draft.tag_ids[0] && draft.tag_ids[0] instanceof ObjectId
+            ? await fetchTagDetails(draft.tag_ids[0].toString())
+            : "Famille inconnue";
+
+        const subFamilyName =
+          draft.tag_ids[1] && draft.tag_ids[1] instanceof ObjectId
+            ? await fetchTagDetails(draft.tag_ids[1].toString())
+            : "Sous famille inconnue";
+
+        const supplierName =
+          draft.suppliers[0]?.supplier_id && draft.suppliers[0].supplier_id instanceof ObjectId
+            ? await fetchSupplierDetails(draft.suppliers[0].supplier_id.toString())
+            : "Fournisseur inconnu";
+
+        return {
+          ...draft,
+          brandName,
+          familyName,
+          subFamilyName,
+          supplierName,
+        };
+      })
+    );
+
+    res.status(200).json(enrichedDrafts);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).json({
+      error: "Une erreur est survenue lors de la récupération des brouillons enrichis.",
     });
   }
 });
