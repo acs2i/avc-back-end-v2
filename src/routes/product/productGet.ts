@@ -114,9 +114,10 @@ router.get(PRODUCT + "/search", async(req: Request, res: Response) => {
     }    
     
 
-    const { reference, supplier, tag, brand, long_label, collection, dimension, dimension_type, status, creation_date } = req.query;
+    const { reference, supplier, tag, brand, long_label, collection, dimension, dimension_type, status, exportToCsv, creation_date } = req.query;
 
-    const response = await Get("/product/search", undefined, intPage, intLimit,  {reference, supplier, tag, brand, long_label, collection, dimension, dimension_type, status, creation_date });
+
+    const response = await Get("/product/search", undefined, intPage, intLimit,  {reference, supplier, tag, brand, long_label, collection, dimension, dimension_type, status, exportToCsv, creation_date });
 
     if(response.status !== 200) {
       throw new Error("Erreur sur le coté de data lake serveur en cherchant les products");
@@ -129,9 +130,6 @@ router.get(PRODUCT + "/search", async(req: Request, res: Response) => {
     console.error(err)
     res.status(500).json(err);
   }
-
-
-
 })
 
 //GET ALL PRODUCT
