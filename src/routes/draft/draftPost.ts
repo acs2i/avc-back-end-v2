@@ -14,10 +14,37 @@ interface ProcessedProduct {
   suppliers: Array<{
     supplier_id: string;
     supplier_ref: string;
+    company_name: string;
+    pcb: string;
+    custom_cat: string;
+    made_in: string;
   }>;
   brand_ids: string[];
   collection_ids: string[];
+  peau?: number;
+  tbeu_pb?: number;
+  tbeu_pmeu?: number;
+  imgPath?: string;
+  dimension_types?: string | string[]; // Pour compatibilité
+  additional_fields?: any[];
+  uvc?: Array<{
+    code: string;
+    dimensions: string[];
+    prices: Array<{
+      tarif_id: string;
+      currency: string;
+      supplier_id: string;
+      price: {
+        peau: number;
+        tbeu_pb: number;
+        tbeu_pmeu: number;
+      };
+      store: string;
+    }>;
+    eans: string[];
+  }>;
 }
+
 
 const router = express.Router();
 
@@ -242,6 +269,33 @@ router.post(DRAFT, async (req: Request, res: Response) => {
 });
 
 
+router.post(DRAFT + "/fetch-dimensions", async (req: Request, res: Response) => {
+  try {
+    const { sizeGridCode, sizeIndices } = req.body;
+    console.log(req.body)
+    if (!sizeGridCode || !Array.isArray(sizeIndices)) {
+      return res.status(400).json({ error: "Le code de la grille et les indices sont requis." });
+    }
+
+    const body = { gridCode: sizeGridCode, indices: sizeIndices };
+    // Appel au premier backend pour obtenir les tailles correspondant aux indices
+    const response = await Post("/product/get-dimensions-by-index", JSON.stringify(body));
+
+    if (response.status !== 200) {
+      throw new Error(`Erreur lors de la récupération des tailles: ${response.statusText}`);
+    }
+
+    const { dimensions } = await response.json();
+
+    res.status(200).json({ dimensions });
+  } catch (error) {
+    console.error("Erreur dans la récupération des dimensions :", error);
+    res.status(400).json({ error: (error as Error).message });
+  }
+});
+
+
+
 router.post(DRAFT + "/batch", async (req: Request, res: Response) => {
   try {
     const { drafts, creator_id } = req.body;
@@ -263,31 +317,34 @@ router.post(DRAFT + "/batch", async (req: Request, res: Response) => {
 
     const processedProducts: ProcessedProduct[] = await response.json();
 
-    // Préparation des drafts avec les données transformées et conversion en ObjectId
-    const drafts_with_ids = processedProducts.map(product => ({
+    // Préparation des drafts avec les données transformées sans conversion en ObjectId
+    const drafts_with_labels = processedProducts.map(product => ({
       ...product,
       creator_id: new Types.ObjectId(creator_id),
-      tag_ids: product.tag_ids.map(id => new Types.ObjectId(id)),
+      tag_labels: product.tag_ids,
       suppliers: product.suppliers.map(supplier => ({
-        ...supplier,
-        supplier_id: new Types.ObjectId(supplier.supplier_id)
+        supplier_id: supplier.supplier_id,
+        supplier_ref: supplier.supplier_ref,
+        pcb: supplier.pcb,
+        custom_cat: supplier.custom_cat,
+        made_in: supplier.made_in
       })),
-      brand_ids: product.brand_ids.map(id => new Types.ObjectId(id)),
-      collection_ids: product.collection_ids.map(id => new Types.ObjectId(id)),
-      status: 'A',
+      brand_labels: product.brand_ids,
+      collection_labels: product.collection_ids,
       step: 1,
       type: "Marchandise",
-      peau: 0,
-      tbeu_pb: 0,
-      tbeu_pmeu: 0,
-      imgPath: "",
-      dimension_types: ["Couleur/Taille"],
-      additional_fields: [],
-      uvc: []
+      peau: product.peau ?? 0,
+      tbeu_pb: product.tbeu_pb ?? 0,
+      tbeu_pmeu: product.tbeu_pmeu ?? 0,
+      imgPath: product.imgPath || "",
+      dimension_types: product.dimension_types || ["Couleur/Taille"],
+      additional_fields: product.additional_fields || [],
+      uvc: product.uvc || [],
     }));
+    
 
     // Insertion des drafts dans la base de données
-    const insertedDrafts = await DraftModel.insertMany(drafts_with_ids);
+    const insertedDrafts = await DraftModel.insertMany(drafts_with_labels);
     const draftIds = insertedDrafts.map(draft => draft._id);
 
     // Mise à jour de l'utilisateur avec les nouveaux drafts
@@ -306,6 +363,7 @@ router.post(DRAFT + "/batch", async (req: Request, res: Response) => {
     });
   }
 });
+
 
 
 

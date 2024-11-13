@@ -20,7 +20,7 @@ interface UvcSchema {
   dimensions: string[]; // Dimensions de l'UVC
   prices: PriceSchema[]; // Liste des prix
   eans: string[]; // Liste des codes EAN
-  status: number; // Statut de l'UVC
+  status: string; // Statut de l'UVC
   additional_fields: any; // Champs additionnels
 }
 
@@ -97,7 +97,7 @@ const uvcSchema = new mongoose.Schema<UvcSchema>(
     dimensions: [{ type: String }],
     prices: [priceSchema],
     eans: [{ type: String }],
-    status: { type: Number },
+    status: { type: String },
     additional_fields: {
       type: Map,
       of: mongoose.Schema.Types.Mixed,
