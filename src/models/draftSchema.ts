@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 interface PriceItemSchema {
-  peau: number; // Prix d'achat en unité
+  paeu: number; // Prix d'achat en unité
   tbeu_pb: number; // Taux de base en unité - prix de base
   tbeu_pmeu: number; // Taux de base en unité - prix modifié
 }
@@ -45,7 +45,7 @@ interface DraftSchema extends Document {
   brand_ids: ObjectId[];
   collection_ids: ObjectId[];
   tax: string;
-  peau: number;
+  paeu: number;
   tbeu_pb: number;
   tbeu_pmeu: number;
   height: string;
@@ -64,7 +64,7 @@ interface DraftSchema extends Document {
 }
 
 const priceItemSchema = new mongoose.Schema<PriceItemSchema>({
-  peau: { type: Number },
+  paeu: { type: Number },
   tbeu_pb: { type: Number },
   tbeu_pmeu: { type: Number },
 });
@@ -124,7 +124,7 @@ const draftSchema = new mongoose.Schema<DraftSchema>(
     brand_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "brand" }],
     collection_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "collection" }],
     tax: {type: String},
-    peau: { type: Number },
+    paeu: { type: Number },
     tbeu_pb: { type: Number },
     tbeu_pmeu: { type: Number },
     height: {type: String},
