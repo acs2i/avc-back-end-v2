@@ -226,6 +226,7 @@ router.post(DRAFT, async (req: Request, res: Response) => {
   try {
     const draft = req.body;
     const userId = req.body.creator_id;
+ 
 
     if (!draft) {
       throw new Error("req.body was falsy");

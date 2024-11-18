@@ -1,27 +1,29 @@
 import { ObjectId } from "mongodb";
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-interface PriceItemSchema {
-  paeu: number; // Prix d'achat en unité
-  tbeu_pb: number; // Taux de base en unité - prix de base
-  tbeu_pmeu: number; // Taux de base en unité - prix modifié
+
+interface UvcSchema {
+  code: string; // Code de l'UVC
+  dimensions: string[]; // Dimensions de l'UVC
+  prices: PriceSchema; // Liste des prix
+  eans: string[]; // Liste des codes EAN
+  status: string; // Statut de l'UVC
+  additional_fields: any;
+  collectionUvc: string;
 }
 
 interface PriceSchema {
   tarif_id: ObjectId; // ID du tarif
   currency: string; // Devise
   supplier_id: ObjectId; // ID du fournisseur
-  price: PriceItemSchema[]; // Détail des prix
+  price: PriceItemSchema; // Détail des prix
   store: string; // Magasin
 }
 
-interface UvcSchema {
-  code: string; // Code de l'UVC
-  dimensions: string[]; // Dimensions de l'UVC
-  prices: PriceSchema[]; // Liste des prix
-  eans: string[]; // Liste des codes EAN
-  status: string; // Statut de l'UVC
-  additional_fields: any; // Champs additionnels
+interface PriceItemSchema {
+  paeu: number; // Prix d'achat en unité
+  tbeu_pb: number; // Taux de base en unité - prix de base
+  tbeu_pmeu: number; // Taux de base en unité - prix modifié
 }
 
 interface SupplierSchema {
@@ -74,7 +76,7 @@ const priceSchema = new mongoose.Schema<PriceSchema>(
     // tarif_id: { type: mongoose.Schema.Types.ObjectId, ref: "tarif", default: "" },
     currency: { type: String },
     // supplier_id: { type: mongoose.Schema.Types.ObjectId, ref: "supplier", default: "" },
-    price: [priceItemSchema],
+    price: priceItemSchema,
     store: { type: String },
   },
   { _id: false }
@@ -95,9 +97,10 @@ const uvcSchema = new mongoose.Schema<UvcSchema>(
   {
     code: { type: String },
     dimensions: [{ type: String }],
-    prices: [priceSchema],
+    prices: priceSchema,
     eans: [{ type: String }],
     status: { type: String },
+    collectionUvc: { type: String },
     additional_fields: {
       type: Map,
       of: mongoose.Schema.Types.Mixed,
