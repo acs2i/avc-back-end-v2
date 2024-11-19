@@ -1,37 +1,37 @@
 import { ObjectId } from "mongodb";
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-
 interface UvcSchema {
-  code: string; // Code de l'UVC
-  dimensions: string[]; // Dimensions de l'UVC
-  prices: PriceSchema; // Liste des prix
-  eans: string[]; // Liste des codes EAN
-  status: string; // Statut de l'UVC
+  code: string;
+  dimensions: string[];
+  prices: PriceSchema;
+  eans: string[];
+  status: string;
   additional_fields: any;
   collectionUvc: string;
+  height: string;
+  width: string;
+  length: string;
+  gross_weight: string;
+  net_weight: string;
 }
 
 interface PriceSchema {
-  tarif_id: ObjectId; // ID du tarif
-  currency: string; // Devise
-  supplier_id: ObjectId; // ID du fournisseur
-  price: PriceItemSchema; // Détail des prix
-  store: string; // Magasin
+  price: PriceItemSchema;
 }
 
 interface PriceItemSchema {
-  paeu: number; // Prix d'achat en unité
-  tbeu_pb: number; // Taux de base en unité - prix de base
-  tbeu_pmeu: number; // Taux de base en unité - prix modifié
+  paeu: number;
+  tbeu_pb: number;
+  tbeu_pmeu: number;
 }
 
 interface SupplierSchema {
-  supplier_id: ObjectId; // ID du fournisseur
-  supplier_ref: string; // Référence du fournisseur
-  pcb: string; // PCB
-  custom_cat: string; // Catégorie douanière
-  made_in: string; // Pays d'origine
+  supplier_id: ObjectId;
+  supplier_ref: string;
+  pcb: string;
+  custom_cat: string;
+  made_in: string;
 }
 
 interface DraftSchema extends Document {
@@ -73,11 +73,7 @@ const priceItemSchema = new mongoose.Schema<PriceItemSchema>({
 
 const priceSchema = new mongoose.Schema<PriceSchema>(
   {
-    // tarif_id: { type: mongoose.Schema.Types.ObjectId, ref: "tarif", default: "" },
-    currency: { type: String },
-    // supplier_id: { type: mongoose.Schema.Types.ObjectId, ref: "supplier", default: "" },
     price: priceItemSchema,
-    store: { type: String },
   },
   { _id: false }
 );
@@ -101,6 +97,11 @@ const uvcSchema = new mongoose.Schema<UvcSchema>(
     eans: [{ type: String }],
     status: { type: String },
     collectionUvc: { type: String },
+    height: { type: String },
+    width: { type: String },
+    length: { type: String },
+    gross_weight: { type: String },
+    net_weight: { type: String },
     additional_fields: {
       type: Map,
       of: mongoose.Schema.Types.Mixed,
@@ -126,26 +127,26 @@ const draftSchema = new mongoose.Schema<DraftSchema>(
     dimension_types: [{ type: String }],
     brand_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "brand" }],
     collection_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "collection" }],
-    tax: {type: String},
+    tax: { type: String },
     paeu: { type: Number },
     tbeu_pb: { type: Number },
     tbeu_pmeu: { type: Number },
-    height: {type: String},
-    width: {type: String},
-    length: {type: String},
-    size_unit: {type: String},
-    weigth_unit: {type: String},
-    gross_weight: {type: String},
-    net_weight: {type: String},
+    height: { type: String },
+    width: { type: String },
+    length: { type: String },
+    size_unit: { type: String },
+    weigth_unit: { type: String },
+    gross_weight: { type: String },
+    net_weight: { type: String },
     comment: { type: String, maxlength: 3000 },
     imgPath: { type: String },
     status: { type: String },
-    step: {type: Number, default: 1},
+    step: { type: Number, default: 1 },
     additional_fields: [
       {
-        label: { type: String},
-        value: { type: String},
-        field_type: { type: String},
+        label: { type: String },
+        value: { type: String },
+        field_type: { type: String },
       },
     ],
     uvc: [uvcSchema],
