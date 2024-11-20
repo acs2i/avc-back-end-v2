@@ -114,7 +114,7 @@
 <body>
   <div class="page">
     <div class="logo">
-      <img src="https://www.cimalpes.fr/preview/460/w960/Logo_vertical.png" alt="Logo" />
+      <img src="https://i.ibb.co/q72fjxq/Logo-vertical.png" alt="Logo" />
       <div class="separator"></div>
       <div style="text-align: center">
         <p style="font-size: 15pt; text-align: justify">
@@ -124,12 +124,12 @@
       <div class="separator"></div>
       <div style="text-align: right">
         <p style="font-size: 10pt; text-align: justify">
-          PRINTEMPS/ÉTÉ<br /><strong style="font-size: 15pt">2024</strong>
+          <strong style="font-size: 15pt">{{season}}</strong>
         </p>
       </div>
     </div>
     <div class="separatorpage"></div>
-    <p><span class="label">Marque(s) :</span> {{#brand_id}}{{.}}, {{/brand_id}}</p>
+    <p><span class="label">Marque(s) :</span> {{#brand_id}}{{label}}{{^last}}, {{/last}}{{/brand_id}}</p>
     <p>
       <span class="label" style="font-weight: bold">N° Fournisseur :</span> {{code}}
       <span class="label" style="margin-left: 110px; font-weight: bold">Nom du fournisseur :</span> {{company_name}}
@@ -139,7 +139,7 @@
       <h2>Facturation</h2>
       <p><span class="label">Raison Sociale :</span> {{company_name}}</p>
       <p>
-        <span class="label">Adresse :</span> {{address_1}} {{address_2}} {{address_3}}, {{postal}} {{country}}
+        <span class="label">Adresse :</span> {{address_1}}{{#address_2}} {{address_2}}{{/address_2}}{{#address_3}} {{address_3}}{{/address_3}}, {{postal}} {{country}}
       </p>
       <p><span class="label">N° TVA Intracommunautaire :</span> {{tva}}</p>
       {{#join_rib}}
@@ -147,35 +147,38 @@
         <span class="checkbox"></span><span class="label">Joindre un RIB</span> (uniquement pour les nouveaux fournisseurs)
       </p>
       {{/join_rib}}
-      <p><span class="label">Paiement :</span> {{#conditions}}{{paiement_condition}}{{/conditions}}</p>
+      <p><span class="label">Paiement :</span> {{additional_fields.paiement_condition}}</p>
     </div>
     <div class="section">
       <h2>Service Commercial</h2>
-      <p><span class="label">Contact :</span> {{#contacts}}{{firstname}} {{lastname}}{{/contacts}}</p>
-      <p><span class="label">Téléphone :</span> {{#contacts}}{{phone}} / {{mobile}}{{/contacts}}</p>
-      <p><span class="label">Email :</span> {{#contacts}}{{email}}{{/contacts}}</p>
-      <p><span class="label">Etiquetage :</span> {{#conditions}}{{labeling}}{{/conditions}}</p>
+      {{#contacts.0}}
+      <p><span class="label">Contact :</span> {{firstname}} {{lastname}}</p>
+      <p><span class="label">Téléphone :</span> {{phone}}{{#mobile}} / {{mobile}}{{/mobile}}</p>
+      <p><span class="label">Email :</span> {{email}}</p>
+      {{/contacts.0}}
+      <p><span class="label">Etiquetage :</span> {{additional_fields.etiquetage}}</p>
       <p>
-        <span class="label" style="font-size: 10pt; margin-top: 10px; font-weight: bold">Validité des tarifs :</span> {{#conditions}}{{validate_tarif}}{{/conditions}}
+        <span class="label" style="font-size: 10pt; margin-top: 10px; font-weight: bold">Validité des tarifs :</span> {{additional_fields.validate_tarif}}
       </p>
     </div>
     <div class="section">
       <h2>Remise</h2>
-      <p><span class="label">Remise sur Facture :</span> {{#conditions}}{{tarif}}{{/conditions}}</p>
-      <p><span class="label">Remise de fin d'année :</span> {{#conditions}}{{rfa}}{{/conditions}}</p>
-      <p><span class="label">Prix Nets :</span> {{#conditions}}{{net_price}}{{/conditions}}</p>
+      <p><span class="label">Remise sur Facture :</span> {{additional_fields.remise_facture}}</p>
+      <p><span class="label">Remise de fin d'année :</span> {{additional_fields.remise_fin_annee}}</p>
+      <p><span class="label">Prix Nets :</span> {{additional_fields.prix_nets}}</p>
       <p>
         <span class="label" style="margin-top: 20px; width: 100%; font-weight: bold"><i>🚚 Frais de port : Livraison des commandes uniquement si le Franco est atteint</i></span>
       </p>
-      <p><span class="label">FRANCO de port à partir de :</span> {{#conditions}}{{franco}}{{/conditions}} euros</p>
-      <p><span class="label" style="font-size: 11pt; margin-top: 10px; font-weight: bold">Budget marketing</span> {{#conditions}}{{budget}}{{/conditions}} euros</p>
+      <p><span class="label">FRANCO de port à partir de :</span> {{additional_fields.franco}} euros</p>
+      <p><span class="label" style="font-size: 11pt; margin-top: 10px; font-weight: bold">Budget marketing</span> {{additional_fields.budget_marketing}} euros</p>
     </div>
     <div class="signature">
+      <span>le {{signatureDate}}</span>
       <p>Signature</p>
       <div class="box"></div>
     </div>
     <div class="footer">
-      <img src="https://www.cimalpes.fr/preview/460/w960/Logo_vertical.png" alt="Logo" />
+      <img src="https://i.ibb.co/q72fjxq/Logo-vertical.png" alt="Logo" />
       <p>&copy; SAS au capital de 1 500 000€ | RCS PARIS 622 012 540 | NAF 47.67Z | N° TVA FR35622012540 | SIRET 622 912 540 00010</p>
     </div>
   </div>
