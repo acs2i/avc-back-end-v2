@@ -43,7 +43,7 @@ router.put(DRAFT + "/:id", async (req: Request & { user?: {id: string}}, res: Re
 
         const draft = req.body;
 
-        
+        console.log("Données reçues pour mise à jour :", req.body);
         if(!draft) {
             throw new Error(req.originalUrl + ", msg: req.body was falsy")
         }
