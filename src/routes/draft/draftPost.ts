@@ -235,14 +235,6 @@ router.post(DRAFT, async (req: Request, res: Response) => {
     const id = req.body.id;
     const { long_label } = draft;
 
-    const existingDraft = await DraftModel.findOne({ long_label, id });
-
-    if (existingDraft) {
-      throw new Error(
-        req.originalUrl + ", msg: There already is a draft with this name"
-      );
-    }
-
     const newDraft = await new DraftModel({ ...draft, id });
 
     if (!newDraft) {
