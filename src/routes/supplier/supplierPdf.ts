@@ -81,19 +81,78 @@ const processQueue = async () => {
 const generatePDF = async (data: any, filePath: string) => {
   let browser;
   try {
-    browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--disable-gpu'
+      ],
+      executablePath: process.env.CHROME_BIN || undefined,
+      env: {
+        ...process.env,
+        DISPLAY: undefined,
+      }
+    });
+
     const page = await browser.newPage();
+    
+    // Set a reasonable viewport
+    await page.setViewport({
+      width: 1200,
+      height: 800,
+      deviceScaleFactor: 1,
+    });
 
     const templatePath = path.join(__dirname, 'template.html');
     const templateHtml = fs.readFileSync(templatePath, 'utf8');
 
     const renderedHtml = Mustache.render(templateHtml, data);
 
-    await page.setContent(renderedHtml, { waitUntil: 'networkidle0', timeout: 60000 });
-    await page.pdf({ path: filePath, format: 'A4', landscape: false });
+    // Set content with more robust error handling
+    try {
+      await page.setContent(renderedHtml, { 
+        waitUntil: ['load', 'networkidle0'],
+        timeout: 60000 
+      });
+    } catch (error) {
+      console.error('Error setting page content:', error);
+      throw new Error('Failed to render HTML content');
+    }
+
+    // Generate PDF with specific options
+    try {
+      await page.pdf({
+        path: filePath,
+        format: 'A4',
+        landscape: false,
+        printBackground: true,
+        margin: {
+          top: '20mm',
+          right: '20mm',
+          bottom: '20mm',
+          left: '20mm'
+        }
+      });
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      throw new Error('Failed to generate PDF file');
+    }
+
+  } catch (error) {
+    console.error('Puppeteer error:', error);
+    throw error;
   } finally {
     if (browser) {
-      await browser.close();
+      try {
+        await browser.close();
+      } catch (error) {
+        console.error('Error closing browser:', error);
+      }
     }
   }
 };
