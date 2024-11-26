@@ -5,4 +5,4 @@ package-lock.json
 curls.sh
 *.sh
 
-/src/routes/supplier/pdfs
+/src/routes/supplier/pdfs/*.pdf
