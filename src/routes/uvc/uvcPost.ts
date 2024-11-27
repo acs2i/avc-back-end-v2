@@ -29,14 +29,17 @@ router.post(UVC, async (req: Request, res: Response) => {
 
 router.post(UVC + "/check-eans", async (req: Request, res: Response) => {
     try {
-        const { ean } = req.body;
+        const { ean, currentEanIndex, uvcId } = req.body; // Ajouter `currentEanIndex` et `uvcId`
 
         if (!ean) {
             return res.status(400).json({ error: "EAN is required in the request body." });
         }
 
-        // Appeler la route du premier backend
-        const response = await Post("/uvc/check-eans", JSON.stringify({ ean }));
+        // Appeler la route du premier backend avec les paramètres supplémentaires
+        const response = await Post(
+            "/uvc/check-eans",
+            JSON.stringify({ ean, currentEanIndex, uvcId }), // Transmettez les paramètres supplémentaires
+        );
 
         if (response.status !== 200) {
             const errorResponse = await response.json();
@@ -45,22 +48,21 @@ router.post(UVC + "/check-eans", async (req: Request, res: Response) => {
 
         const result = await response.json();
 
-        // Retourner directement le message et le produit (s'il existe)
+        // Retourner la réponse complète, y compris les nouveaux champs
         return res.status(200).json({
             message: result.message,
-            product: result.product || null, // Ajout du produit si disponible
-            exist: result.exist
+            product: result.product || null,
+            exist: result.exists, // Assurez-vous que le champ existe est correct
+            uvcId: result.uvcId || null, // Ajout de l'ID de l'UVC si disponible
         });
     } catch (err) {
         console.error(err);
         return res.status(500).json({
             error: "An error occurred while checking the EAN.",
-            details: "error"
+            details: "Unknown error",
         });
     }
 });
-
-
 
 
 export default router;
