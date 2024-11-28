@@ -132,10 +132,10 @@ const generatePDF = async (data: any, filePath: string) => {
         landscape: false,
         printBackground: true,
         margin: {
-          top: '20mm',
-          right: '20mm',
-          bottom: '20mm',
-          left: '20mm'
+          top: '10mm',    // Reduced from 20mm
+          right: '10mm',  // Reduced from 20mm
+          bottom: '10mm', // Reduced from 20mm
+          left: '10mm'    // Reduced from 20mm
         }
       });
     } catch (error) {
