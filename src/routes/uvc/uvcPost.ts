@@ -29,16 +29,15 @@ router.post(UVC, async (req: Request, res: Response) => {
 
 router.post(UVC + "/check-eans", async (req: Request, res: Response) => {
     try {
-        const { ean, currentEanIndex, uvcId } = req.body; // Ajouter `currentEanIndex` et `uvcId`
+        const { ean, currentEanIndex, uvcId } = req.body;
 
         if (!ean) {
             return res.status(400).json({ error: "EAN is required in the request body." });
         }
 
-        // Appeler la route du premier backend avec les paramètres supplémentaires
         const response = await Post(
             "/uvc/check-eans",
-            JSON.stringify({ ean, currentEanIndex, uvcId }), // Transmettez les paramètres supplémentaires
+            JSON.stringify({ ean, currentEanIndex, uvcId }), 
         );
 
         if (response.status !== 200) {
@@ -48,12 +47,12 @@ router.post(UVC + "/check-eans", async (req: Request, res: Response) => {
 
         const result = await response.json();
 
-        // Retourner la réponse complète, y compris les nouveaux champs
+       
         return res.status(200).json({
             message: result.message,
             product: result.product || null,
-            exist: result.exists, // Assurez-vous que le champ existe est correct
-            uvcId: result.uvcId || null, // Ajout de l'ID de l'UVC si disponible
+            exist: result.exists, 
+            uvcId: result.uvcId || null,
         });
     } catch (err) {
         console.error(err);
