@@ -9,6 +9,8 @@ interface UvcSchema {
   status: string;
   additional_fields: any;
   collectionUvc: string;
+  blocked: string,
+  blocked_reason_code: string,
   height: string;
   width: string;
   length: string;
@@ -46,6 +48,8 @@ interface DraftSchema extends Document {
   dimension_types: string[];
   brand_ids: ObjectId[];
   collection_ids: ObjectId[];
+  blocked: string,
+  blocked_reason_code: string,
   tax: string;
   paeu: number;
   tbeu_pb: number;
@@ -97,6 +101,8 @@ const uvcSchema = new mongoose.Schema<UvcSchema>(
     eans: [{ type: String }],
     status: { type: String },
     collectionUvc: { type: String },
+    blocked: {type: String},
+    blocked_reason_code: {type: String},
     height: { type: String },
     width: { type: String },
     length: { type: String },
@@ -127,6 +133,8 @@ const draftSchema = new mongoose.Schema<DraftSchema>(
     dimension_types: [{ type: String }],
     brand_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "brand" }],
     collection_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "collection" }],
+    blocked: {type: String},
+    blocked_reason_code: {type: String},
     tax: { type: String },
     paeu: { type: Number },
     tbeu_pb: { type: Number },
