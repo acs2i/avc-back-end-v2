@@ -133,7 +133,7 @@ const draftSchema = new mongoose.Schema<DraftSchema>(
     dimension_types: [{ type: String }],
     brand_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "brand" }],
     collection_ids: [{ type: mongoose.Schema.Types.Mixed, ref: "collection" }],
-    blocked: {type: String},
+    blocked: {type: String, default: "Non"},
     blocked_reason_code: {type: String},
     tax: { type: String },
     paeu: { type: Number },
